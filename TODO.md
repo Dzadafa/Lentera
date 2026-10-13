@@ -10,7 +10,7 @@
 
 <!-- policy: Untuk section ini, jangan mengubah file di luar daftar `Files` pada tiap task. -->
 
-- [ ] Scaffold proyek Expo React Native TypeScript dengan struktur direktori standar
+- [x] Scaffold proyek Expo React Native TypeScript dengan struktur direktori standar
   - **ID**: p0-scaffold
   - **Tags**: setup, expo, typescript
   - **Details**: Buat proyek Expo SDK terbaru dengan TypeScript strict, buat folder `src/screens`, `src/components`, `src/navigation`, `src/store`, `src/db`, `src/services`, `src/content`, `src/theme`, `src/types`; pasang `react-native-safe-area-context`, `react-native-svg`, `zustand`, `expo-sqlite`, `expo-haptics`, `expo-av`, `expo-print`, `expo-sharing`, `expo-router`.
@@ -18,7 +18,7 @@
   - **Acceptance**: `npx tsc --noEmit` melaporkan 0 error; struktur folder ada; app ter-render tanpa crash di perangkat.
   - **Estimate**: 45m
 
-- [ ] Bangun lapisan SQLite lokal dengan skema skrining, krisis, check-in, dan pengaturan
+- [x] Bangun lapisan SQLite lokal dengan skema skrining, krisis, check-in, dan pengaturan
   - **ID**: p0-db-layer
   - **Tags**: database, sqlite, privacy
   - **Details**: Aktifkan `PRAGMA journal_mode = WAL`, `PRAGMA foreign_keys = ON`; buat tabel `screening_records`, `crisis_events`, `daily_checkins`, `settings`; sediakan helper query bertipe dan fungsi `initDatabase()`.
@@ -26,7 +26,7 @@
   - **Acceptance**: `initDatabase()` dijalankan dua kali tidak melempar error; insert dan select pada keempat tabel berhasil; 0 request jaringan saat inisialisasi.
   - **Estimate**: 1h
 
-- [ ] Implementasikan navigator bertipe dengan rute seluruh layar inti
+- [x] Implementasikan navigator bertipe dengan rute seluruh layar inti
   - **ID**: p0-navigation
   - **Tags**: navigation, typescript
   - **Details**: Definisikan union `ScreenRoute` untuk beranda, ruang tenang, kuis DASS-21, hasil tier, panduan BPJS, mode kerja, dan pengaturan; bungkus root dengan `SafeAreaProvider` dari `react-native-safe-area-context`.
@@ -34,7 +34,7 @@
   - **Acceptance**: Setiap rute dapat dinavigasi tanpa error tipe; `npx tsc --noEmit` 0 error; `SafeAreaProvider` membungkus root tree.
   - **Estimate**: 45m
 
-- [ ] Bangun komponen global: emergency interceptor, tombol tutup cepat, dan banner disclaimer
+- [x] Bangun komponen global: emergency interceptor, tombol tutup cepat, dan banner disclaimer
   - **ID**: p0-global-safety
   - **Tags**: safety, crisis, ui
   - **Details**: Modal merah ramah berisi tombol panggil 119 ekstensi 8; tombol tutup cepat di pojok kanan atas yang mengalihkan layar ke antarmuka netral dalam 300 ms; komponen disclaimer teks tetap "Ini skrining awal, bukan diagnosis."
@@ -42,7 +42,7 @@
   - **Acceptance**: Tombol interceptor memicu `Linking.openURL('tel:119')`; tombol tutup cepat berpindah layar di bawah 300 ms; `npx tsc --noEmit` 0 error.
   - **Estimate**: 1h
 
-- [ ] Bangun beranda dua pintu dengan hierarki satu CTA per pintu
+- [x] Bangun beranda dua pintu dengan hierarki satu CTA per pintu
   - **ID**: p0-home-two-doors
   - **Tags**: ui, navigation
   - **Details**: Pintu satu adalah tombol besar "Aku sedang tidak baik sekarang" yang langsung membuka Ruang Tenang tanpa pertanyaan; pintu dua adalah tombol skrining DASS-21 dengan keterangan anonim tanpa akun.
@@ -50,7 +50,7 @@
   - **Acceptance**: Pintu satu membuka Ruang Tenang dalam 1 ketukan tanpa isian; pintu dua membuka kuis; hanya satu tombol primer tampil per pintu.
   - **Estimate**: 1h
 
-- [ ] Implementasikan fitur hero Ruang Tenang dengan napas terpandu haptic
+- [x] Implementasikan fitur hero Ruang Tenang dengan napas terpandu haptic
   - **ID**: p0-ruang-tenang-haptic
   - **Tags**: hero, haptics, ui
   - **Details**: Lingkaran napas beranimasi dengan pola 4-4-4-4 dan Physiological Sigh; getaran perangkat sinkron tiap transisi fase memakai `expo-haptics`; sediakan fallback kilatan warna lembut bila perangkat tidak mendukung getaran; sertakan kontrol mulai, jeda, dan durasi.
@@ -58,7 +58,7 @@
   - **Acceptance**: Pola getar terasa pada tiap transisi fase; fallback visual aktif bila getar tidak tersedia; sesi napas berjalan tanpa crash selama 5 menit berturut-turut.
   - **Estimate**: 2h
 
-- [ ] Bangun konten 21 butir DASS-21 beserta mesin skoring tiga dimensi
+- [x] Bangun konten 21 butir DASS-21 beserta mesin skoring tiga dimensi
   - **ID**: p0-dass21-engine
   - **Tags**: content, scoring, logic
   - **Details**: Simpan 21 butir dengan pemetaan ke dimensi depresi, kecemasan, dan stres serta skala 0 sampai 3; hitung skor per dimensi dan kalikan dua sesuai kunci DASS-21; tentukan tier rendah, sedang, atau akut.
@@ -66,7 +66,7 @@
   - **Acceptance**: Kasus semua nol menghasilkan total 0 pada tiga dimensi; kasus semua tiga menghasilkan skor maksimum 42 per dimensi; pengujian batas tier lulus 100 persen.
   - **Estimate**: 1.5h
 
-- [ ] Bangun layar kuis DASS-21 dengan cek krisis sebagai gerbang wajib
+- [x] Bangun layar kuis DASS-21 dengan cek krisis sebagai gerbang wajib
   - **ID**: p0-quiz-screen
   - **Tags**: ui, safety, logic
   - **Details**: Tampilkan satu butir per layar dengan indikator progres; sisipkan pertanyaan cek krisis pikiran menyakiti diri sebelum halaman hasil dirender; jawaban positif langsung memicu emergency interceptor.
@@ -74,7 +74,7 @@
   - **Acceptance**: Kuis memuat tepat 21 butir; banyak soal sama dengan 21 pada semua jalur; jawaban krisis positif memicu interceptor di bawah 1 detik dan mencegah render hasil sebelum ditangani.
   - **Estimate**: 2h
 
-- [ ] Bangun halaman hasil tiga tier dengan disiplin satu CTA
+- [x] Bangun halaman hasil tiga tier dengan disiplin satu CTA
   - **ID**: p0-result-tiers
   - **Tags**: ui, logic, safety
   - **Details**: Tier rendah menampilkan validasi dan menyembunyikan seluruh rujukan klinis; tier sedang menampilkan rencana mandiri tujuh hari; tier akut menampilkan keselamatan lebih dahulu dengan satu CTA menuju panduan puskesmas.
@@ -84,7 +84,7 @@
 
 ## P1
 
-- [ ] Bangun panduan faskes BPJS tiga langkah beserta naskah loket siap pakai
+- [x] Bangun panduan faskes BPJS tiga langkah beserta naskah loket siap pakai
   - **ID**: p1-bpjs-guide
   - **Tags**: bantuan, content
   - **Details**: Alur tiga langkah dari cek faskes tingkat pertama, pengambilan surat rujukan, hingga layanan psikolog; sertakan naskah kalimat yang bisa dibaca pengguna kepada petugas loket.
@@ -93,7 +93,7 @@
   - **Estimate**: 1.5h
   - **Blocked by**: p0-result-tiers
 
-- [ ] Implementasikan generator surat ringkasan gejala satu halaman dalam format PDF
+- [x] Implementasikan generator surat ringkasan gejala satu halaman dalam format PDF
   - **ID**: p1-pdf-summary
   - **Tags**: pdf, export
   - **Details**: Susun ringkasan berisi tanggal, skor tiga dimensi, tier, dan catatan singkat; render via `expo-print` dan bagikan via `expo-sharing`.
@@ -102,7 +102,7 @@
   - **Estimate**: 1.5h
   - **Blocked by**: p0-result-tiers
 
-- [ ] Implementasikan alat grounding 5-4-3-2-1 dan tulis-lepaskan di Ruang Tenang
+- [x] Implementasikan alat grounding 5-4-3-2-1 dan tulis-lepaskan di Ruang Tenang
   - **ID**: p1-grounding-tools
   - **Tags**: ui, tools
   - **Details**: Alat grounding interaktif lima langkah berbasis indra; kanvas tulis-lepaskan yang menghapus coretan setelah pengguna selesai menulis.
@@ -111,7 +111,7 @@
   - **Estimate**: 2h
   - **Blocked by**: p0-ruang-tenang-haptic
 
-- [ ] Implementasikan mode kerja yang menyamarkan antarmuka menjadi catatan polos
+- [x] Implementasikan mode kerja yang menyamarkan antarmuka menjadi catatan polos
   - **ID**: p1-work-mode
   - **Tags**: privacy, ui
   - **Details**: Mode yang mengubah judul, ikon, dan label menjadi netral tanpa kata bermuatan mental; aktif melalui sakelar di pengaturan.
@@ -120,7 +120,7 @@
   - **Estimate**: 1.5h
   - **Blocked by**: p0-home-two-doors
 
-- [ ] Implementasikan check-in harian energi yang tersimpan lokal
+- [x] Implementasikan check-in harian energi yang tersimpan lokal
   - **ID**: p1-daily-checkin
   - **Tags**: ui, database
   - **Details**: Satu ketukan untuk mencatat tingkat energi harian; simpan di tabel `daily_checkins`; tampilkan rangkaian hari terakhir.
