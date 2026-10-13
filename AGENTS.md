@@ -1,41 +1,56 @@
-This is an Expo/React Native mobile application. Prioritize mobile-first patterns, performance, and cross-platform compatibility.
+# AGENTS.md — TautJiwa Mobile
 
-## Expo has changed — do not trust your training data
+## Overview
+Repo ini berisi **TautJiwa Mobile**, aplikasi Android native (React Native + Expo) untuk skrining kesehatan mental mandiri dan panduan faskes BPJS. Aplikasi ini adalah "Jembatan Pertama": anonim, 100 persen on-device, tanpa akun, dan tanpa server runtime. Target pengguna adalah mahasiswa dan pekerja muda Indonesia. Seluruh pekerjaan UI wajib merujuk `DESIGN.md`.
 
-Expo ships breaking changes every SDK release. APIs you remember are likely renamed, moved, or removed. Before writing any code that touches an Expo, EAS, or React Native API:
-
-1. Read the major version of the `expo` package in `package.json`.
-2. Fetch the matching versioned docs: `https://docs.expo.dev/versions/v<major>.0.0/`
-3. For anything else, fetch https://docs.expo.dev/llms.txt — an index of all Expo docs with corrections to common LLM misconceptions. Follow its links to the specific page you need; never answer from memory.
+## Repository Structure
+- `src/screens/` — satu file per layar fungsional (beranda, ruang tenang, kuis, hasil, panduan BPJS, mode kerja, pengaturan).
+- `src/components/` — komponen presentasional dan ikon SVG inline.
+- `src/navigation/` — definisi rute dan navigator bertipe.
+- `src/store/` — state global (Zustand) dan aksi domain.
+- `src/db/` — lapisan SQLite: skema, migrasi, dan query bertipe.
+- `src/services/` — haptik, audio, PDF, izin, dan integrasi perangkat.
+- `src/content/` — naskah statis: 21 butir DASS-21, kartu psikoedukasi, naskah loket.
+- `src/theme/` — token hasil turunan `DESIGN.md` dalam bentuk objek TypeScript.
+- `src/types/` — tipe domain bersama.
+- `assets/` — ikon, splash, dan berkas audio ambient.
+- `android/` — proyek native hasil prebuild; jangan sunting manual kecuali konfigurasi Gradle atau manifest.
+- `DESIGN.md`, `PRD.md`, `TODO.md` — dokumen kontrak; baca sebelum mengubah perilaku.
 
 ## Commands
+- `npm install` — memasang dependensi.
+- `npx tsc --noEmit` — pemeriksaan tipe; wajib 0 error sebelum commit.
+- `npm run lint` — ESLint + Prettier pada seluruh `src`.
+- `npm test` — menjalankan Jest dan React Native Testing Library.
+- `npx expo start` — menjalankan Metro bundler untuk pengujian cepat.
+- `npx expo prebuild --platform android` — sinkronisasi konfigurasi native Android.
+- `cd android && ./gradlew assembleDebug` — kompilasi APK debug standalone.
+- `cd android && ./gradlew assembleRelease` — kompilasi APK release standalone.
+- `adb install -r android/app/build/outputs/apk/release/app-release.apk` — memasang APK ke perangkat.
+- `adb exec-out screencap -p > /tmp/screen.png` — menangkap tangkapan layar perangkat.
 
-Use `bunx` instead of `npx` if the project uses bun (`bun.lock` present).
+## Git Workflow
+- Branch utama adalah `main`; remote `origin` menunjuk ke repositori GitHub tim.
+- Gaya commit: `feat(scope): ...`, `fix(scope): ...`, `refactor(scope): ...`, `docs(scope): ...`, `chore(scope): ...`.
+- Satu commit = satu perubahan logis. Jalankan `npx tsc --noEmit` sebelum setiap commit.
+- Jangan commit `node_modules`, `android/build`, `android/app/build`, atau berkas `.keystore`.
+- Perubahan pada `PRD.md`, `TODO.md`, atau `DESIGN.md` harus disertai alasan di badan commit.
 
-```bash
-npx expo install <package>  # ALWAYS use instead of npm/yarn/pnpm/bun add — resolves SDK-compatible versions
-npx expo start              # start the dev server
-npx expo lint               # lint
-npx tsc --noEmit            # typecheck
-npx expo-doctor             # diagnose dependency and config issues
-npx expo install --fix      # fix incompatible package versions
-```
+## Design
+- Untuk semua pekerjaan UI, baca `DESIGN.md` dan pakai HANYA token di dalamnya.
+- Jangan mengarang nilai hex, ukuran font, atau radius baru.
+- Jika butuh token yang belum ada, ajukan dulu — jangan menambah sendiri.
 
-Run lint and typecheck before declaring any task done.
-
-## Navigation & Routing
-
-- Use **Expo Router** for all navigation. Routes live in `src/app/` — every file there is a screen, `_layout.tsx` files define navigators. Keep non-route code (components, hooks, utils) outside `src/app/`.
-- Import `Link`, `router`, and `useLocalSearchParams` from `expo-router`.
-- Docs: https://docs.expo.dev/router/introduction.md
-
-## Building with EAS
-
-Use EAS to build, sign, and submit the app in the cloud (`eas build`, `eas submit`) and to ship over-the-air updates (`eas update`) — no local Xcode or Android Studio required. Run EAS CLI as `bunx eas-cli <command>` in Bun projects, or `npx eas-cli@latest <command>` otherwise; substitute that for bare `eas` in docs examples.
-Docs: https://docs.expo.dev/eas/index.md
-
-## Rules
-
-- If `ios/` and `android/` directories do not exist, they are generated (Continuous Native Generation). Never create or edit them by hand — configure native behavior in `app.json` and config plugins.
-- Expo Go only includes its bundled native modules. After adding a library with native code, the app needs a development build: `npx expo run:ios|android` locally, or `eas build --profile development`.
-- Prefer recommended Expo modules over third-party libraries, and check your available skills before adding dependencies. Docs: https://docs.expo.dev/versions/latest/index.md
+## Boundaries
+- **Always**: jalankan `npx tsc --noEmit` dan pastikan 0 error sebelum commit.
+- **Always**: simpan seluruh data skrining di SQLite lokal; tidak ada transmisi jaringan untuk data personal.
+- **Always**: tampilkan disclaimer "skrining awal, bukan diagnosis" pada setiap halaman hasil.
+- **Always**: sertakan akses emergency interceptor dan tombol tutup cepat pada setiap layar hasil.
+- **Always**: gunakan `SafeAreaView` dari `react-native-safe-area-context`, bukan dari `react-native`.
+- **Ask first**: sebelum menambah dependensi native baru yang mengubah `android/`.
+- **Ask first**: sebelum mengubah bobot atau urutan butir instrumen DASS-21.
+- **Never**: menaruh API key, token, atau kredensial apa pun di dalam source code.
+- **Never**: mengirim data skrining, mood, atau identitas pengguna ke jaringan mana pun.
+- **Never**: menampilkan klaim diagnosis klinis definitif atau menyarankan penghentian pengobatan.
+- **Never**: memakai data dummy yang di-hardcode di dalam komponen view; gunakan query SQLite atau empty state terkurasi.
+- **Never**: mengubah berkas di `android/` secara manual kecuali `build.gradle`, `gradle.properties`, `AndroidManifest.xml`, atau `local.properties`.

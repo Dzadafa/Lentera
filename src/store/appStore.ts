@@ -1,0 +1,132 @@
+import { create } from 'zustand';
+import type { CheckIn, Dass21Answer, ScreeningResult } from '../types/domain';
+import {
+  initDatabase,
+  getLatestScreening,
+  insertScreening,
+  getCheckIns,
+  upsertDailyCheckIn,
+  getSetting,
+  setSetting,
+  recordCrisisEvent,
+} from '../db';
+import { calculateDass21 } from '../services/scoring';
+import { haptics } from '../services/haptics';
+
+interface AppState {
+  isInitialized: boolean;
+  workMode: boolean;
+  hapticsEnabled: boolean;
+  latestScreening: ScreeningResult | null;
+  recentCheckIns: CheckIn[];
+  isCrisisModalVisible: boolean;
+  crisisSource: string;
+
+  // Quiz state
+  currentQuestionIndex: number;
+  answers: Record<number, 0 | 1 | 2 | 3>;
+
+  // Actions
+  initialize: () => Promise<void>;
+  toggleWorkMode: () => Promise<void>;
+  toggleHaptics: () => Promise<void>;
+  openCrisisModal: (source?: string) => void;
+  closeCrisisModal: () => void;
+  recordCrisisDial: () => Promise<void>;
+
+  // Quiz actions
+  answerQuestion: (itemId: number, value: 0 | 1 | 2 | 3) => void;
+  resetQuiz: () => void;
+  submitQuiz: (crisisAnsweredYes?: boolean) => Promise<ScreeningResult>;
+
+  // CheckIn actions
+  saveTodayCheckIn: (mood: number, energy: number, note?: string) => Promise<void>;
+}
+
+export const useAppStore = create<AppState>((set, get) => ({
+  isInitialized: false,
+  workMode: false,
+  hapticsEnabled: true,
+  latestScreening: null,
+  recentCheckIns: [],
+  isCrisisModalVisible: false,
+  crisisSource: 'manual',
+  currentQuestionIndex: 0,
+  answers: {},
+
+  initialize: async () => {
+    await initDatabase();
+    const wm = await getSetting('work_mode');
+    const hp = await getSetting('haptics_enabled');
+    const isWorkMode = wm === 'true';
+    const isHaptics = hp !== 'false';
+    haptics.setEnabled(isHaptics);
+
+    const latest = await getLatestScreening();
+    const checks = await getCheckIns(7);
+
+    set({
+      isInitialized: true,
+      workMode: isWorkMode,
+      hapticsEnabled: isHaptics,
+      latestScreening: latest,
+      recentCheckIns: checks,
+    });
+  },
+
+  toggleWorkMode: async () => {
+    const next = !get().workMode;
+    await setSetting('work_mode', String(next));
+    set({ workMode: next });
+  },
+
+  toggleHaptics: async () => {
+    const next = !get().hapticsEnabled;
+    await setSetting('haptics_enabled', String(next));
+    haptics.setEnabled(next);
+    set({ hapticsEnabled: next });
+  },
+
+  openCrisisModal: (source = 'manual') => {
+    haptics.alert();
+    set({ isCrisisModalVisible: true, crisisSource: source });
+  },
+
+  closeCrisisModal: () => {
+    set({ isCrisisModalVisible: false });
+  },
+
+  recordCrisisDial: async () => {
+    await recordCrisisEvent(get().crisisSource, 'dial_119_ext_8');
+  },
+
+  answerQuestion: (itemId, value) => {
+    haptics.tap();
+    set((state) => ({
+      answers: { ...state.answers, [itemId]: value },
+    }));
+  },
+
+  resetQuiz: () => {
+    set({ currentQuestionIndex: 0, answers: {} });
+  },
+
+  submitQuiz: async (crisisAnsweredYes = false) => {
+    const answersList: Dass21Answer[] = Object.entries(get().answers).map(([k, v]) => ({
+      itemId: Number(k),
+      value: v,
+    }));
+    const result = calculateDass21(answersList, crisisAnsweredYes);
+    await insertScreening(result);
+    set({ latestScreening: result, answers: {}, currentQuestionIndex: 0 });
+    return result;
+  },
+
+  saveTodayCheckIn: async (mood, energy, note = '') => {
+    const today = new Date().toISOString().split('T')[0];
+    await upsertDailyCheckIn({ date: today, mood, energy, note });
+    const checks = await getCheckIns(7);
+    set({ recentCheckIns: checks });
+    haptics.success();
+  },
+}));

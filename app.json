@@ -1,25 +1,35 @@
 {
   "expo": {
-    "name": "_tj_scaffold",
-    "slug": "_tj_scaffold",
+    "name": "TautJiwa",
+    "slug": "tautjiwa",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "splash": {
+      "backgroundColor": "#F7F9F8",
+      "resizeMode": "contain"
+    },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": false,
+      "bundleIdentifier": "com.danipinion.tautjiwa"
     },
     "android": {
+      "package": "com.danipinion.tautjiwa",
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#F7F9F8",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
+      "permissions": [
+        "android.permission.VIBRATE",
+        "android.permission.INTERNET"
+      ],
       "predictiveBackGestureEnabled": false
     },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    }
+    "plugins": [
+      "expo-sqlite"
+    ]
   }
 }
