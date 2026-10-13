@@ -38,6 +38,19 @@ class HapticsService {
     }
   }
 
+  /** Pola getar menyalakan/membakar: beberapa ketukan ringan berurutan. */
+  async burn() {
+    if (!this.enabled) return;
+    try {
+      for (let i = 0; i < 6; i += 1) {
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        await new Promise((resolve) => setTimeout(resolve, 85));
+      }
+    } catch {
+      // ignore
+    }
+  }
+
   async tap() {
     if (!this.enabled) return;
     try {

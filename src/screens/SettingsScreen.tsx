@@ -23,6 +23,8 @@ export const SettingsScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
   const hapticsEnabled = useAppStore((s) => s.hapticsEnabled);
   const toggleWorkMode = useAppStore((s) => s.toggleWorkMode);
   const toggleHaptics = useAppStore((s) => s.toggleHaptics);
+  const voiceGuide = useAppStore((s) => s.voiceGuide);
+  const toggleVoiceGuide = useAppStore((s) => s.toggleVoiceGuide);
 
   return (
     <View style={styles.container}>
@@ -65,6 +67,24 @@ export const SettingsScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
             <Switch
               value={hapticsEnabled}
               onValueChange={toggleHaptics}
+              trackColor={{ false: colors.surfaceContainerHigh, true: colors.secondary }}
+              thumbColor="#FFFFFF"
+            />
+          </View>
+
+          <View style={styles.divider} />
+
+          <View style={styles.row}>
+            <View style={styles.rowText}>
+              <Text style={styles.rowTitle}>Mode Suara</Text>
+              <Text style={styles.rowSub}>
+                Perintah latihan dibacakan dengan suara, jadi kamu bisa menutup mata dan hanya
+                mengikuti panduan. Memakai mesin suara bawaan perangkat, tanpa internet.
+              </Text>
+            </View>
+            <Switch
+              value={voiceGuide}
+              onValueChange={toggleVoiceGuide}
               trackColor={{ false: colors.surfaceContainerHigh, true: colors.secondary }}
               thumbColor="#FFFFFF"
             />
@@ -122,6 +142,7 @@ const styles = StyleSheet.create({
     borderColor: colors.outlineVariant,
   },
   row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.md },
+  divider: { height: 1, backgroundColor: colors.outlineVariant, marginVertical: spacing.md },
   rowText: { flex: 1 },
   rowTitle: { ...typography.labelLg, color: colors.onSurface },
   rowSub: { ...typography.bodySm, color: colors.onSurfaceVariant, marginTop: 2 },

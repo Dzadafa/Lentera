@@ -12,11 +12,13 @@ import {
 } from '../db';
 import { calculateDass21 } from '../services/scoring';
 import { haptics } from '../services/haptics';
+import { speech } from '../services/speech';
 
 interface AppState {
   isInitialized: boolean;
   workMode: boolean;
   hapticsEnabled: boolean;
+  voiceGuide: boolean;
   latestScreening: ScreeningResult | null;
   recentCheckIns: CheckIn[];
   isCrisisModalVisible: boolean;
@@ -30,6 +32,7 @@ interface AppState {
   initialize: () => Promise<void>;
   toggleWorkMode: () => Promise<void>;
   toggleHaptics: () => Promise<void>;
+  toggleVoiceGuide: () => Promise<void>;
   openCrisisModal: (source?: string) => void;
   closeCrisisModal: () => void;
   recordCrisisDial: () => Promise<void>;
@@ -47,6 +50,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   isInitialized: false,
   workMode: false,
   hapticsEnabled: true,
+  voiceGuide: false,
   latestScreening: null,
   recentCheckIns: [],
   isCrisisModalVisible: false,
@@ -58,9 +62,12 @@ export const useAppStore = create<AppState>((set, get) => ({
     await initDatabase();
     const wm = await getSetting('work_mode');
     const hp = await getSetting('haptics_enabled');
+    const vg = await getSetting('voice_guide');
     const isWorkMode = wm === 'true';
     const isHaptics = hp !== 'false';
+    const isVoiceGuide = vg === 'true';
     haptics.setEnabled(isHaptics);
+    speech.setEnabled(isVoiceGuide);
 
     const latest = await getLatestScreening();
     const checks = await getCheckIns(7);
@@ -69,6 +76,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       isInitialized: true,
       workMode: isWorkMode,
       hapticsEnabled: isHaptics,
+      voiceGuide: isVoiceGuide,
       latestScreening: latest,
       recentCheckIns: checks,
     });
@@ -78,6 +86,16 @@ export const useAppStore = create<AppState>((set, get) => ({
     const next = !get().workMode;
     await setSetting('work_mode', String(next));
     set({ workMode: next });
+  },
+
+  toggleVoiceGuide: async () => {
+    const next = !get().voiceGuide;
+    await setSetting('voice_guide', String(next));
+    speech.setEnabled(next);
+    set({ voiceGuide: next });
+    if (next) {
+      void speech.speak('Panduan suara aktif. Aku akan membacakan setiap langkah latihanmu.');
+    }
   },
 
   toggleHaptics: async () => {

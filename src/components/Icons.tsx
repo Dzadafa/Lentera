@@ -106,3 +106,53 @@ export const EyeOffIcon: React.FC<IconProps> = ({ size = 20, color = '#5A6B60' }
     />
   </Svg>
 );
+
+export const MicIcon: React.FC<IconProps> = ({ size = 22, color = '#1B3B2B' }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Rect x="9" y="2" width="6" height="11" rx="3" stroke={color} strokeWidth={2} />
+    <Path d="M5 11a7 7 0 0 0 14 0" stroke={color} strokeWidth={2} strokeLinecap="round" />
+    <Path d="M12 18v4" stroke={color} strokeWidth={2} strokeLinecap="round" />
+    <Path d="M8 22h8" stroke={color} strokeWidth={2} strokeLinecap="round" />
+  </Svg>
+);
+
+export const SpeakerIcon: React.FC<IconProps> = ({ size = 20, color = '#1B3B2B' }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Path d="M11 5 6 9H3v6h3l5 4V5z" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+    <Path d="M15.5 8.5a5 5 0 0 1 0 7" stroke={color} strokeWidth={2} strokeLinecap="round" />
+    <Path d="M18.5 5.5a9 9 0 0 1 0 13" stroke={color} strokeWidth={2} strokeLinecap="round" />
+  </Svg>
+);
+
+export const SpeakerOffIcon: React.FC<IconProps> = ({ size = 20, color = '#5A6B60' }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Path d="M11 5 6 9H3v6h3l5 4V5z" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+    <Path d="M16 9l5 6M21 9l-5 6" stroke={color} strokeWidth={2} strokeLinecap="round" />
+  </Svg>
+);
+
+export const FlameIcon: React.FC<IconProps> = ({ size = 20, color = '#B45309' }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Path d="M12 2c1.6 3.2.4 5.2-1 6.6C9.4 10.2 8 11.6 8 14a4 4 0 0 0 8 0c0-1.2-.4-2.2-1-3" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+    <Path d="M12 22a6 6 0 0 0 6-6c0-2.6-1.6-4.4-3-6" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+  </Svg>
+);
+
+export const PlusIcon: React.FC<IconProps> = ({ size = 20, color = '#FFFFFF' }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Path d="M12 5v14M5 12h14" stroke={color} strokeWidth={2} strokeLinecap="round" />
+  </Svg>
+);
+
+export const TrashIcon: React.FC<IconProps> = ({ size = 20, color = '#5A6B60' }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Path d="M3 6h18M8 6V4h8v2M6 6l1 15h10l1-15" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+  </Svg>
+);
+
+export const CheckCircleIcon: React.FC<IconProps> = ({ size = 22, color = '#2A9D8F' }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Circle cx="12" cy="12" r="9" stroke={color} strokeWidth={2} />
+    <Path d="M8.5 12.5l2.4 2.4 4.6-5" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+  </Svg>
+);

@@ -24,12 +24,26 @@
       },
       "permissions": [
         "android.permission.VIBRATE",
-        "android.permission.INTERNET"
+        "android.permission.INTERNET",
+        "android.permission.RECORD_AUDIO"
       ],
       "predictiveBackGestureEnabled": false
     },
     "plugins": [
-      "expo-sqlite"
+      "expo-sqlite",
+      "expo-sharing",
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "TautJiwa memakai mikrofon hanya saat kamu menekan tombol suara di latihan grounding. Tidak ada rekaman yang disimpan atau dikirim.",
+          "speechRecognitionPermission": "TautJiwa mengubah ucapanmu menjadi teks di perangkat ini saja, supaya latihan grounding bisa dilakukan tanpa mengetik.",
+          "androidSpeechServicePackages": [
+            "com.google.android.googlequicksearchbox",
+            "com.google.android.as",
+            "com.google.android.tts"
+          ]
+        }
+      ]
     ]
   }
 }

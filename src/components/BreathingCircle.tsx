@@ -2,12 +2,15 @@ import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, Animated, TouchableOpacity } from 'react-native';
 import { colors, typography, radius, spacing } from '../theme';
 import { haptics } from '../services/haptics';
+import { speech } from '../services/speech';
 
 export type BreathPattern = 'box' | 'sigh';
 
 interface Props {
   pattern?: BreathPattern;
   isActive: boolean;
+  /** Bacakan setiap fase dengan suara agar bisa diikuti dengan mata tertutup. */
+  voiceGuide?: boolean;
 }
 
 /**
@@ -15,7 +18,7 @@ interface Props {
  * Box: Tarik (4s) -> Tahan (4s) -> Hembus (4s) -> Tahan (4s).
  * Sigh: Tarik panjang (4s) -> Tarik pendek (1.5s) -> Hembus perlahan (6s).
  */
-export const BreathingCircle: React.FC<Props> = ({ pattern = 'box', isActive }) => {
+export const BreathingCircle: React.FC<Props> = ({ pattern = 'box', isActive, voiceGuide = false }) => {
   const scale = useRef(new Animated.Value(0.65)).current;
   const [phaseText, setPhaseText] = useState<string>('Tarik Napas');
   const [phaseKey, setPhaseKey] = useState<'inhale' | 'hold' | 'exhale'>('inhale');
@@ -25,6 +28,7 @@ export const BreathingCircle: React.FC<Props> = ({ pattern = 'box', isActive }) 
     if (!isActive) {
       scale.setValue(0.65);
       setPhaseText('Siap Bernapas');
+      void speech.stop();
       if (timerRef.current) clearInterval(timerRef.current);
       return;
     }
@@ -38,6 +42,7 @@ export const BreathingCircle: React.FC<Props> = ({ pattern = 'box', isActive }) 
       setPhaseKey('inhale');
       setPhaseText('Tarik Napas (4 detik)');
       haptics.breathPhase('inhale');
+      if (voiceGuide) void speech.speak('Tarik napas', { rate: 0.85 });
       Animated.timing(scale, {
         toValue: 1.0,
         duration: 4000,
@@ -49,6 +54,7 @@ export const BreathingCircle: React.FC<Props> = ({ pattern = 'box', isActive }) 
         setPhaseKey('hold');
         setPhaseText('Tahan (4 detik)');
         haptics.breathPhase('hold');
+        if (voiceGuide) void speech.speak('Tahan', { rate: 0.85 });
         setTimeout(() => {
           if (!isMounted) return;
 
@@ -56,6 +62,7 @@ export const BreathingCircle: React.FC<Props> = ({ pattern = 'box', isActive }) 
           setPhaseKey('exhale');
           setPhaseText('Hembuskan Perlahan (4 detik)');
           haptics.breathPhase('exhale');
+          if (voiceGuide) void speech.speak('Hembuskan perlahan', { rate: 0.85 });
           Animated.timing(scale, {
             toValue: 0.65,
             duration: 4000,
@@ -67,6 +74,7 @@ export const BreathingCircle: React.FC<Props> = ({ pattern = 'box', isActive }) 
             setPhaseKey('hold');
             setPhaseText('Jeda Sejenak (4 detik)');
             haptics.breathPhase('hold');
+            if (voiceGuide) void speech.speak('Jeda sejenak', { rate: 0.85 });
             setTimeout(() => {
               if (isMounted) runBoxCycle();
             }, 4000);
@@ -80,8 +88,9 @@ export const BreathingCircle: React.FC<Props> = ({ pattern = 'box', isActive }) 
     return () => {
       isMounted = false;
       scale.stopAnimation();
+      void speech.stop();
     };
-  }, [isActive, pattern]);
+  }, [isActive, pattern, voiceGuide]);
 
   return (
     <View style={styles.container}>

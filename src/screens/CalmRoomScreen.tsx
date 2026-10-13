@@ -12,6 +12,7 @@ import { BreathingCircle } from '../components/BreathingCircle';
 import { GroundingCard } from '../components/GroundingCard';
 import { ThoughtShredder } from '../components/ThoughtShredder';
 import { QuickCloseButton } from '../components/QuickCloseButton';
+import { useAppStore } from '../store/appStore';
 
 interface Props {
   onBack: () => void;
@@ -21,6 +22,7 @@ interface Props {
 type Tool = 'breath' | 'grounding' | 'release';
 
 export const CalmRoomScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
+  const voiceGuide = useAppStore((s) => s.voiceGuide);
   const [activeTool, setActiveTool] = useState<Tool>('breath');
   const [isBreathing, setIsBreathing] = useState(false);
 
@@ -59,7 +61,7 @@ export const CalmRoomScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
 
         {activeTool === 'breath' && (
           <View style={styles.breathSection}>
-            <BreathingCircle pattern="box" isActive={isBreathing} />
+            <BreathingCircle pattern="box" isActive={isBreathing} voiceGuide={voiceGuide} />
             <TouchableOpacity
               style={[styles.primaryBtn, isBreathing && styles.primaryBtnStop]}
               onPress={() => setIsBreathing(!isBreathing)}
@@ -78,7 +80,7 @@ export const CalmRoomScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
 
         {activeTool === 'grounding' && (
           <View>
-            <GroundingCard />
+            <GroundingCard voiceGuide={voiceGuide} />
           </View>
         )}
 
