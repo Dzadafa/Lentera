@@ -131,7 +131,7 @@
 
 ## P2
 
-- [ ] Implementasikan pemutar audio ambient offline untuk Ruang Tenang
+- [x] Implementasikan pemutar audio ambient offline untuk Ruang Tenang
   - **ID**: p2-ambient-audio
   - **Tags**: audio, offline
   - **Details**: Tiga pilihan suara ambient (hujan, derau coklat, ombak) yang dibundel sebagai aset lokal dan tidak memerlukan jaringan.
@@ -156,9 +156,67 @@
   - **Estimate**: 2h
   - **Blocked by**: p0-dass21-engine
 
+## P4 — Fitur Lanjutan (Audit Fitur.md)
+
+- [x] Implementasikan Reset 60 Detik terpandu otomatis di Kotak Pertolongan Mandiri
+  - **ID**: p4-reset-60
+  - **Tags**: ui, animation, calm-room
+  - **Details**: Alur tiga fase tanpa isian (20 detik napas, 20 detik grounding, 20 detik afirmasi) dengan bilah progres, getaran per fase, dan pembacaan afirmasi lewat mesin suara bawaan perangkat.
+  - **Files**: `src/components/Reset60Flow.tsx`, `src/content/affirmations.ts`
+  - **Acceptance**: Tiga fase berjalan berurutan tanpa interaksi; pengguna bisa menghentikan kapan saja; tidak ada teks yang disimpan.
+
+- [x] Implementasikan pemutar audio ambient offline di Kotak Pertolongan Mandiri
+  - **ID**: p4-ambient-audio
+  - **Tags**: audio, offline
+  - **Details**: Tiga berkas audio dibundel di `assets/audio` (hujan, ombak, derau coklat), dimuat malas lewat `expo-audio` dengan fallback aman bila modul tidak tersedia.
+  - **Files**: `src/services/ambientAudio.ts`, `src/components/AmbientPlayer.tsx`, `assets/audio/`
+  - **Acceptance**: Ketiga suara berputar dalam mode pesawat; total berkas audio di bawah 1 MB; pemutaran berhenti saat layar ditinggalkan.
+
+- [x] Implementasikan Ruang Kerja Sehat: ritual tutup hari, jeda mikro, naskah bicara, log kemenangan
+  - **ID**: p4-burnout-room
+  - **Tags**: ui, burnout, database
+  - **Details**: Empat tab: ritual tiga langkah, pengingat jeda 50/5 dengan hitung mundur nyata, naskah bicara siap salin ke atasan/dosen/rekan, dan log tiga kemenangan kecil per hari.
+  - **Files**: `src/screens/BurnoutScreen.tsx`, `src/content/burnout.ts`, `src/db/schema.ts`, `src/db/index.ts`
+  - **Acceptance**: Naskah tersalin dengan satu ketukan; hitung mundur berjalan dan berganti otomatis ke fase jeda; log kemenangan tersimpan lokal per tanggal.
+
+- [x] Implementasikan Dinding Cerita dengan surat lokal untuk diri sendiri
+  - **ID**: p4-story-wall
+  - **Tags**: ui, content, privacy
+  - **Details**: Lima cerita kurasi dibundel luring dengan filter per tingkat kondisi, ditambah penulis surat untuk diri sendiri yang tersimpan di tabel `story_letters` dan dapat dihapus.
+  - **Files**: `src/screens/StoryWallScreen.tsx`, `src/content/storyWall.ts`
+  - **Acceptance**: Filter berfungsi; surat tersimpan dan terbaca kembali setelah restart; penghapusan benar-benar menghapus baris; tidak ada unggahan jaringan.
+
+- [x] Implementasikan Teman Cerita dan direktori layanan pendamping
+  - **ID**: p4-peer-support
+  - **Tags**: ui, referral, safety
+  - **Details**: Tujuh layanan dikelompokkan menjadi kampus, kerja/komunitas, dan hotline resmi, dengan catatan alasan mengapa obrolan anonim publik tidak dibangun.
+  - **Files**: `src/screens/PeerSupportScreen.tsx`, `src/content/campusDirectory.ts`
+  - **Acceptance**: Tombol hotline memanggil `tel:119`; seluruh entri dapat dibaca dalam mode pesawat.
+
+- [x] Implementasikan riwayat dan grafik tren skor skrining
+  - **ID**: p4-trend
+  - **Tags**: ui, database, chart
+  - **Details**: Grafik tiga dimensi digambar dengan `View` murni tanpa pustaka grafik, ditambah daftar riwayat terbalik dan delta terhadap skrining sebelumnya.
+  - **Files**: `src/screens/TrendScreen.tsx`, `src/components/DassTrendChart.tsx`, `src/types/dass_trend.ts`
+  - **Acceptance**: Grafik muncul setelah dua skrining atau lebih; keadaan kosong punya CTA menuju kuis; tidak ada dependensi grafik baru.
+
+- [x] Implementasikan Kotak P3K Emosi dan uji ulang pikiran
+  - **ID**: p4-selfcare
+  - **Tags**: ui, content, cbt
+  - **Details**: Dek lima kartu teknik (tubuh, pikiran, lingkungan) dan empat template pertanyaan kognitif dengan contoh sebelum/sesudah. Teks yang ditulis tidak disimpan.
+  - **Files**: `src/screens/SelfCareScreen.tsx`, `src/components/ToolkitDeck.tsx`, `src/components/CbtReframeCard.tsx`, `src/content/toolkit.ts`
+  - **Acceptance**: Navigasi kartu berputar tanpa batas; formulir dapat dibersihkan; tidak ada penulisan ke basis data.
+
+- [x] Tambahkan pengingat harian lokal dan sakelar suara latar di pengaturan
+  - **ID**: p4-reminders-settings
+  - **Tags**: notifications, settings, privacy
+  - **Details**: Notifikasi lokal pukul 20.30 dengan teks netral, serta sakelar Suara Latar yang langsung menghentikan pemutaran saat dimatikan.
+  - **Files**: `src/services/reminders.ts`, `src/screens/SettingsScreen.tsx`, `src/store/appStore.ts`
+  - **Acceptance**: Sakelar kembali mati bila izin ditolak; notifikasi terdaftar ulang tanpa duplikat; teks notifikasi tidak memuat istilah klinis.
+
 ## P3
 
-- [ ] Kompilasi dan verifikasi APK release standalone pada perangkat fisik
+- [x] Kompilasi dan verifikasi APK release standalone pada perangkat fisik
   - **ID**: p3-release-apk
   - **Tags**: build, gradle, adb
   - **Details**: Jalankan `expo prebuild` bersih, kompilasi `assembleRelease` untuk arsitektur arm64-v8a, lalu pasang via ADB pada perangkat Android 14.

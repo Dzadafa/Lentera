@@ -25,6 +25,10 @@ export const SettingsScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
   const toggleHaptics = useAppStore((s) => s.toggleHaptics);
   const voiceGuide = useAppStore((s) => s.voiceGuide);
   const toggleVoiceGuide = useAppStore((s) => s.toggleVoiceGuide);
+  const ambientEnabled = useAppStore((s) => s.ambientEnabled);
+  const toggleAmbient = useAppStore((s) => s.toggleAmbient);
+  const nightlyReminder = useAppStore((s) => s.nightlyReminder);
+  const toggleNightlyReminder = useAppStore((s) => s.toggleNightlyReminder);
 
   return (
     <View style={styles.container}>
@@ -85,6 +89,43 @@ export const SettingsScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
             <Switch
               value={voiceGuide}
               onValueChange={toggleVoiceGuide}
+              trackColor={{ false: colors.surfaceContainerHigh, true: colors.secondary }}
+              thumbColor="#FFFFFF"
+            />
+          </View>
+
+          <View style={styles.divider} />
+
+          <View style={styles.row}>
+            <View style={styles.rowText}>
+              <Text style={styles.rowTitle}>Suara Latar</Text>
+              <Text style={styles.rowSub}>
+                Izinkan pemutar suara ambient luring di Kotak Pertolongan Mandiri. Tidak ada berkas
+                yang diunduh dari internet.
+              </Text>
+            </View>
+            <Switch
+              value={ambientEnabled}
+              onValueChange={toggleAmbient}
+              trackColor={{ false: colors.surfaceContainerHigh, true: colors.secondary }}
+              thumbColor="#FFFFFF"
+            />
+          </View>
+        </View>
+
+        <Text style={styles.groupLabel}>PENGINGAT</Text>
+        <View style={styles.card}>
+          <View style={styles.row}>
+            <View style={styles.rowText}>
+              <Text style={styles.rowTitle}>Pengingat Tutup Hari</Text>
+              <Text style={styles.rowSub}>
+                Notifikasi lokal pukul 20.30 untuk mencatat suasana hati. Pesannya netral dan tidak
+                memuat informasi kondisi apa pun.
+              </Text>
+            </View>
+            <Switch
+              value={nightlyReminder}
+              onValueChange={toggleNightlyReminder}
               trackColor={{ false: colors.surfaceContainerHigh, true: colors.secondary }}
               thumbColor="#FFFFFF"
             />

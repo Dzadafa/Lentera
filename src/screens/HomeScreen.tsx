@@ -7,7 +7,15 @@ import {
   ScrollView,
 } from 'react-native';
 import { colors, typography, radius, spacing } from '../theme';
-import { HeartPulseIcon, ShieldLockIcon, WindIcon, ChevronLeftIcon } from '../components/Icons';
+import {
+  HeartPulseIcon,
+  ShieldLockIcon,
+  WindIcon,
+  ChartIcon,
+  SparkleIcon,
+  HourglassIcon,
+  ChatHeartIcon,
+} from '../components/Icons';
 import { useAppStore } from '../store/appStore';
 import type { ScreenRoute } from '../navigation/routes';
 
@@ -116,6 +124,87 @@ export const HomeScreen: React.FC<Props> = ({ onNavigate, onQuickClose }) => {
         </TouchableOpacity>
       )}
 
+      {/* Ruang pendukung — tetap satu ketukan per pintu, tanpa mengubah CTA utama */}
+      <Text style={styles.sectionLabel}>{workMode ? 'Ruang lain' : 'Ruang pendukung'}</Text>
+
+      <TouchableOpacity
+        style={styles.roomCard}
+        onPress={() => onNavigate('selfcare')}
+        activeOpacity={0.85}
+      >
+        <View style={styles.roomIcon}>
+          <SparkleIcon size={18} color={colors.tertiary} />
+        </View>
+        <View style={styles.roomBody}>
+          <Text style={styles.roomTitle}>
+            {workMode ? 'Kumpulan teknik praktis' : 'Kotak Pertolongan Mandiri'}
+          </Text>
+          <Text style={styles.roomSub}>Kartu teknik, uji ulang pikiran, reset 60 detik</Text>
+        </View>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.roomCard}
+        onPress={() => onNavigate('burnout')}
+        activeOpacity={0.85}
+      >
+        <View style={styles.roomIcon}>
+          <HourglassIcon size={18} color={colors.tertiary} />
+        </View>
+        <View style={styles.roomBody}>
+          <Text style={styles.roomTitle}>
+            {workMode ? 'Manajemen beban kerja' : 'Ruang Kerja Sehat'}
+          </Text>
+          <Text style={styles.roomSub}>Ritual tutup hari, jeda mikro, naskah bicara</Text>
+        </View>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.roomCard}
+        onPress={() => onNavigate('stories')}
+        activeOpacity={0.85}
+      >
+        <View style={styles.roomIcon}>
+          <ChatHeartIcon size={18} color={colors.tertiary} />
+        </View>
+        <View style={styles.roomBody}>
+          <Text style={styles.roomTitle}>
+            {workMode ? 'Catatan pengalaman' : 'Dinding Cerita'}
+          </Text>
+          <Text style={styles.roomSub}>Pengalaman orang lain yang pernah di titik berat</Text>
+        </View>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.roomCard}
+        onPress={() => onNavigate('support')}
+        activeOpacity={0.85}
+      >
+        <View style={styles.roomIcon}>
+          <HeartPulseIcon size={18} color={colors.tertiary} />
+        </View>
+        <View style={styles.roomBody}>
+          <Text style={styles.roomTitle}>
+            {workMode ? 'Jalur bantuan resmi' : 'Teman Cerita & Direktori Pendamping'}
+          </Text>
+          <Text style={styles.roomSub}>Konselor kampus, klinik, dan hotline resmi</Text>
+        </View>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.roomCard}
+        onPress={() => onNavigate('trend')}
+        activeOpacity={0.85}
+      >
+        <View style={styles.roomIcon}>
+          <ChartIcon size={18} color={colors.tertiary} />
+        </View>
+        <View style={styles.roomBody}>
+          <Text style={styles.roomTitle}>Riwayat & Tren</Text>
+          <Text style={styles.roomSub}>Lihat arah perubahan skormu dari waktu ke waktu</Text>
+        </View>
+      </TouchableOpacity>
+
       <View style={styles.privacyRow}>
         <ShieldLockIcon size={16} color={colors.onSurfaceVariant} />
         <Text style={styles.privacyText}>
@@ -218,6 +307,34 @@ const styles = StyleSheet.create({
   lastResultLabel: { ...typography.labelSm, color: colors.onPrimaryContainer },
   lastResultValue: { ...typography.headlineMd, color: colors.onPrimaryContainer, marginTop: 2 },
   lastResultSub: { ...typography.bodySm, color: colors.onPrimaryContainer, marginTop: 2 },
+  sectionLabel: {
+    ...typography.labelSm,
+    color: colors.onSurfaceVariant,
+    marginTop: spacing.sm,
+    marginBottom: spacing.sm,
+  },
+  roomCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm + 4,
+    backgroundColor: colors.surface,
+    borderRadius: radius.md,
+    padding: spacing.md,
+    borderWidth: 1,
+    borderColor: colors.outlineVariant,
+    marginBottom: spacing.sm,
+  },
+  roomIcon: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: colors.tertiaryContainer,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  roomBody: { flex: 1 },
+  roomTitle: { ...typography.labelLg, color: colors.onSurface },
+  roomSub: { ...typography.bodySm, color: colors.onSurfaceVariant, marginTop: 2 },
   privacyRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',

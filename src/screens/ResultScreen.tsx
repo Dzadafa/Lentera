@@ -22,6 +22,11 @@ interface Props {
   onBack: () => void;
   onOpenReferral: () => void;
   onOpenCheckIn: () => void;
+  onOpenSelfCare: () => void;
+  onOpenBurnout: () => void;
+  onOpenStories: () => void;
+  onOpenSupport: () => void;
+  onOpenTrend: () => void;
   onQuickClose: () => void;
 }
 
@@ -63,6 +68,11 @@ export const ResultScreen: React.FC<Props> = ({
   onBack,
   onOpenReferral,
   onOpenCheckIn,
+  onOpenSelfCare,
+  onOpenBurnout,
+  onOpenStories,
+  onOpenSupport,
+  onOpenTrend,
   onQuickClose,
 }) => {
   const result = useAppStore((s) => s.latestScreening);
@@ -210,6 +220,58 @@ export const ResultScreen: React.FC<Props> = ({
           </TouchableOpacity>
         )}
 
+        {/* Ruang pendukung per tier. CTA utama tetap tepat satu di atas. */}
+        {result.tier === 'low' && (
+          <View>
+            <Text style={styles.sectionTitle}>Jaga supaya tetap di sini</Text>
+            <View style={styles.linkGroup}>
+              <TouchableOpacity style={styles.linkRow} onPress={onOpenSelfCare}>
+                <Text style={styles.linkText}>Kotak Pertolongan Mandiri</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.linkRow} onPress={onOpenTrend}>
+                <Text style={styles.linkText}>Riwayat & tren skor</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+
+        {result.tier === 'moderate' && (
+          <View>
+            <Text style={styles.sectionTitle}>Langkah pendukung</Text>
+            <View style={styles.linkGroup}>
+              <TouchableOpacity style={styles.linkRow} onPress={onOpenSelfCare}>
+                <Text style={styles.linkText}>Kotak Pertolongan Mandiri</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.linkRow} onPress={onOpenBurnout}>
+                <Text style={styles.linkText}>Latihan bicara & ritual tutup hari</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.linkRow} onPress={onOpenStories}>
+                <Text style={styles.linkText}>Dinding Cerita: dari kondisi sedang</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.linkRow} onPress={onOpenSupport}>
+                <Text style={styles.linkText}>Direktori konseling kampus dan EAP</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.linkRow} onPress={onOpenTrend}>
+                <Text style={styles.linkText}>Riwayat & tren skor</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+
+        {result.tier === 'high' && (
+          <View>
+            <Text style={styles.sectionTitle}>Kamu tidak sendirian</Text>
+            <View style={styles.linkGroup}>
+              <TouchableOpacity style={styles.linkRow} onPress={onOpenStories}>
+                <Text style={styles.linkText}>Dinding Cerita: pernah kondisi tinggi, kini membaik</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.linkRow} onPress={onOpenSupport}>
+                <Text style={styles.linkText}>Hotline dan layanan pendamping</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+
         {/* Psikoedukasi — disembunyikan pada tier akut */}
         {result.tier !== 'high' && (
           <View>
@@ -333,6 +395,20 @@ const styles = StyleSheet.create({
   planDayText: { ...typography.labelSm, color: colors.onPrimaryContainer },
   planTitle: { ...typography.labelLg, color: colors.onSurface },
   planAction: { ...typography.bodySm, color: colors.onSurfaceVariant, marginTop: 2 },
+  linkGroup: {
+    backgroundColor: colors.surface,
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    borderColor: colors.outlineVariant,
+    overflow: 'hidden',
+  },
+  linkRow: {
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.outlineVariant,
+  },
+  linkText: { ...typography.labelMd, color: colors.secondary },
   psychoCard: {
     flexDirection: 'row',
     gap: spacing.sm,

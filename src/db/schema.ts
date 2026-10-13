@@ -40,3 +40,19 @@ CREATE TABLE IF NOT EXISTS settings (
   value TEXT NOT NULL
 );
 `;
+export const CREATE_WIN_LOG_TABLE = `
+CREATE TABLE IF NOT EXISTS win_logs (
+  id TEXT PRIMARY KEY NOT NULL,
+  date TEXT UNIQUE NOT NULL,
+  wins_json TEXT NOT NULL,
+  created_at INTEGER NOT NULL
+);
+`;
+
+export const CREATE_STORY_LETTER_TABLE = `
+CREATE TABLE IF NOT EXISTS story_letters (
+  id TEXT PRIMARY KEY NOT NULL,
+  body TEXT NOT NULL,
+  created_at INTEGER NOT NULL
+);
+`;

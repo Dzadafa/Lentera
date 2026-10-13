@@ -13,12 +13,16 @@ import {
 import { calculateDass21 } from '../services/scoring';
 import { haptics } from '../services/haptics';
 import { speech } from '../services/speech';
+import { ambient } from '../services/ambientAudio';
+import { reminders } from '../services/reminders';
 
 interface AppState {
   isInitialized: boolean;
   workMode: boolean;
   hapticsEnabled: boolean;
   voiceGuide: boolean;
+  ambientEnabled: boolean;
+  nightlyReminder: boolean;
   latestScreening: ScreeningResult | null;
   recentCheckIns: CheckIn[];
   isCrisisModalVisible: boolean;
@@ -33,6 +37,8 @@ interface AppState {
   toggleWorkMode: () => Promise<void>;
   toggleHaptics: () => Promise<void>;
   toggleVoiceGuide: () => Promise<void>;
+  toggleAmbient: () => Promise<void>;
+  toggleNightlyReminder: () => Promise<void>;
   openCrisisModal: (source?: string) => void;
   closeCrisisModal: () => void;
   recordCrisisDial: () => Promise<void>;
@@ -51,6 +57,8 @@ export const useAppStore = create<AppState>((set, get) => ({
   workMode: false,
   hapticsEnabled: true,
   voiceGuide: false,
+  ambientEnabled: false,
+  nightlyReminder: false,
   latestScreening: null,
   recentCheckIns: [],
   isCrisisModalVisible: false,
@@ -69,6 +77,11 @@ export const useAppStore = create<AppState>((set, get) => ({
     haptics.setEnabled(isHaptics);
     speech.setEnabled(isVoiceGuide);
 
+    const ab = await getSetting('ambient_enabled');
+    const nr = await getSetting('nightly_reminder');
+    const isAmbient = ab === 'true';
+    ambient.setEnabled(isAmbient);
+
     const latest = await getLatestScreening();
     const checks = await getCheckIns(7);
 
@@ -77,6 +90,8 @@ export const useAppStore = create<AppState>((set, get) => ({
       workMode: isWorkMode,
       hapticsEnabled: isHaptics,
       voiceGuide: isVoiceGuide,
+      ambientEnabled: isAmbient,
+      nightlyReminder: nr === 'true',
       latestScreening: latest,
       recentCheckIns: checks,
     });
@@ -138,6 +153,33 @@ export const useAppStore = create<AppState>((set, get) => ({
     await insertScreening(result);
     set({ latestScreening: result, answers: {}, currentQuestionIndex: 0 });
     return result;
+  },
+
+  toggleAmbient: async () => {
+    const next = !get().ambientEnabled;
+    await setSetting('ambient_enabled', String(next));
+    ambient.setEnabled(next);
+    if (!next) ambient.stop();
+    set({ ambientEnabled: next });
+  },
+
+  toggleNightlyReminder: async () => {
+    const next = !get().nightlyReminder;
+    if (next) {
+      const id = await reminders.scheduleNightly();
+      if (!id) {
+        // Izin ditolak atau notifikasi tidak didukung: kembalikan sakelar.
+        await setSetting('nightly_reminder', 'false');
+        set({ nightlyReminder: false });
+        return;
+      }
+      await setSetting('nightly_reminder', 'true');
+      set({ nightlyReminder: true });
+      return;
+    }
+    await reminders.cancelNightly();
+    await setSetting('nightly_reminder', 'false');
+    set({ nightlyReminder: false });
   },
 
   saveTodayCheckIn: async (mood, energy, note = '') => {

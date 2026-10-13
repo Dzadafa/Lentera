@@ -84,3 +84,16 @@ Tekan **Tutup Cepat**. Layar berubah jadi catatan rapat biasa.
 - **Etika**: Disclaimer, cek krisis sebelum hasil, larangan diagnosis, privasi total.
 - **Kelengkapan**: Alur dari keluhan sampai langkah konkret berjalan tanpa server.
 - **Metrik**: Rasio klik CTA utama per tier sebagai "jembatan berhasil".
+
+## Peragaan Fitur Pendukung (opsional, 60 detik)
+
+Jika waktu masih tersisa, tunjukkan dua ruang ini untuk membuktikan bahwa produk tidak berhenti di
+skrining:
+
+1. Buka **Kotak Pertolongan Mandiri** dari beranda, geser satu kartu teknik, lalu tekan **Tulis
+   Surat** di **Dinding Cerita** untuk menunjukkan bahwa cerita kurasi dibundel luring.
+2. Buka **Ruang Kerja Sehat**, tab **Latihan Bicara**, salin naskah ke dosen, lalu tab
+   **Kemenangan** untuk memperlihatkan penyimpanan lokal per tanggal.
+
+Kalimat penutup yang disarankan: "Semua ini berjalan tanpa akun dan tanpa server. Bahkan suara
+latarnya sudah ada di dalam aplikasi."

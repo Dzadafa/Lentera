@@ -11,6 +11,11 @@ import { ResultScreen } from './screens/ResultScreen';
 import { ReferralGuideScreen } from './screens/ReferralGuideScreen';
 import { CheckInScreen } from './screens/CheckInScreen';
 import { SettingsScreen } from './screens/SettingsScreen';
+import { SelfCareScreen } from './screens/SelfCareScreen';
+import { BurnoutScreen } from './screens/BurnoutScreen';
+import { StoryWallScreen } from './screens/StoryWallScreen';
+import { PeerSupportScreen } from './screens/PeerSupportScreen';
+import { TrendScreen } from './screens/TrendScreen';
 import { StealthScreen } from './screens/StealthScreen';
 import { EmergencyInterceptor } from './components/EmergencyInterceptor';
 
@@ -77,6 +82,48 @@ export default function App() {
               onBack={() => setCurrentRoute('home')}
               onOpenReferral={() => setCurrentRoute('referral')}
               onOpenCheckIn={() => setCurrentRoute('checkin')}
+              onOpenSelfCare={() => setCurrentRoute('selfcare')}
+              onOpenBurnout={() => setCurrentRoute('burnout')}
+              onOpenStories={() => setCurrentRoute('stories')}
+              onOpenSupport={() => setCurrentRoute('support')}
+              onOpenTrend={() => setCurrentRoute('trend')}
+              onQuickClose={handleQuickClose}
+            />
+          )}
+
+          {currentRoute === 'trend' && (
+            <TrendScreen
+              onBack={() => setCurrentRoute('home')}
+              onOpenQuiz={() => setCurrentRoute('quiz')}
+              onQuickClose={handleQuickClose}
+            />
+          )}
+
+          {currentRoute === 'selfcare' && (
+            <SelfCareScreen
+              onBack={() => setCurrentRoute('home')}
+              onOpenCheckIn={() => setCurrentRoute('checkin')}
+              onQuickClose={handleQuickClose}
+            />
+          )}
+
+          {currentRoute === 'burnout' && (
+            <BurnoutScreen
+              onBack={() => setCurrentRoute('home')}
+              onQuickClose={handleQuickClose}
+            />
+          )}
+
+          {currentRoute === 'stories' && (
+            <StoryWallScreen
+              onBack={() => setCurrentRoute('home')}
+              onQuickClose={handleQuickClose}
+            />
+          )}
+
+          {currentRoute === 'support' && (
+            <PeerSupportScreen
+              onBack={() => setCurrentRoute('home')}
               onQuickClose={handleQuickClose}
             />
           )}

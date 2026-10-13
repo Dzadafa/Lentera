@@ -45,3 +45,33 @@ Baca sebelum mengubah perilaku: `PRD.md`, `AGENTS.md`, `DESIGN.md`, `TODO.md`.
 2. Setiap halaman hasil punya disclaimer, tombol tutup cepat, dan akses interceptor.
 3. Satu CTA utama per halaman hasil.
 4. Aplikasi tidak pernah menegakkan diagnosis klinis.
+
+## Fitur Lengkap
+
+Aplikasi ini menutup seluruh blok pada `Fitur.md` secara 100 persen on-device.
+
+**Pertolongan instan (Ruang Tenang)**
+- Napas getar haptic dengan pola kotak 4-4-4-4 dan physiological sigh.
+- Grounding 5-4-3-2-1 dengan input teks maupun suara (STT luring).
+- Tulis & Lepaskan dengan animasi kertas terbakar, teks dihapus permanen.
+- Reset 60 Detik terpandu otomatis tanpa isian.
+- Suara latar luring: hujan, ombak, derau coklat.
+
+**Skrining dan hasil**
+- Kuis DASS-21 dua puluh satu butir dengan gerbang cek krisis wajib.
+- Halaman hasil tiga tier dengan disiplin satu CTA utama.
+- Panduan faskes BPJS tiga langkah dan ekspor ringkasan gejala PDF.
+- Riwayat dan grafik tren skor tiga dimensi.
+
+**Pendukung mandiri**
+- Kotak P3K Emosi: lima kartu teknik (tubuh, pikiran, lingkungan).
+- Uji ulang pikiran dengan empat template pertanyaan kognitif.
+- Ruang Kerja Sehat: ritual tutup hari, jeda mikro 50/5, naskah bicara, log kemenangan kecil.
+- Dinding Cerita: lima cerita kurasi luring dan surat lokal untuk diri sendiri.
+- Teman Cerita: direktori konselor kampus, klinik, EAP, dan hotline resmi.
+- Pengingat harian lokal dengan teks netral.
+
+**Privasi**
+- Tidak ada akun, tidak ada server, tidak ada unggahan.
+- Seluruh data tersimpan di SQLite lokal dengan mode WAL.
+- Audio dan cerita kurasi dibundel di dalam APK, jadi tetap berfungsi dalam mode pesawat.

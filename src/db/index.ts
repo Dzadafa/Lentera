@@ -4,8 +4,11 @@ import {
   CREATE_CRISIS_TABLE,
   CREATE_CHECKIN_TABLE,
   CREATE_SETTINGS_TABLE,
+  CREATE_WIN_LOG_TABLE,
+  CREATE_STORY_LETTER_TABLE,
 } from './schema';
 import type { CheckIn, CrisisEvent, ScreeningResult } from '../types/domain';
+import type { ScreeningTrendPoint } from '../types/dass_trend';
 
 let dbInstance: SQLite.SQLiteDatabase | null = null;
 
@@ -18,6 +21,8 @@ export async function getDb(): Promise<SQLite.SQLiteDatabase> {
   await db.execAsync(CREATE_CRISIS_TABLE);
   await db.execAsync(CREATE_CHECKIN_TABLE);
   await db.execAsync(CREATE_SETTINGS_TABLE);
+  await db.execAsync(CREATE_WIN_LOG_TABLE);
+  await db.execAsync(CREATE_STORY_LETTER_TABLE);
   dbInstance = db;
   return db;
 }
@@ -132,4 +137,84 @@ export async function getSetting(key: string): Promise<string | null> {
     [key]
   );
   return row ? row.value : null;
+}
+/** Log Kemenangan Kecil (J4) — satu baris per hari, disimpan lokal. */
+export async function saveWinLog(wins: string[]): Promise<void> {
+  const db = await getDb();
+  const date = new Date().toISOString().split('T')[0];
+  await db.runAsync(
+    `INSERT INTO win_logs (id, date, wins_json, created_at)
+     VALUES (?, ?, ?, ?)
+     ON CONFLICT(date) DO UPDATE SET wins_json = excluded.wins_json, created_at = excluded.created_at;`,
+    [`win_${date}`, date, JSON.stringify(wins), Date.now()]
+  );
+}
+
+export async function getWinLog(): Promise<string[] | null> {
+  const db = await getDb();
+  const today = new Date().toISOString().split('T')[0];
+  const row = await db.getFirstAsync<{ wins_json: string }>(
+    'SELECT wins_json FROM win_logs WHERE date = ?;',
+    [today]
+  );
+  if (!row) return null;
+  try {
+    const parsed = JSON.parse(row.wins_json);
+    return Array.isArray(parsed) ? (parsed as string[]) : null;
+  } catch {
+    return null;
+  }
+}
+
+export interface StoryLetter {
+  id: string;
+  body: string;
+  createdAt: number;
+}
+
+/** Surat untuk diri sendiri di Dinding Cerita (I4) — lokal, bisa dihapus. */
+export async function addStoryLetter(body: string): Promise<void> {
+  const db = await getDb();
+  const id = `ltr_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+  await db.runAsync('INSERT INTO story_letters (id, body, created_at) VALUES (?, ?, ?);', [
+    id,
+    body,
+    Date.now(),
+  ]);
+}
+
+export async function getStoryLetters(limit: number = 10): Promise<StoryLetter[]> {
+  const db = await getDb();
+  const rows = await db.getAllAsync<any>(
+    'SELECT * FROM story_letters ORDER BY created_at DESC LIMIT ?;',
+    [limit]
+  );
+  return rows.map((r) => ({ id: r.id, body: r.body, createdAt: r.created_at }));
+}
+
+export async function deleteStoryLetter(id: string): Promise<void> {
+  const db = await getDb();
+  await db.runAsync('DELETE FROM story_letters WHERE id = ?;', [id]);
+}
+
+/**
+ * Titik data tren skrining (C5), dikembalikan urut lama ke baru supaya bisa
+ * langsung digambar sebagai garis waktu.
+ */
+export async function getScreeningTrend(limit: number = 12): Promise<ScreeningTrendPoint[]> {
+  const db = await getDb();
+  const rows = await db.getAllAsync<any>(
+    'SELECT id, created_at, depression_score, anxiety_score, stress_score, tier FROM screening_records ORDER BY created_at DESC LIMIT ?;',
+    [limit]
+  );
+  return rows
+    .map((r) => ({
+      id: r.id as string,
+      createdAt: r.created_at as number,
+      depression: r.depression_score as number,
+      anxiety: r.anxiety_score as number,
+      stress: r.stress_score as number,
+      tier: r.tier as ScreeningTrendPoint['tier'],
+    }))
+    .reverse();
 }

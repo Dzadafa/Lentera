@@ -156,3 +156,34 @@ export const CheckCircleIcon: React.FC<IconProps> = ({ size = 22, color = '#2A9D
     <Path d="M8.5 12.5l2.4 2.4 4.6-5" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
   </Svg>
 );
+
+export const HourglassIcon: React.FC<IconProps> = ({ size = 20, color = '#2A9D8F' }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Path
+      d="M7 3h10M7 21h10M8 3v3.5L12 10l4-3.5V3M8 21v-3.5L12 14l4 3.5V21"
+      stroke={color}
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </Svg>
+);
+
+export const ChatHeartIcon: React.FC<IconProps> = ({ size = 20, color = '#437A5B' }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Path
+      d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"
+      stroke={color}
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </Svg>
+);
+
+export const ChartIcon: React.FC<IconProps> = ({ size = 20, color = '#1B3B2B' }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Path d="M4 20V10M10 20V4M16 20v-7M22 20H2" stroke={color} strokeWidth={2} strokeLinecap="round" />
+  </Svg>
+);
+
