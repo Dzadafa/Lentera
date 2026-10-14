@@ -16,9 +16,10 @@ import { EMERGENCY_CONTACT } from '../content/referral';
 interface Props {
   onBack: () => void;
   onQuickClose: () => void;
+  onOpenSplash?: () => void;
 }
 
-export const SettingsScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
+export const SettingsScreen: React.FC<Props> = ({ onBack, onQuickClose, onOpenSplash }) => {
   const workMode = useAppStore((s) => s.workMode);
   const hapticsEnabled = useAppStore((s) => s.hapticsEnabled);
   const toggleWorkMode = useAppStore((s) => s.toggleWorkMode);
@@ -142,10 +143,24 @@ export const SettingsScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
           </View>
         </View>
 
+        {onOpenSplash && (
+          <TouchableOpacity
+            style={styles.splashCard}
+            onPress={onOpenSplash}
+            activeOpacity={0.85}
+          >
+            <View style={styles.splashTextGroup}>
+              <Text style={styles.splashTitle}>Pengenalan & Filosofi LENTERA</Text>
+              <Text style={styles.splashSub}>Buka kembali 2 halaman pengantar awal aplikasi</Text>
+            </View>
+            <ChevronLeftIcon size={18} color={colors.onSurfaceVariant} />
+          </TouchableOpacity>
+        )}
+
         <View style={styles.infoCard}>
           <Text style={styles.infoTitle}>Tentang Data Kamu</Text>
           <Text style={styles.infoBody}>
-            TautJiwa tidak memiliki server dan tidak meminta akun. Seluruh jawaban skrining, catatan harian, dan pengaturan tersimpan di basis data lokal perangkat ini. Menghapus aplikasi akan menghapus seluruh data.
+            LENTERA tidak memiliki server dan tidak meminta akun. Seluruh jawaban skrining, catatan harian, dan pengaturan tersimpan di basis data lokal perangkat ini. Menghapus aplikasi akan menghapus seluruh data.
           </Text>
         </View>
       </ScrollView>
@@ -193,6 +208,30 @@ const styles = StyleSheet.create({
     padding: spacing.md,
     marginTop: spacing.lg,
   },
+  splashCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: colors.surface,
+    borderRadius: radius.lg,
+    padding: spacing.md,
+    borderWidth: 1,
+    borderColor: colors.outlineVariant,
+    marginTop: spacing.md,
+  },
+  splashTextGroup: {
+    flex: 1,
+  },
+  splashTitle: {
+    ...typography.cardTitle,
+    color: colors.primary,
+  },
+  splashSub: {
+    ...typography.bodySm,
+    color: colors.onSurfaceVariant,
+    marginTop: 2,
+  },
   infoTitle: { ...typography.labelLg, color: colors.onPrimaryContainer, marginBottom: 4 },
   infoBody: { ...typography.bodySm, color: colors.onPrimaryContainer, lineHeight: 18 },
 });
+

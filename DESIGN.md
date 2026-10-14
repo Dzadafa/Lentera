@@ -1,417 +1,148 @@
----
-version: alpha
-name: TautJiwa Calm Interface
-description: Design system untuk aplikasi triase kesehatan mental — tenang, privat, dan tidak menghakimi.
-colors:
-  # --- Palet inti ---
-  primary: "#1B3B2B"
-  secondary: "#437A5B"
-  tertiary: "#2A9D8F"
-  neutral: "#F7F9F8"
-
-  # --- Permukaan & teks ---
-  surface: "#FFFFFF"
-  surface-container: "#F1F5F2"
-  surface-container-high: "#E4EDE7"
-  on-surface: "#131F17"
-  on-surface-variant: "#5A6B60"
-  inverse-surface: "#131F17"
-  inverse-on-surface: "#F7F9F8"
-
-  # --- Garis ---
-  outline: "#8FA396"
-  outline-variant: "#DFE8E2"
-
-  # --- Pasangan aksi ---
-  on-primary: "#FFFFFF"
-  primary-container: "#E2EFE7"
-  on-primary-container: "#0F261B"
-
-  on-secondary: "#FFFFFF"
-  secondary-container: "#D4E8DC"
-  on-secondary-container: "#1B3B2B"
-
-  on-tertiary: "#FFFFFF"
-  tertiary-container: "#D3F0EC"
-  on-tertiary-container: "#0A302B"
-
-  # --- Latar & teks ---
-  background: "#F7F9F8"
-  on-background: "#131F17"
-
-  # --- Status ---
-  error: "#B3261E"
-  on-error: "#FFFFFF"
-  error-container: "#FFE5E8"
-  on-error-container: "#5C000B"
-
-  success: "#2E7D32"
-  on-success: "#FFFFFF"
-  success-container: "#E8F5E9"
-  on-success-container: "#123B14"
-
-  warning: "#9A6700"
-  on-warning: "#FFFFFF"
-  warning-container: "#FEF3C7"
-  on-warning-container: "#4A3200"
-
-  info: "#1F6FEB"
-  on-info: "#FFFFFF"
-  info-container: "#DBEAFE"
-  on-info-container: "#0F2C5C"
-
-  # --- Tier hasil skrining ---
-  tier-low: "#2E7D32"
-  tier-low-container: "#E8F5E9"
-  tier-moderate: "#B45309"
-  tier-moderate-container: "#FEF3C7"
-  tier-high: "#B3261E"
-  tier-high-container: "#FFE5E8"
-
-  # --- Krisis (hanya untuk interceptor) ---
-  crisis: "#C1121F"
-  on-crisis: "#FFFFFF"
-  crisis-container: "#FFE4E6"
-  on-crisis-container: "#60000A"
-
-  # --- Mode samaran ---
-  stealth-surface: "#FFFFFF"
-  stealth-on-surface: "#1F2937"
-  stealth-outline: "#D1D5DB"
-
-typography:
-  display-lg:
-    fontFamily: Plus Jakarta Sans
-    fontSize: 32px
-    fontWeight: "700"
-    lineHeight: 1.2
-    letterSpacing: -0.02em
-  headline-lg:
-    fontFamily: Plus Jakarta Sans
-    fontSize: 24px
-    fontWeight: "700"
-    lineHeight: 1.25
-    letterSpacing: -0.01em
-  headline-md:
-    fontFamily: Plus Jakarta Sans
-    fontSize: 20px
-    fontWeight: "600"
-    lineHeight: 1.3
-    letterSpacing: 0em
-  body-lg:
-    fontFamily: Plus Jakarta Sans
-    fontSize: 16px
-    fontWeight: "400"
-    lineHeight: 1.6
-    letterSpacing: 0em
-  body-md:
-    fontFamily: Plus Jakarta Sans
-    fontSize: 14px
-    fontWeight: "400"
-    lineHeight: 1.6
-    letterSpacing: 0em
-  body-sm:
-    fontFamily: Plus Jakarta Sans
-    fontSize: 12px
-    fontWeight: "400"
-    lineHeight: 1.5
-    letterSpacing: 0em
-  label-lg:
-    fontFamily: Plus Jakarta Sans
-    fontSize: 14px
-    fontWeight: "600"
-    lineHeight: 1.4
-    letterSpacing: 0.01em
-  label-md:
-    fontFamily: Plus Jakarta Sans
-    fontSize: 12px
-    fontWeight: "600"
-    lineHeight: 1.4
-    letterSpacing: 0.04em
-  label-sm:
-    fontFamily: Plus Jakarta Sans
-    fontSize: 11px
-    fontWeight: "700"
-    lineHeight: 1.3
-    letterSpacing: 0.08em
-
-rounded:
-  none: 0px
-  sm: 6px
-  md: 12px
-  lg: 20px
-  xl: 28px
-  full: 9999px
-
-spacing:
-  unit: 4px
-  xs: 4px
-  sm: 8px
-  md: 16px
-  lg: 24px
-  xl: 32px
-  xxl: 48px
-  margin-mobile: 20px
-  gap-card: 12px
-
-components:
-  page-layout:
-    backgroundColor: "{colors.background}"
-    textColor: "{colors.on-background}"
-    padding: "{spacing.margin-mobile}"
-
-  button-primary:
-    backgroundColor: "{colors.primary}"
-    textColor: "{colors.on-primary}"
-    typography: "{typography.label-lg}"
-    rounded: "{rounded.full}"
-    padding: 16px
-    height: 54px
-
-  button-secondary:
-    backgroundColor: "{colors.primary-container}"
-    textColor: "{colors.on-primary-container}"
-    typography: "{typography.label-lg}"
-    rounded: "{rounded.full}"
-    padding: 16px
-    height: 54px
-
-  button-ghost:
-    backgroundColor: "{colors.surface}"
-    textColor: "{colors.on-surface}"
-    typography: "{typography.label-lg}"
-    rounded: "{rounded.full}"
-    padding: 16px
-    height: 54px
-
-  button-danger:
-    backgroundColor: "{colors.crisis}"
-    textColor: "{colors.on-crisis}"
-    typography: "{typography.label-lg}"
-    rounded: "{rounded.full}"
-    padding: 16px
-    height: 54px
-
-  card-default:
-    backgroundColor: "{colors.surface}"
-    textColor: "{colors.on-surface}"
-    typography: "{typography.body-md}"
-    rounded: "{rounded.lg}"
-    padding: 20px
-
-  card-tier-low:
-    backgroundColor: "{colors.tier-low-container}"
-    textColor: "{colors.on-success-container}"
-    rounded: "{rounded.lg}"
-    padding: 20px
-
-  card-tier-moderate:
-    backgroundColor: "{colors.tier-moderate-container}"
-    textColor: "{colors.on-warning-container}"
-    rounded: "{rounded.lg}"
-    padding: 20px
-
-  card-tier-high:
-    backgroundColor: "{colors.tier-high-container}"
-    textColor: "{colors.on-error-container}"
-    rounded: "{rounded.lg}"
-    padding: 20px
-
-  modal-crisis:
-    backgroundColor: "{colors.crisis-container}"
-    textColor: "{colors.on-crisis-container}"
-    rounded: "{rounded.xl}"
-    padding: 24px
-
-  badge-default:
-    backgroundColor: "{colors.surface-container-high}"
-    textColor: "{colors.on-surface-variant}"
-    typography: "{typography.label-sm}"
-    rounded: "{rounded.full}"
-    padding: 6px
-
-  badge-accent:
-    backgroundColor: "{colors.tertiary-container}"
-    textColor: "{colors.on-tertiary-container}"
-    typography: "{typography.label-sm}"
-    rounded: "{rounded.full}"
-    padding: 6px
-
-  alert-info:
-    backgroundColor: "{colors.info-container}"
-    textColor: "{colors.on-info-container}"
-    typography: "{typography.body-sm}"
-    rounded: "{rounded.md}"
-    padding: 16px
-
-  alert-warning:
-    backgroundColor: "{colors.warning-container}"
-    textColor: "{colors.on-warning-container}"
-    typography: "{typography.body-sm}"
-    rounded: "{rounded.md}"
-    padding: 16px
-
-  breathing-circle:
-    backgroundColor: "{colors.secondary-container}"
-    textColor: "{colors.on-secondary-container}"
-    rounded: "{rounded.full}"
-    padding: 0px
-
-  question-option:
-    backgroundColor: "{colors.surface}"
-    textColor: "{colors.on-surface}"
-    typography: "{typography.body-md}"
-    rounded: "{rounded.md}"
-    padding: 16px
-
-  question-option-selected:
-    backgroundColor: "{colors.primary}"
-    textColor: "{colors.on-primary}"
-    typography: "{typography.body-md}"
-    rounded: "{rounded.md}"
-    padding: 16px
-
-  stealth-panel:
-    backgroundColor: "{colors.stealth-surface}"
-    textColor: "{colors.stealth-on-surface}"
-    typography: "{typography.body-md}"
-    rounded: "{rounded.sm}"
-    padding: 12px
----
-
-## Overview
-
-Desain ini meminjam bahasa visual **ruang tunggu puskesmas yang tenang dan klinik
-psikologi Swedia tahun 1970-an**: permukaan kayu muda, cahaya alami dari jendela
-besar, perabot dengan sudut membulat, dan nol material berkilau. Paletnya diambil
-dari dedaunan sage dan lumut hutan, bukan dari gradien ungu teknologi.
-
-Referensi ini membawa serta keputusannya: **tidak ada warna yang mendesak**,
-**tidak ada animasi yang mengagetkan**, dan **tidak ada elemen yang menuntut
-perhatian**. Pengguna aplikasi ini datang dalam keadaan panik atau lelah. Tugas
-antarmuka bukan memikat mereka, melainkan **menurunkan denyut nadi mereka dalam
-lima detik pertama**.
-
-## Colors
-
-Palet dibangun di sekitar satu warna utama, **Deep Forest Sage** (primary,
-`#1B3B2B`), yang dipakai untuk teks judul dan tombol utama. Warna ini memiliki
-kontras 13.1:1 terhadap latar `#F7F9F8`, jauh di atas ambang WCAG AA.
-
-Warna aksi sekunder adalah **Leaf Green** (`#437A5B`) untuk elemen pendukung yang
-tidak boleh bersaing dengan CTA utama. Warna aksen **Teal Tenang** (`#2A9D8F`)
-dipakai hanya untuk indikator progres dan napas terpandu.
-
-Tiga warna tier hasil memiliki makna tetap dan tidak boleh dipakai untuk keperluan
-lain di luar konteks skrining:
-- `tier-low` hijau (`#2E7D32`) — kondisi rendah, pesan validasi.
-- `tier-moderate` amber (`#B45309`) — kondisi sedang, ajakan aksi mandiri.
-- `tier-high` merah (`#B3261E`) — kondisi akut, jalur keselamatan.
-
-Warna **crisis** (`#C1121F`) dicadangkan secara eksklusif untuk emergency
-interceptor. Warna ini tidak boleh muncul di tempat lain agar efek kejutnya
-terjaga saat benar-benar dibutuhkan.
-
-Mode samaran memakai tiga token terpisah (`stealth-surface`, `stealth-on-surface`,
-`stealth-outline`) yang sengaja dibuat netral dan tanpa asosiasi visual apa pun.
-
-## Typography
-
-Satu keluarga huruf untuk seluruh aplikasi: **Plus Jakarta Sans**. Tidak ada
-pasangan font kedua. Huruf ini dipilih karena memiliki x-height besar dan
-terminal terbuka, sehingga tetap terbaca saat pengguna sedang menangis atau
-tangan gemetar.
-
-Skala dibuat sempit dengan sengaja — hanya tiga ukuran teks isi (12, 14, 16 px)
-agar hierarki terasa tenang dan tidak seperti poster.
-
-Aturan yang tidak boleh dilanggar:
-- Judul layar memakai `headline-lg` (24px). Tidak ada teks di atas 32px kecuali
-  angka skor pada halaman hasil.
-- Teks isi selalu `body-md` (14px). Jangan pernah memakai teks di bawah 12px untuk
-  paragraf yang harus dibaca.
-- Elemen label memakai `label-sm` dengan huruf kapital dan `letterSpacing` 0.08em.
-- Tinggi baris minimal 1.5 untuk semua paragraf agar paragraf panjang tetap
-  nyaman dibaca.
-
-## Layout
-
-Satu kolom tunggal dengan lebar konten penuh, margin samping `20px`, dan jarak
-antar kartu `12px`. Tidak ada tata letak multi-kolom di mana pun — pengguna dalam
-kondisi panik tidak boleh diberi pilihan visual bersamaan.
-
-Setiap layar mengikuti pola vertikal yang sama:
-1. Bilah atas ringkas: tombol kembali opsional, judul, tombol tutup cepat.
-2. Badan konten yang dapat digulir.
-3. Satu bilah aksi tetap di bagian bawah berisi CTA tunggal.
-
-Bilah aksi bawah selalu diberi padding bawah tambahan 28px pada Android untuk
-menghindari tertutup bilah navigasi gestur sistem.
-
-## Elevation & Depth
-
-Kedalaman dibangun dengan **variasi warna permukaan dan garis tipis**, bukan
-bayangan. Kartu default tidak memiliki shadow sama sekali; pemisahan dilakukan
-oleh `outline-variant` setebal 1px.
-
-Aturan:
-- `elevation: 0` kecuali pada `modal-crisis` yang boleh memakai shadow lembut
-  (`opacity 0.08`, `radius 16`, `offsetY 4`).
-- Tidak ada efek blur, gradien, atau glassmorphism.
-- Kedalaman pada tombol tekan dinyatakan lewat perubahan warna latar ke
-  `primary-container`, bukan lewat pergerakan posisi.
-
-## Shapes
-
-Skala sudut hanya punya tiga tingkat yang benar-benar dipakai:
-- `rounded.md` (12px) untuk kartu pertanyaan, tombol opsi, dan panel samaran.
-- `rounded.lg` (20px) untuk kartu default dan kartu tier.
-- `rounded.full` (9999px) untuk seluruh tombol aksi dan lencana.
-
-Lingkaran napas terpandu adalah satu-satunya elemen yang berbentuk lingkaran
-sempurna dan berskala besar, karena bentuk itulah yang menjadi metafora napasnya.
-
-## Components
-
-**Tombol utama** selalu setinggi 54px dengan sudut penuh. Dalam satu layar hasil
-hanya boleh ada **tepat satu** tombol utama. Ini adalah aturan inti dari prinsip
-pertolongan kesehatan mental: jangan beri delapan pilihan kepada orang yang
-sedang tidak baik-baik saja.
-
-**Kartu tier** memakai warna latar tier masing-masing. Kartu tier akut wajib
-menampilkan label keselamatan di baris pertama sebelum informasi skor apa pun.
-
-**Modal krisis** adalah satu-satunya komponen yang boleh memakai warna merah
-menyala. Ia wajib memiliki tombol tutup yang jelas dan ramah — tidak boleh
-terasa seperti peringatan polisi.
-
-**Lingkaran napas** beranimasi antara skala 0.55 dan 1.0 mengikuti fase tarik dan
-buang napas. Transisi memakai durasi `ease-in-out` selama 4000 ms per fase, dan
-setiap transisi fase disertai sinyal haptic ringan.
-
-**Panel samaran** memakai sudut `rounded.sm` (6px), bukan sudut membulat besar
-layaknya kartu aplikasi kesehatan, agar tampil beda dan tidak menarik perhatian.
-
-## Motion
-
-Seluruh animasi harus **lambat dan dapat diprediksi**. Durasi standar adalah
-300 ms untuk transisi layar dan 4000 ms untuk satu fase pernapasan.
-
-Aturan:
-- Tidak ada animasi yang melebihi kecepatan 300 ms kecuali lingkaran napas.
-- Tidak boleh ada elemen yang berdenyut, berkedip, atau bergetar tanpa kendali
-  pengguna — ini memicu kecemasan.
-- Animasi wajib dihormati terhadap setelan aksesibilitas sistem: bila pengguna
-  menonaktifkan animasi, aplikasi harus langsung menampilkan kondisi akhir.
-
-## Voice
-
-Nada bicara aplikasi adalah **pembimbing tenang yang tidak menghakimi**. Tidak
-ada tanda seru, tidak ada emoji perayaan, tidak ada kata "harus" atau "seharusnya".
-
-Aturan penulisan:
-- Sapaan "kamu", bukan "Anda" atau "kalian".
-- Kalimat maksimal 20 kata. Satu kalimat, satu ide.
-- Selalu sebut kondisi sebagai hal yang wajar: "Banyak orang merasa seperti ini".
-- Dilarang menampilkan kata "gila", "abnormal", "penderita", atau "korban".
-- Setiap hasil diakhiri dengan satu langkah konkret, bukan sekadar validasi.
+# DESIGN.md — LENTERA (Listening, Empathy, Nurture, Togetherness, Encouragement, Resilience, Awareness)
+
+Dokumen ini diturunkan dari tangkapan layar dua halaman (Beranda dan Profil Psikolog). Seluruh nilai warna, ukuran, dan font adalah estimasi visual, bukan hasil ekstraksi dari file desain asli. Verifikasi ke file Figma sumber sebelum dipakai sebagai acuan final.
+
+## 1. Karakter Desain
+
+LENTERA (Listening, Empathy, Nurture, Togetherness, Encouragement, Resilience, Awareness) adalah aplikasi mobile untuk menemukan psikolog dan mengikuti acara kesehatan mental. Nuansanya tenang, lembut, dan ramah: latar putih keunguan yang sangat pucat, satu warna aksen ungu yang tegas, sudut membulat di hampir semua elemen, dan tipografi sans-serif geometris yang bersih. Hierarki dibangun lewat ukuran dan bobot huruf, bukan lewat garis atau bayangan tebal. Setiap layar hanya punya satu aksi utama yang berwarna ungu penuh.
+
+## 2. Warna
+
+Palet warna diturunkan langsung dari identitas visual logo **LENTERA**:
+- **Ungu Utama (`#7843E4`)**: warna aksi utama, tombol primer, dan status aktif.
+- **Ungu Muda (`#C7A6FB`)**: kelopak lentera, warna sekunder, dan aksen lembut.
+- **Kuning Lentera (`#FEC565`)**: pendar cahaya/api lentera, kehangatan, dan aksen perhatian.
+
+```css
+:root {
+  /* Brand (Warna Logo LENTERA) */
+  --color-primary: #7843E4;          /* tombol utama, tab aktif, ikon nav aktif */
+  --color-primary-soft: #EFE6FD;     /* latar chip & badge lembut */
+  --color-primary-on: #FFFFFF;       /* teks di atas primary */
+
+  --color-secondary: #C7A6FB;        /* ungu muda logo, aksen kelopak lentera */
+  --color-secondary-container: #F3EBFE;
+  --color-on-secondary-container: #361273;
+
+  --color-tertiary: #FEC565;         /* kuning lentera, cahaya pelita */
+  --color-tertiary-container: #FFF4DE;
+  --color-on-tertiary-container: #573B00;
+
+  /* Surface & Background */
+  --color-bg: #F7F4FD;               /* latar layar, putih keunguan lembut */
+  --color-surface: #FFFFFF;          /* kartu, panel profil, bottom nav */
+  --color-bg-gradient-from: #FDF7EB; /* semburat kuning lentera hangat */
+  --color-bg-gradient-to: #EFE8FC;   /* semburat ungu lembut */
+
+  /* Text */
+  --color-text-primary: #1B1B23;     /* judul, nama, isi utama */
+  --color-text-secondary: #6E6E7A;   /* subjudul, label kecil, tab tidak aktif */
+  --color-text-muted: #9A9AA6;       /* teks redup, ikon nav tidak aktif */
+
+  /* Accent & Status */
+  --color-accent-yellow: #FEC565;    /* kuning lentera, bintang, warning */
+  --color-accent-cyan: #22B8CF;      /* spiral FAQ, info */
+  --color-accent-pink: #C2406E;      /* aksen pelengkap */
+
+  /* Outline */
+  --color-outline: #9A9AA6;
+  --color-outline-variant: #E8DCFC;  /* garis tepi lembut keunguan */
+}
+```
+
+Aturan pemakaian: ungu penuh (#7843E4) hanya untuk satu CTA per layar dan state aktif. Ungu muda (#C7A6FB) dan Kuning (#FEC565) dipakai untuk elemen pendukung dan pendar hangat identitas lentera.
+
+## 3. Tipografi
+
+Aplikasi menggunakan keluarga huruf geometris **Montserrat** yang memberikan kesan modern, ramah, kokoh, dan bersih. Varian yang digunakan meliputi Regular (body & narasi), Medium (label & caption), SemiBold (tombol, judul kartu, subjudul), dan Bold (judul utama, headline, badge). Fallback: Montserrat, system-ui, -apple-system, sans-serif.
+
+```css
+:root {
+  --font-family: "Montserrat", system-ui, -apple-system, sans-serif;
+
+  --text-display: 700 24px/32px var(--font-family);  /* "LENTERA" (Bold) */
+  --text-title:   700 20px/26px var(--font-family);  /* judul bagian utama (Bold) */
+  --text-headline:600 18px/24px var(--font-family);  /* judul kartu / subbagian (SemiBold) */
+  --text-card:    600 16px/22px var(--font-family);  /* judul kartu acara / konten (SemiBold) */
+  --text-body:    400 15px/22px var(--font-family);  /* tagline, isi panduan, deskripsi (Regular) */
+  --text-button:  600 16px/24px var(--font-family);  /* label tombol utama (SemiBold) */
+  --text-label:   600 14px/20px var(--font-family);  /* tab aktif, label grup (SemiBold) */
+  --text-caption: 500 12px/16px var(--font-family);  /* label sekunder, nav bawah (Medium) */
+  --text-chip:    700 10px/12px var(--font-family);  /* chip status / badge, kapital + letter-spacing (Bold) */
+}
+```
+
+Angka pada statistik profil ("10 years", "60 $", "16+") memakai bobot 600 dengan ukuran sekitar 15 sampai 16px, di bawah label caption abu-abu dua baris. Judul bagian ("Upcoming events", "FAQ") selalu rata kiri dan bobot semibold.
+
+## 4. Spasi, Radius, dan Elevasi
+
+Sistem spasi berbasis kelipatan 4px, dengan margin horizontal layar sekitar 18 sampai 20px dan jarak antarbagian vertikal sekitar 24 sampai 32px.
+
+```css
+:root {
+  --space-1: 4px;  --space-2: 8px;  --space-3: 12px;
+  --space-4: 16px; --space-5: 20px; --space-6: 24px; --space-8: 32px;
+
+  --radius-chip: 8px;
+  --radius-card: 20px;       /* kartu acara */
+  --radius-photo: 24px;      /* foto psikolog (rounded square) */
+  --radius-button: 999px;    /* tombol pill penuh */
+  --radius-sheet: 24px;      /* panel putih di bawah foto profil (sudut atas) */
+  --radius-device: 36px;     /* hanya bingkai mockup, bukan komponen UI */
+
+  --shadow-card: 0 2px 12px rgba(80, 60, 140, 0.06);   /* sangat halus */
+  --shadow-device: 0 12px 32px rgba(80, 60, 140, 0.15); /* hanya mockup */
+}
+```
+
+Elevasi nyaris tidak dipakai. Kartu dibedakan dari latar lewat kontras putih terhadap lavender pucat, dengan bayangan yang hampir tidak terlihat. Hindari bayangan gelap atau border keras pada kartu.
+
+## 5. Komponen
+
+### Tombol utama
+
+Tombol pill selebar penuh kontainer, tinggi sekitar 48 sampai 52px, latar primary, teks putih rata tengah bobot 500. Pada beranda ("Find a psychologist") tombol memuat ikon chevron kanan di ujung kanan, dan lebarnya mengikuti konten dengan padding horizontal besar. Pada profil ("Make an appointment") tombol melebar penuh dan menempel di dasar panel konten. Tidak ada state sekunder yang terlihat di screenshot, jadi varian outline atau ghost harus didefinisikan terpisah bila dibutuhkan.
+
+### Kartu acara (Upcoming events)
+
+Kartu putih radius 20px, padding sekitar 16px, ditata dalam carousel horizontal dengan kartu berikutnya terpotong di tepi kanan sebagai petunjuk scroll. Isi dari atas ke bawah: baris atas berisi chip kategori di kiri dan status lokasi ("Online") abu-abu di kanan, lalu judul acara dua baris bobot 500, lalu baris bawah berisi waktu di kiri dan hari ("Today") di kanan dengan warna secondary. Lebar kartu sekitar 185px.
+
+### Chip kategori
+
+Pill kecil radius 8px, padding sekitar 4px vertikal dan 8px horizontal, teks kapital 10px bobot 600. LECTURE memakai latar ungu muda dengan teks ungu tua, WORKSHOP memakai latar pink muda dengan teks pink tua. Pasangan warna baru harus mengikuti pola yang sama: latar tint 10 sampai 15 persen, teks versi gelap dari warna yang sama.
+
+### Daftar FAQ
+
+Setiap baris berupa ikon outline berwarna di kiri (sekitar 24px) dan teks body di kanan, jarak vertikal antarbaris sekitar 20px, tanpa pemisah garis. Setiap item memakai warna ikon berbeda (ungu, kuning, cyan) sebagai aksen identitas. Header bagian memuat judul di kiri dan tautan "See all" kecil abu-abu di kanan.
+
+### Bottom navigation
+
+Lima tab: Main, Discover, Catalog, Schedule, Settings. Ikon outline sekitar 24px dengan label caption di bawahnya. Tab aktif memakai ikon terisi dan label berwarna primary, tab tidak aktif memakai abu-abu muda. Latar putih menyatu dengan layar, tanpa garis pemisah atas, dan di bawahnya ada home indicator bar hitam tipis bawaan perangkat.
+
+### Header profil psikolog
+
+Tombol kembali berupa panah kiri di pojok kiri atas, lalu nama (title, rata tengah) dan gelar di bawahnya dalam teks secondary. Foto berbentuk rounded square sekitar 135px dengan radius 24px, rata tengah. Di bawah foto ada baris tiga statistik dengan jarak merata: label caption abu-abu dua baris di atas, nilai semibold di bawah. Gunakan pola ini untuk metrik ringkas lain agar konsisten.
+
+### Tab konten (About, Reviews, Contacts)
+
+Tiga tab teks rata tengah di dalam panel putih bersudut atas membulat. Tab aktif memakai teks gelap bobot 500 dengan garis bawah primary setebal 2px dan selebar teksnya, tab tidak aktif memakai teks secondary tanpa garis.
+
+### Blok informasi profil
+
+Label bagian ("Main method", "I work with requests") memakai bobot 500 dengan ukuran label, nilainya berupa baris teks body biasa yang ditumpuk dengan jarak sekitar 12px tanpa bullet atau pemisah. Antarblok diberi jarak sekitar 20px.
+
+## 6. Tata Letak
+
+Kanvas mobile sekitar 390px lebar (rasio iPhone). Konten ditata satu kolom dengan margin sisi konsisten. Beranda berurutan dari atas: status bar, judul merek dan tagline, CTA utama, bagian acara (carousel), bagian FAQ, lalu bottom nav tetap di dasar. Profil berurutan: bar navigasi atas, identitas, foto, statistik, panel putih berisi tab dan konten, lalu CTA yang menempel di bawah. Panel putih pada profil membedakan area konten dari area identitas yang berlatar lavender.
+
+## 7. Ikonografi dan Dekorasi
+
+Ikon bergaya outline dengan stroke tipis konsisten, sudut membulat, ukuran 24px. Ikon FAQ berwarna per item, ikon navigasi monokrom. Dekorasi utama adalah siluet hati besar berstroke tipis berwarna pink pucat di belakang judul beranda, dipotong oleh tepi kanan layar, sebagai penanda merek yang lembut. Dekorasi ini harus tetap berkontras sangat rendah supaya tidak mengganggu keterbacaan teks.
+
+## 8. Prinsip Penggunaan
+
+Pertahankan satu aksi utama berwarna ungu penuh per layar. Gunakan sudut membulat besar secara konsisten dan hindari sudut tajam pada komponen baru. Biarkan ruang kosong yang lapang, karena kesan tenang adalah inti dari identitas aplikasi ini. Jangan menambah warna aksen baru di luar palet tanpa alasan, dan jangan memakai merah pekat atau hitam pekat untuk elemen non-kritis agar nada visual tidak terasa menekan.
+
+## 9. Catatan dan Celah
+
+Beberapa hal tidak bisa disimpulkan dari screenshot dan perlu didefinisikan sendiri: state hover, pressed, disabled, dan error; mode gelap; perilaku animasi dan transisi; varian tombol sekunder; tampilan tab Reviews dan Contacts; serta aturan aksesibilitas seperti ukuran target sentuh minimum 44px. Selain itu, ejaan pada UI sumber memuat kesalahan ("Shedule" pada tab navigasi, "specialist" tertulis "spesialist"), dan sebaiknya diperbaiki saat implementasi alih-alih disalin.

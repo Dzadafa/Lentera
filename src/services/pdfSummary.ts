@@ -28,52 +28,52 @@ export async function generateAndSharePdfSummary(result: ScreeningResult): Promi
     body {
       font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
       margin: 40px;
-      color: #131F17;
+      color: #1B1B23;
       background: #FFFFFF;
       line-height: 1.5;
     }
     .header {
-      border-bottom: 2px solid #1B3B2B;
+      border-bottom: 2px solid #7843E4;
       padding-bottom: 16px;
       margin-bottom: 24px;
     }
     .title {
       font-size: 20px;
       font-weight: 700;
-      color: #1B3B2B;
+      color: #7843E4;
       margin: 0;
     }
     .subtitle {
       font-size: 12px;
-      color: #5A6B60;
+      color: #6E6E7A;
       margin-top: 4px;
     }
     .disclaimer {
-      background: #E2EFE7;
-      border-left: 4px solid #1B3B2B;
+      background: #E9DDFD;
+      border-left: 4px solid #7843E4;
       padding: 12px 16px;
       font-size: 11px;
-      color: #0F261B;
+      color: #3D148A;
       margin-bottom: 24px;
-      border-radius: 4px;
+      border-radius: 8px;
     }
     .card {
-      border: 1px solid #DFE8E2;
-      border-radius: 8px;
+      border: 1px solid #E5DFEE;
+      border-radius: 12px;
       padding: 16px;
       margin-bottom: 16px;
     }
     .card-title {
       font-size: 13px;
       font-weight: 700;
-      color: #1B3B2B;
+      color: #7843E4;
       margin-bottom: 8px;
     }
     .score-row {
       display: flex;
       justify-content: space-between;
       padding: 8px 0;
-      border-bottom: 1px solid #F1F5F2;
+      border-bottom: 1px solid #EDE8F8;
       font-size: 13px;
     }
     .score-row:last-child {
@@ -81,12 +81,12 @@ export async function generateAndSharePdfSummary(result: ScreeningResult): Promi
     }
     .score-val {
       font-weight: 700;
-      color: #1B3B2B;
+      color: #7843E4;
     }
     .tier-badge {
       display: inline-block;
       padding: 6px 12px;
-      background: #1B3B2B;
+      background: #7843E4;
       color: #FFFFFF;
       border-radius: 999px;
       font-size: 12px;
@@ -96,22 +96,22 @@ export async function generateAndSharePdfSummary(result: ScreeningResult): Promi
     .footer {
       margin-top: 36px;
       padding-top: 16px;
-      border-top: 1px solid #DFE8E2;
+      border-top: 1px solid #E5DFEE;
       font-size: 10px;
-      color: #8FA396;
+      color: #9A9AA6;
       text-align: center;
     }
     .talking-points {
-      background: #F7F9F8;
+      background: #F6F3FB;
       padding: 12px;
-      border-radius: 6px;
+      border-radius: 8px;
       font-size: 12px;
     }
   </style>
 </head>
 <body>
   <div class="header">
-    <h1 class="title">TautJiwa — Ringkasan Skrining Awal Mandiri</h1>
+    <h1 class="title">LENTERA — Ringkasan Skrining Awal Mandiri</h1>
     <div class="subtitle">Instrumen DASS-21 (21 Butir) • Dicetak: ${dateStr}</div>
   </div>
 
@@ -150,7 +150,7 @@ export async function generateAndSharePdfSummary(result: ScreeningResult): Promi
   </div>
 
   <div class="footer">
-    TautJiwa Mobile • 100% On-Device & Zero-Cloud Storage • Tidak memuat identitas pasien
+    LENTERA Mobile • 100% On-Device & Zero-Cloud Storage • Tidak memuat identitas pasien
   </div>
 </body>
 </html>

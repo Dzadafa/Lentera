@@ -1,40 +1,64 @@
 /**
- * Token desain TautJiwa — sumber tunggal kebenaran adalah DESIGN.md.
- * Jangan mengarang nilai hex, ukuran font, atau radius baru di dalam komponen.
+ * Token desain LENTERA — sumber tunggal kebenaran adalah DESIGN.md.
+ * Listening, Empathy, Nurture, Togetherness, Encouragement, Resilience, Awareness
  */
 
 export const colors = {
-  primary: '#1B3B2B',
-  secondary: '#437A5B',
-  tertiary: '#2A9D8F',
-  neutral: '#F7F9F8',
+  // Brand (Warna Logo LENTERA)
+  primary: '#7843E4',          // Ungu Utama Logo
+  primarySoft: '#EFE6FD',      // Latar chip/badge ungu sangat lembut
+  primaryOn: '#FFFFFF',
 
+  // Secondary & Tertiary
+  secondary: '#C7A6FB',        // Ungu Muda Logo
+  secondaryContainer: '#F3EBFE',
+  onSecondaryContainer: '#361273',
+
+  tertiary: '#FEC565',         // Kuning Lentera (Yellow Cahaya)
+  tertiaryContainer: '#FFF4DE',
+  onTertiaryContainer: '#573B00',
+
+  neutral: '#F7F4FD',
+
+  // Surface & Text
   surface: '#FFFFFF',
-  surfaceContainer: '#F1F5F2',
-  surfaceContainerHigh: '#E4EDE7',
-  onSurface: '#131F17',
-  onSurfaceVariant: '#5A6B60',
-  inverseSurface: '#131F17',
-  inverseOnSurface: '#F7F9F8',
+  surfaceContainer: '#F7F4FD',
+  surfaceContainerHigh: '#EFE8FC',
+  onSurface: '#1B1B23',
+  onSurfaceVariant: '#6E6E7A',
+  inverseSurface: '#1B1B23',
+  inverseOnSurface: '#F7F4FD',
 
-  outline: '#8FA396',
-  outlineVariant: '#DFE8E2',
+  textPrimary: '#1B1B23',
+  textSecondary: '#6E6E7A',
+  textMuted: '#9A9AA6',
 
+  // Outline
+  outline: '#9A9AA6',
+  outlineVariant: '#E8DCFC',
+
+  // Interactive pairs
   onPrimary: '#FFFFFF',
-  primaryContainer: '#E2EFE7',
-  onPrimaryContainer: '#0F261B',
+  primaryContainer: '#EDE2FE',
+  onPrimaryContainer: '#2B0E68',
 
-  onSecondary: '#FFFFFF',
-  secondaryContainer: '#D4E8DC',
-  onSecondaryContainer: '#1B3B2B',
+  onSecondary: '#200B42',
+  onTertiary: '#2B1C00',
 
-  onTertiary: '#FFFFFF',
-  tertiaryContainer: '#D3F0EC',
-  onTertiaryContainer: '#0A302B',
+  // Background
+  background: '#F7F4FD',
+  onBackground: '#1B1B23',
+  bgGradientFrom: '#FDF7EB',
+  bgGradientTo: '#EFE8FC',
 
-  background: '#F7F9F8',
-  onBackground: '#131F17',
+  // Accents
+  accentPinkSoft: '#FBD9E4',
+  accentPink: '#C2406E',
+  accentYellow: '#FEC565',     // Kuning Lentera
+  accentCyan: '#22B8CF',
+  heartOutline: '#E8DCFC',
 
+  // Status & Tiers
   error: '#B3261E',
   onError: '#FFFFFF',
   errorContainer: '#FFE5E8',
@@ -45,16 +69,17 @@ export const colors = {
   successContainer: '#E8F5E9',
   onSuccessContainer: '#123B14',
 
-  warning: '#9A6700',
-  onWarning: '#FFFFFF',
-  warningContainer: '#FEF3C7',
-  onWarningContainer: '#4A3200',
+  warning: '#FEC565',
+  onWarning: '#2B1C00',
+  warningContainer: '#FFF4DE',
+  onWarningContainer: '#573B00',
 
-  info: '#1F6FEB',
+  info: '#22B8CF',
   onInfo: '#FFFFFF',
-  infoContainer: '#DBEAFE',
-  onInfoContainer: '#0F2C5C',
+  infoContainer: '#D0F4F7',
+  onInfoContainer: '#084852',
 
+  // Tiers DASS-21
   tierLow: '#2E7D32',
   tierLowContainer: '#E8F5E9',
   onTierLowContainer: '#123B14',
@@ -65,34 +90,43 @@ export const colors = {
   tierHighContainer: '#FFE5E8',
   onTierHighContainer: '#5C000B',
 
+  // Crisis Interceptor
   crisis: '#C1121F',
   onCrisis: '#FFFFFF',
   crisisContainer: '#FFE4E6',
   onCrisisContainer: '#60000A',
 
+  // Mode Samaran (Stealth)
   stealthSurface: '#FFFFFF',
   stealthOnSurface: '#1F2937',
   stealthOutline: '#D1D5DB',
 } as const;
 
 export const typography = {
-  displayLg: { fontSize: 32, fontWeight: '700', lineHeight: 38, letterSpacing: -0.64 },
-  headlineLg: { fontSize: 24, fontWeight: '700', lineHeight: 30, letterSpacing: -0.24 },
-  headlineMd: { fontSize: 20, fontWeight: '600', lineHeight: 26, letterSpacing: 0 },
-  bodyLg: { fontSize: 16, fontWeight: '400', lineHeight: 26, letterSpacing: 0 },
-  bodyMd: { fontSize: 14, fontWeight: '400', lineHeight: 22, letterSpacing: 0 },
-  bodySm: { fontSize: 12, fontWeight: '400', lineHeight: 18, letterSpacing: 0 },
-  labelLg: { fontSize: 14, fontWeight: '600', lineHeight: 20, letterSpacing: 0.14 },
-  labelMd: { fontSize: 12, fontWeight: '600', lineHeight: 17, letterSpacing: 0.48 },
-  labelSm: { fontSize: 11, fontWeight: '700', lineHeight: 14, letterSpacing: 0.88 },
+  displayLg: { fontFamily: 'Montserrat-Bold', fontSize: 24, lineHeight: 32, letterSpacing: -0.24 },
+  headlineLg: { fontFamily: 'Montserrat-Bold', fontSize: 20, lineHeight: 26, letterSpacing: -0.1 },
+  headlineMd: { fontFamily: 'Montserrat-SemiBold', fontSize: 18, lineHeight: 24, letterSpacing: 0 },
+  cardTitle: { fontFamily: 'Montserrat-SemiBold', fontSize: 16, lineHeight: 22, letterSpacing: 0 },
+  bodyLg: { fontFamily: 'Montserrat-Regular', fontSize: 16, lineHeight: 24, letterSpacing: 0 },
+  bodyMd: { fontFamily: 'Montserrat-Regular', fontSize: 15, lineHeight: 22, letterSpacing: 0 },
+  bodySm: { fontFamily: 'Montserrat-Regular', fontSize: 13, lineHeight: 18, letterSpacing: 0 },
+  button: { fontFamily: 'Montserrat-SemiBold', fontSize: 16, lineHeight: 24, letterSpacing: 0.2 },
+  labelLg: { fontFamily: 'Montserrat-SemiBold', fontSize: 14, lineHeight: 20, letterSpacing: 0 },
+  labelMd: { fontFamily: 'Montserrat-Medium', fontSize: 12, lineHeight: 16, letterSpacing: 0 },
+  labelSm: { fontFamily: 'Montserrat-Bold', fontSize: 10, lineHeight: 12, letterSpacing: 0.4 },
 } as const;
 
 export const radius = {
   none: 0,
   sm: 6,
+  chip: 8,
   md: 12,
+  card: 20,
   lg: 20,
-  xl: 28,
+  sheet: 24,
+  photo: 24,
+  xl: 24,
+  button: 9999,
   full: 9999,
 } as const;
 
@@ -106,6 +140,16 @@ export const spacing = {
   xxl: 48,
   marginMobile: 20,
   gapCard: 12,
+} as const;
+
+export const shadows = {
+  card: {
+    shadowColor: 'rgba(80, 60, 140, 0.06)',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 1,
+    shadowRadius: 12,
+    elevation: 2,
+  },
 } as const;
 
 export const motion = {

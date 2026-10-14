@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
+  Image,
 } from 'react-native';
 import { colors, typography, radius, spacing } from '../theme';
 import {
@@ -37,9 +38,17 @@ export const HomeScreen: React.FC<Props> = ({ onNavigate, onQuickClose }) => {
       <View style={styles.header}>
         <View style={styles.brandRow}>
           <View style={styles.brandMark}>
-            <HeartPulseIcon size={18} color={colors.onPrimary} />
+            {workMode ? (
+              <HeartPulseIcon size={18} color={colors.onPrimary} />
+            ) : (
+              <Image
+                source={require('../../assets/lentera-icon.png')}
+                style={styles.brandLogoImg}
+                resizeMode="contain"
+              />
+            )}
           </View>
-          <Text style={styles.brandText}>{workMode ? 'Catatan Harian' : 'TautJiwa'}</Text>
+          <Text style={styles.brandText}>{workMode ? 'Catatan Harian' : 'LENTERA'}</Text>
         </View>
         <TouchableOpacity onPress={onQuickClose} style={styles.stealthBtn}>
           <Text style={styles.stealthLabel}>Mode Aman</Text>
@@ -52,8 +61,18 @@ export const HomeScreen: React.FC<Props> = ({ onNavigate, onQuickClose }) => {
       <Text style={styles.subheadline}>
         {workMode
           ? 'Tulis apa pun yang ingin kamu catat hari ini.'
-          : 'Pilih satu langkah. Tidak ada akun, tidak ada data yang keluar dari perangkat ini.'}
+          : 'Pilih satu langkah. Kamu bisa berhenti kapan pun.'}
       </Text>
+
+      {/* Privasi — ditaruh di atas pintu, bukan sebagai footer. Ini yang meyakinkan pengguna skeptis. */}
+      {!workMode && (
+        <View style={styles.privacyRow}>
+          <ShieldLockIcon size={14} color={colors.onSurfaceVariant} />
+          <Text style={styles.privacyText}>
+            Semua jawaban tersimpan hanya di perangkat ini. Tidak ada server, tidak ada akun.
+          </Text>
+        </View>
+      )}
 
       {/* PINTU 1 — Pertolongan instan */}
       <TouchableOpacity
@@ -185,7 +204,7 @@ export const HomeScreen: React.FC<Props> = ({ onNavigate, onQuickClose }) => {
         </View>
         <View style={styles.roomBody}>
           <Text style={styles.roomTitle}>
-            {workMode ? 'Jalur bantuan resmi' : 'Teman Cerita & Direktori Pendamping'}
+            {workMode ? 'Jalur bantuan resmi' : 'Konselor & Hotline'}
           </Text>
           <Text style={styles.roomSub}>Konselor kampus, klinik, dan hotline resmi</Text>
         </View>
@@ -204,13 +223,6 @@ export const HomeScreen: React.FC<Props> = ({ onNavigate, onQuickClose }) => {
           <Text style={styles.roomSub}>Lihat arah perubahan skormu dari waktu ke waktu</Text>
         </View>
       </TouchableOpacity>
-
-      <View style={styles.privacyRow}>
-        <ShieldLockIcon size={16} color={colors.onSurfaceVariant} />
-        <Text style={styles.privacyText}>
-          Semua jawaban tersimpan hanya di perangkat ini. Tidak ada server, tidak ada akun.
-        </Text>
-      </View>
 
       <TouchableOpacity style={styles.settingsLink} onPress={() => onNavigate('settings')}>
         <Text style={styles.settingsLinkText}>Pengaturan & Mode Kerja</Text>
@@ -233,9 +245,16 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: colors.primary,
+    backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: colors.outlineVariant,
+  },
+  brandLogoImg: {
+    width: 28,
+    height: 28,
   },
   brandText: { ...typography.headlineMd, color: colors.primary },
   stealthBtn: {
@@ -337,9 +356,13 @@ const styles = StyleSheet.create({
   roomSub: { ...typography.bodySm, color: colors.onSurfaceVariant, marginTop: 2 },
   privacyRow: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     gap: spacing.sm,
-    marginTop: spacing.sm,
+    backgroundColor: colors.surfaceContainer,
+    borderRadius: radius.chip,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.sm + 4,
+    marginBottom: spacing.md,
   },
   privacyText: { ...typography.bodySm, color: colors.onSurfaceVariant, flex: 1 },
   settingsLink: { marginTop: spacing.lg, alignItems: 'center', paddingVertical: spacing.sm },

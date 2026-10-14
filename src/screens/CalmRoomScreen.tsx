@@ -38,7 +38,7 @@ export const CalmRoomScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <Text style={styles.intro}>
-          Kamu sudah sampai di sini. Ambil posisi yang nyaman, lalu pilih satu latihan. Tidak ada yang perlu diselesaikan cepat.
+          Kamu tidak perlu siap. Cukup duduk, pilih satu latihan, dan ikuti saja selangkah demi selangkah.
         </Text>
 
         <View style={styles.toolTabs}>

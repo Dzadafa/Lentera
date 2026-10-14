@@ -32,8 +32,11 @@ interface AppState {
   currentQuestionIndex: number;
   answers: Record<number, 0 | 1 | 2 | 3>;
 
+  hasSeenSplash: boolean;
+
   // Actions
   initialize: () => Promise<void>;
+  markSplashSeen: () => Promise<void>;
   toggleWorkMode: () => Promise<void>;
   toggleHaptics: () => Promise<void>;
   toggleVoiceGuide: () => Promise<void>;
@@ -65,12 +68,14 @@ export const useAppStore = create<AppState>((set, get) => ({
   crisisSource: 'manual',
   currentQuestionIndex: 0,
   answers: {},
+  hasSeenSplash: false,
 
   initialize: async () => {
     await initDatabase();
     const wm = await getSetting('work_mode');
     const hp = await getSetting('haptics_enabled');
     const vg = await getSetting('voice_guide');
+    const ss = await getSetting('has_seen_splash');
     const isWorkMode = wm === 'true';
     const isHaptics = hp !== 'false';
     const isVoiceGuide = vg === 'true';
@@ -87,6 +92,7 @@ export const useAppStore = create<AppState>((set, get) => ({
 
     set({
       isInitialized: true,
+      hasSeenSplash: ss === 'true',
       workMode: isWorkMode,
       hapticsEnabled: isHaptics,
       voiceGuide: isVoiceGuide,
@@ -95,6 +101,11 @@ export const useAppStore = create<AppState>((set, get) => ({
       latestScreening: latest,
       recentCheckIns: checks,
     });
+  },
+
+  markSplashSeen: async () => {
+    await setSetting('has_seen_splash', 'true');
+    set({ hasSeenSplash: true });
   },
 
   toggleWorkMode: async () => {

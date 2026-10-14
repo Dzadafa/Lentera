@@ -17,16 +17,38 @@ import { StoryWallScreen } from './screens/StoryWallScreen';
 import { PeerSupportScreen } from './screens/PeerSupportScreen';
 import { TrendScreen } from './screens/TrendScreen';
 import { StealthScreen } from './screens/StealthScreen';
+import { WelcomeSplashScreen } from './screens/WelcomeSplashScreen';
 import { EmergencyInterceptor } from './components/EmergencyInterceptor';
 
+import { useFonts } from 'expo-font';
+
 export default function App() {
+  const [fontsLoaded, fontError] = useFonts({
+    'Montserrat-Regular': require('../assets/fonts/Montserrat_400Regular.ttf'),
+    'Montserrat-Medium': require('../assets/fonts/Montserrat_500Medium.ttf'),
+    'Montserrat-SemiBold': require('../assets/fonts/Montserrat_600SemiBold.ttf'),
+    'Montserrat-Bold': require('../assets/fonts/Montserrat_700Bold.ttf'),
+  });
+
   const [currentRoute, setCurrentRoute] = useState<ScreenRoute>('home');
   const [previousRoute, setPreviousRoute] = useState<ScreenRoute>('home');
   const isInitialized = useAppStore((s) => s.isInitialized);
   const initialize = useAppStore((s) => s.initialize);
+  const markSplashSeen = useAppStore((s) => s.markSplashSeen);
 
   useEffect(() => {
-    initialize();
+    if (fontError) {
+      console.warn('Gagal memuat font Plus Jakarta Sans:', fontError);
+    }
+  }, [fontError]);
+
+  useEffect(() => {
+    initialize().then(() => {
+      const seen = useAppStore.getState().hasSeenSplash;
+      if (!seen) {
+        setCurrentRoute('splash');
+      }
+    });
   }, [initialize]);
 
   const handleNavigate = (route: ScreenRoute) => {
@@ -42,7 +64,7 @@ export default function App() {
     setCurrentRoute(previousRoute === 'stealth' ? 'home' : previousRoute);
   };
 
-  if (!isInitialized) {
+  if (!isInitialized || (!fontsLoaded && !fontError)) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color={colors.primary} />
@@ -58,6 +80,15 @@ export default function App() {
           backgroundColor={currentRoute === 'stealth' ? '#FFFFFF' : colors.background}
         />
         <View style={styles.container}>
+          {currentRoute === 'splash' && (
+            <WelcomeSplashScreen
+              onComplete={async () => {
+                await markSplashSeen();
+                setCurrentRoute('home');
+              }}
+            />
+          )}
+
           {currentRoute === 'home' && (
             <HomeScreen onNavigate={handleNavigate} onQuickClose={handleQuickClose} />
           )}
@@ -146,6 +177,7 @@ export default function App() {
             <SettingsScreen
               onBack={() => setCurrentRoute('home')}
               onQuickClose={handleQuickClose}
+              onOpenSplash={() => setCurrentRoute('splash')}
             />
           )}
 

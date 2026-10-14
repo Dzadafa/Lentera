@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { colors, typography, radius, spacing } from '../theme';
 import { ChevronLeftIcon, DocumentIcon, SparkleIcon } from '../components/Icons';
@@ -38,19 +39,19 @@ const TIER_STYLES: Record<
     bg: colors.tierLowContainer,
     fg: colors.onTierLowContainer,
     label: 'Kondisi Rendah',
-    framing: 'Skor kamu rendah — dan itu kabar baik. Yuk jaga supaya tetap di sini.',
+    framing: 'Skor kamu rendah — bukan berarti kamu harus mempertahankannya sendirian.',
   },
   moderate: {
     bg: colors.tierModerateContainer,
     fg: colors.onTierModerateContainer,
     label: 'Kondisi Sedang',
-    framing: 'Skor kamu sedang. Belum terlambat, dan ini saat yang tepat untuk bertindak.',
+    framing: 'Skor kamu sedang. Kondisi ini bisa membaik dengan langkah kecil yang konsisten.',
   },
   high: {
     bg: colors.tierHighContainer,
     fg: colors.onTierHighContainer,
     label: 'Kondisi Tinggi',
-    framing: 'Skor kamu tinggi. Kamu tidak sendirian — ada langkah konkret yang bisa diambil hari ini.',
+    framing: 'Skor kamu tinggi. Ada langkah konkret yang bisa diambil hari ini — dan kamu tidak harus menghadapinya sendiri.',
   },
 };
 
@@ -91,8 +92,11 @@ export const ResultScreen: React.FC<Props> = ({
         <View style={styles.emptyState}>
           <Text style={styles.emptyTitle}>Belum ada hasil skrining</Text>
           <Text style={styles.emptyBody}>
-            Selesaikan 21 pertanyaan skrining awal untuk melihat ringkasan kondisi kamu di sini.
+            Selesaikan 21 pertanyaan skrining untuk melihat ringkasan kondisi kamu di sini.
           </Text>
+          <TouchableOpacity style={styles.emptyCtaBtn} onPress={onBack} activeOpacity={0.88}>
+            <Text style={styles.emptyCtaText}>Mulai skrining sekarang</Text>
+          </TouchableOpacity>
         </View>
       </View>
     );
@@ -105,7 +109,11 @@ export const ResultScreen: React.FC<Props> = ({
     try {
       await generateAndSharePdfSummary(result);
     } catch {
-      // silent
+      Alert.alert(
+        'Surat tidak bisa dibuat',
+        'PDF gagal dibuat karena penyimpanan perangkat mungkin penuh, atau ada izin yang belum diberikan. Coba periksa ruang penyimpanan dan ulangi.',
+        [{ text: 'Tutup' }]
+      );
     } finally {
       setIsExporting(false);
     }
@@ -423,5 +431,14 @@ const styles = StyleSheet.create({
   psychoBody: { ...typography.bodySm, color: colors.onSurfaceVariant, marginTop: 2 },
   emptyState: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: spacing.xl },
   emptyTitle: { ...typography.headlineMd, color: colors.primary, marginBottom: spacing.xs },
-  emptyBody: { ...typography.bodyMd, color: colors.onSurfaceVariant, textAlign: 'center' },
+  emptyBody: { ...typography.bodyMd, color: colors.onSurfaceVariant, textAlign: 'center', marginBottom: spacing.lg },
+  emptyCtaBtn: {
+    backgroundColor: colors.primary,
+    height: 48,
+    borderRadius: radius.full,
+    paddingHorizontal: spacing.xl,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyCtaText: { ...typography.labelLg, color: colors.onPrimary },
 });

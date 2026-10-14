@@ -145,8 +145,10 @@ export const QuizScreen: React.FC<Props> = ({ onBack, onComplete, onQuickClose }
           disabled={selected === undefined}
           onPress={handleNext}
           activeOpacity={0.88}
+          accessibilityLabel={isLast ? 'Tampilkan hasil skrining' : 'Lanjut ke pertanyaan berikutnya'}
+          accessibilityHint={selected === undefined ? 'Pilih satu jawaban di atas untuk melanjutkan' : undefined}
         >
-          <Text style={styles.nextBtnText}>{isLast ? 'Lihat Hasil' : 'Lanjut'}</Text>
+          <Text style={styles.nextBtnText}>{isLast ? 'Tampilkan hasil' : 'Lanjut'}</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -209,7 +211,7 @@ const styles = StyleSheet.create({
   },
   optionSelected: { backgroundColor: colors.primary, borderColor: colors.primary },
   optionText: { ...typography.bodyLg, color: colors.onSurface },
-  optionTextSelected: { color: colors.onPrimary, fontWeight: '600' },
+  optionTextSelected: { color: colors.onPrimary, fontFamily: 'Montserrat-SemiBold' },
   optionCheck: {
     width: 22,
     height: 22,

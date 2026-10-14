@@ -1,4 +1,5 @@
 export type ScreenRoute =
+  | 'splash'
   | 'home'
   | 'calm'
   | 'quiz'

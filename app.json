@@ -1,13 +1,14 @@
 {
   "expo": {
-    "name": "TautJiwa",
+    "name": "LENTERA",
     "slug": "tautjiwa",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/lentera-icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "backgroundColor": "#F7F9F8",
+      "image": "./assets/lentera-icon.png",
+      "backgroundColor": "#FFFFFF",
       "resizeMode": "contain"
     },
     "ios": {
@@ -17,10 +18,8 @@
     "android": {
       "package": "com.danipinion.tautjiwa",
       "adaptiveIcon": {
-        "backgroundColor": "#F7F9F8",
-        "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
+        "backgroundColor": "#FFFFFF",
+        "foregroundImage": "./assets/lentera-icon.png"
       },
       "permissions": [
         "android.permission.VIBRATE",
@@ -35,8 +34,8 @@
       [
         "expo-speech-recognition",
         {
-          "microphonePermission": "TautJiwa memakai mikrofon hanya saat kamu menekan tombol suara di latihan grounding. Tidak ada rekaman yang disimpan atau dikirim.",
-          "speechRecognitionPermission": "TautJiwa mengubah ucapanmu menjadi teks di perangkat ini saja, supaya latihan grounding bisa dilakukan tanpa mengetik.",
+          "microphonePermission": "LENTERA memakai mikrofon hanya saat kamu menekan tombol suara di latihan grounding. Tidak ada rekaman yang disimpan atau dikirim.",
+          "speechRecognitionPermission": "LENTERA mengubah ucapanmu menjadi teks di perangkat ini saja, supaya latihan grounding bisa dilakukan tanpa mengetik.",
           "androidSpeechServicePackages": [
             "com.google.android.googlequicksearchbox",
             "com.google.android.as",
