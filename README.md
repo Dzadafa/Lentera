@@ -58,10 +58,12 @@ Aplikasi ini menutup seluruh blok pada `Fitur.md` secara 100 persen on-device.
 - Suara latar luring: hujan, ombak, derau coklat.
 
 **Skrining dan hasil**
-- Kuis DASS-21 dua puluh satu butir dengan gerbang cek krisis wajib.
+> Bagian ini hanya gambaran sekilas, untuk detail pengetesan cek di [docs/mental-screening-guidenance.md](./docs/mental-screening-guidenance.md)
+- Skrining bertingkat: K-10 sepuluh butir cepat, membuka PHQ-9 dan GAD-7 jika terindikasi distres tinggi (skor ≥ 25).
+- Intersepsi krisis seketika pada butir ke-9 PHQ-9 dengan tombol darurat Hotline 119 ext 8.
 - Halaman hasil tiga tier dengan disiplin satu CTA utama.
 - Panduan faskes BPJS tiga langkah dan ekspor ringkasan gejala PDF.
-- Riwayat dan grafik tren skor tiga dimensi.
+- Riwayat dan grafik tren berkala multidimensi (distres global, depresi, kecemasan).
 
 **Pendukung mandiri**
 - Kotak P3K Emosi: lima kartu teknik (tubuh, pikiran, lingkungan).
