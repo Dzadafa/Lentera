@@ -119,7 +119,7 @@ export const HomeScreen: React.FC<Props> = ({ onNavigate, onQuickClose }) => {
               {workMode ? 'Isi catatan terstruktur' : 'Cek kondisi hatiku sekarang'}
             </Text>
             <Text style={styles.doorSecondarySub}>
-              21 pertanyaan singkat • sekitar 3 menit • hasil langsung
+              {workMode ? 'K-10 sepuluh butir cepat' : 'Skrining K-10 (10 butir) • Bertingkat jika terindikasi'}
             </Text>
           </View>
         </View>

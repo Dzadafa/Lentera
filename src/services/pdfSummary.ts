@@ -112,12 +112,12 @@ export async function generateAndSharePdfSummary(result: ScreeningResult): Promi
 <body>
   <div class="header">
     <h1 class="title">LENTERA — Ringkasan Skrining Awal Mandiri</h1>
-    <div class="subtitle">Instrumen DASS-21 (21 Butir) • Dicetak: ${dateStr}</div>
+    <div class="subtitle">${result.tiered ? 'Instrumen Bertingkat (K-10, PHQ-9, GAD-7)' : 'Instrumen Skrining Awal'} • Dicetak: ${dateStr}</div>
   </div>
 
   <div class="disclaimer">
     <strong>CATATAN UNTUK TENAGA KESEHATAN / DOKTER:</strong><br>
-    Lembar ini berisi hasil skrining mandiri menggunakan instrumen DASS-21 yang diisi oleh pasien secara anonim di perangkat pribadinya. Dokumen ini <strong>bukan merupakan diagnosis medis</strong>, melainkan rangkuman keluhan subjektif 7 hari terakhir untuk mempermudah anamnesis awal di faskes tingkat pertama atau rujukan.
+    Lembar ini berisi hasil skrining mandiri yang diisi oleh pasien secara mandiri dan anonim di perangkat pribadinya menggunakan instrumen baku (K-10, PHQ-9, GAD-7). Dokumen ini <strong>bukan merupakan diagnosis medis definitif</strong>, melainkan rangkuman keluhan subjektif untuk mempermudah anamnesis awal di faskes tingkat pertama atau faskes rujukan BPJS.
   </div>
 
   <div class="card">
@@ -127,7 +127,32 @@ export async function generateAndSharePdfSummary(result: ScreeningResult): Promi
   </div>
 
   <div class="card">
-    <div class="card-title">Skor 3 Dimensi DASS-21</div>
+    <div class="card-title">${result.tiered ? 'Rincian Skor Skrining Bertingkat' : 'Skor Dimensi Skrining'}</div>
+    ${
+      result.tiered
+        ? `
+    <div class="score-row">
+      <span>Distres Global (K-10)</span>
+      <span class="score-val">${result.tiered.k10Score} / 50 (${result.tiered.k10Score >= 25 ? 'Distres Tinggi' : 'Distres Rendah/Sedang'})</span>
+    </div>
+    ${
+      result.tiered.openedDeepScreening
+        ? `
+    <div class="score-row">
+      <span>Depresi (PHQ-9)</span>
+      <span class="score-val">${result.tiered.phq9Score ?? result.depression.score} / 27 (${formatSeverityLabel(result.depression.severity)})</span>
+    </div>
+    <div class="score-row">
+      <span>Kecemasan (GAD-7)</span>
+      <span class="score-val">${result.tiered.gad7Score ?? result.anxiety.score} / 21 (${formatSeverityLabel(result.anxiety.severity)})</span>
+    </div>
+    `
+        : `
+    <div style="font-size: 11px; color: #6E6E7A; padding-top: 6px;">Skor K-10 di bawah ambang 25; skrining lanjutan PHQ-9/GAD-7 tidak diindikasikan.</div>
+    `
+    }
+    `
+        : `
     <div class="score-row">
       <span>Depresi</span>
       <span class="score-val">${result.depression.score} / 42 (${formatSeverityLabel(result.depression.severity)})</span>
@@ -140,6 +165,8 @@ export async function generateAndSharePdfSummary(result: ScreeningResult): Promi
       <span>Stres</span>
       <span class="score-val">${result.stress.score} / 42 (${formatSeverityLabel(result.stress.severity)})</span>
     </div>
+    `
+    }
   </div>
 
   <div class="card">

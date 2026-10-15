@@ -10,7 +10,7 @@ import {
   setSetting,
   recordCrisisEvent,
 } from '../db';
-import { calculateDass21 } from '../services/scoring';
+import { calculateDass21, calculateTieredScreening } from '../services/scoring';
 import { haptics } from '../services/haptics';
 import { speech } from '../services/speech';
 import { ambient } from '../services/ambientAudio';
@@ -50,6 +50,12 @@ interface AppState {
   answerQuestion: (itemId: number, value: 0 | 1 | 2 | 3) => void;
   resetQuiz: () => void;
   submitQuiz: (crisisAnsweredYes?: boolean) => Promise<ScreeningResult>;
+  submitTieredQuiz: (
+    k10Answers: Record<string, number>,
+    phq9Answers?: Record<string, number>,
+    gad7Answers?: Record<string, number>,
+    crisisAnsweredYes?: boolean
+  ) => Promise<ScreeningResult>;
 
   // CheckIn actions
   saveTodayCheckIn: (mood: number, energy: number, note?: string) => Promise<void>;
@@ -161,6 +167,18 @@ export const useAppStore = create<AppState>((set, get) => ({
       value: v,
     }));
     const result = calculateDass21(answersList, crisisAnsweredYes);
+    await insertScreening(result);
+    set({ latestScreening: result, answers: {}, currentQuestionIndex: 0 });
+    return result;
+  },
+
+  submitTieredQuiz: async (
+    k10Answers: Record<string, number>,
+    phq9Answers: Record<string, number> = {},
+    gad7Answers: Record<string, number> = {},
+    crisisAnsweredYes = false
+  ) => {
+    const result = calculateTieredScreening(k10Answers, phq9Answers, gad7Answers, crisisAnsweredYes);
     await insertScreening(result);
     set({ latestScreening: result, answers: {}, currentQuestionIndex: 0 });
     return result;

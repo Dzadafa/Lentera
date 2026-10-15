@@ -145,14 +145,67 @@ export const ResultScreen: React.FC<Props> = ({
 
         <ScreeningDisclaimer />
 
-        <View style={styles.scoresCard}>
-          <Text style={styles.scoresTitle}>Skor Tiga Dimensi (DASS-21)</Text>
-          <DimensionRow title="Depresi" data={result.depression} />
-          <View style={styles.divider} />
-          <DimensionRow title="Kecemasan" data={result.anxiety} />
-          <View style={styles.divider} />
-          <DimensionRow title="Stres" data={result.stress} />
-        </View>
+        {result.tiered ? (
+          <View style={styles.scoresCard}>
+            <View style={styles.tieredHeaderRow}>
+              <Text style={styles.scoresTitle}>Skrining Bertingkat</Text>
+              <View style={styles.k10Badge}>
+                <Text style={styles.k10BadgeText}>
+                  K-10: {result.tiered.k10Score}/50
+                </Text>
+              </View>
+            </View>
+
+            <View style={styles.k10SummaryBox}>
+              <Text style={styles.k10SummaryTitle}>K-10 (Distres Psikologis Global)</Text>
+              <Text style={styles.k10SummaryDesc}>
+                Skor {result.tiered.k10Score} dari 50 •{' '}
+                {result.tiered.k10Score >= 25
+                  ? 'Terindikasi distres tinggi (≥ 25)'
+                  : 'Distres dalam batas ringan/normal'}
+              </Text>
+            </View>
+
+            {result.tiered.openedDeepScreening ? (
+              <View style={{ marginTop: spacing.sm }}>
+                <Text style={styles.subScoresTitle}>
+                  Hasil Skrining Spesifik Lanjutan
+                </Text>
+                <View style={styles.dimensionRow}>
+                  <Text style={styles.dimensionTitle}>Depresi (PHQ-9)</Text>
+                  <View style={styles.dimensionRight}>
+                    <Text style={styles.dimensionScore}>{result.tiered.phq9Score ?? result.depression.score}/27</Text>
+                    <Text style={styles.dimensionSeverity}>{formatSeverityLabel(result.depression.severity)}</Text>
+                  </View>
+                </View>
+                <View style={styles.divider} />
+                <View style={styles.dimensionRow}>
+                  <Text style={styles.dimensionTitle}>Kecemasan (GAD-7)</Text>
+                  <View style={styles.dimensionRight}>
+                    <Text style={styles.dimensionScore}>{result.tiered.gad7Score ?? result.anxiety.score}/21</Text>
+                    <Text style={styles.dimensionSeverity}>{formatSeverityLabel(result.anxiety.severity)}</Text>
+                  </View>
+                </View>
+              </View>
+            ) : (
+              <View style={styles.k10SafeNotice}>
+                <SparkleIcon size={16} color={colors.primary} />
+                <Text style={styles.k10SafeNoticeText}>
+                  Skor K-10 di bawah ambang batas distres tinggi (25). Skrining lanjutan tidak diperlukan.
+                </Text>
+              </View>
+            )}
+          </View>
+        ) : (
+          <View style={styles.scoresCard}>
+            <Text style={styles.scoresTitle}>Skor Tiga Dimensi</Text>
+            <DimensionRow title="Depresi" data={result.depression} />
+            <View style={styles.divider} />
+            <DimensionRow title="Kecemasan" data={result.anxiety} />
+            <View style={styles.divider} />
+            <DimensionRow title="Stres" data={result.stress} />
+          </View>
+        )}
 
         {/* CTA utama — tepat satu, sesuai tier */}
         {result.tier === 'low' && (
@@ -342,6 +395,57 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.outlineVariant,
     marginVertical: spacing.sm,
+  },
+  tieredHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: spacing.xs,
+  },
+  k10Badge: {
+    backgroundColor: colors.primaryContainer,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 3,
+    borderRadius: radius.chip,
+  },
+  k10BadgeText: {
+    ...typography.labelSm,
+    color: colors.primary,
+  },
+  k10SummaryBox: {
+    backgroundColor: colors.surfaceContainer,
+    padding: spacing.sm + 2,
+    borderRadius: radius.md,
+    marginVertical: spacing.xs,
+  },
+  k10SummaryTitle: {
+    ...typography.labelMd,
+    color: colors.onSurface,
+  },
+  k10SummaryDesc: {
+    ...typography.bodySm,
+    color: colors.onSurfaceVariant,
+    marginTop: 2,
+  },
+  subScoresTitle: {
+    ...typography.labelMd,
+    color: colors.primary,
+    marginTop: spacing.xs,
+    marginBottom: spacing.xs,
+  },
+  k10SafeNotice: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    backgroundColor: colors.primaryContainer,
+    padding: spacing.sm + 2,
+    borderRadius: radius.md,
+    marginTop: spacing.sm,
+  },
+  k10SafeNoticeText: {
+    ...typography.bodySm,
+    color: colors.onPrimaryContainer,
+    flex: 1,
   },
   scoresTitle: { ...typography.labelLg, color: colors.primary, marginBottom: spacing.sm },
   dimensionRow: {

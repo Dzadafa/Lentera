@@ -16,11 +16,36 @@ export interface Dass21Answer {
   value: 0 | 1 | 2 | 3;
 }
 
+export type ScreeningInstrument = 'k10' | 'phq9' | 'gad7';
+
+export interface ScreeningQuestionItem {
+  id: string;
+  instrument: ScreeningInstrument;
+  order: number;
+  text: string;
+  crisisFlag?: boolean;
+}
+
+export interface ScreeningAnswerScale {
+  value: number;
+  label: string;
+}
+
 export interface DimensionScore {
   raw: number;
-  /** Skor DASS-21 final = raw x 2 */
+  /** Skor final */
   score: number;
   severity: 'normal' | 'mild' | 'moderate' | 'severe' | 'extremely_severe';
+}
+
+export interface TieredScreeningResult {
+  k10Score: number;
+  k10Severity: 'low' | 'moderate' | 'high' | 'very_high';
+  openedDeepScreening: boolean;
+  phq9Score?: number;
+  phq9Severity?: 'normal' | 'mild' | 'moderate' | 'severe' | 'extremely_severe';
+  gad7Score?: number;
+  gad7Severity?: 'normal' | 'mild' | 'moderate' | 'severe';
 }
 
 export interface ScreeningResult {
@@ -31,7 +56,8 @@ export interface ScreeningResult {
   stress: DimensionScore;
   tier: Tier;
   crisisFlag: boolean;
-  answers: Dass21Answer[];
+  answers: Dass21Answer[] | { id: string; value: number }[];
+  tiered?: TieredScreeningResult;
 }
 
 export interface CrisisEvent {

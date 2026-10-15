@@ -33,12 +33,19 @@ export async function initDatabase(): Promise<void> {
 
 export async function insertScreening(res: ScreeningResult): Promise<void> {
   const db = await getDb();
+  // Ensure tiered_json column exists if migrated
+  try {
+    await db.execAsync('ALTER TABLE screening_records ADD COLUMN tiered_json TEXT;');
+  } catch {
+    // Column already exists
+  }
+
   await db.runAsync(
     `INSERT INTO screening_records (
       id, created_at, depression_score, depression_severity,
       anxiety_score, anxiety_severity, stress_score, stress_severity,
-      tier, crisis_flag, answers_json
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+      tier, crisis_flag, answers_json, tiered_json
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
     [
       res.id,
       res.createdAt,
@@ -51,6 +58,7 @@ export async function insertScreening(res: ScreeningResult): Promise<void> {
       res.tier,
       res.crisisFlag ? 1 : 0,
       JSON.stringify(res.answers),
+      res.tiered ? JSON.stringify(res.tiered) : null,
     ]
   );
 }
@@ -61,6 +69,15 @@ export async function getLatestScreening(): Promise<ScreeningResult | null> {
     'SELECT * FROM screening_records ORDER BY created_at DESC LIMIT 1;'
   );
   if (!row) return null;
+  let tieredData = undefined;
+  if (row.tiered_json) {
+    try {
+      tieredData = JSON.parse(row.tiered_json);
+    } catch {
+      // ignore
+    }
+  }
+
   return {
     id: row.id,
     createdAt: row.created_at,
@@ -82,6 +99,7 @@ export async function getLatestScreening(): Promise<ScreeningResult | null> {
     tier: row.tier,
     crisisFlag: Boolean(row.crisis_flag),
     answers: JSON.parse(row.answers_json || '[]'),
+    tiered: tieredData,
   };
 }
 
