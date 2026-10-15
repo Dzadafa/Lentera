@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,8 @@ import {
   Dimensions,
   NativeSyntheticEvent,
   NativeScrollEvent,
+  Animated,
+  Easing,
 } from 'react-native';
 import { colors, typography, radius, spacing, shadows } from '../theme';
 import { haptics } from '../services/haptics';
@@ -18,6 +20,7 @@ import {
   DocumentIcon,
   ShieldLockIcon,
   ChevronRightIcon,
+  SparkleIcon,
 } from '../components/Icons';
 
 interface Props {
@@ -32,7 +35,7 @@ interface SlideItem {
   title: string;
   subtitle: string;
   description: string;
-  highlights: { title: string; desc: string }[];
+  highlights: { title: string; desc: string; emoji: string }[];
   iconType: 'logo' | 'quiz' | 'calm' | 'bpjs';
 }
 
@@ -50,10 +53,12 @@ const SLIDES: SlideItem[] = [
       'LENTERA adalah jembatan pertama untuk memahami kondisi pikiranmu secara mandiri, tanpa login, tanpa akun, dan tanpa data yang dikirim ke internet.',
     highlights: [
       {
+        emoji: '🔒',
         title: 'Zero-Cloud Privacy',
         desc: 'Seluruh jawaban tersimpan di database ponselmu saja.',
       },
       {
+        emoji: '🌱',
         title: 'Bebas Hambatan & Stigma',
         desc: 'Buka dan gunakan kapan pun saat kamu merasa berat.',
       },
@@ -71,12 +76,14 @@ const SLIDES: SlideItem[] = [
       'Kami menggunakan alur skrining bertingkat yang efisien agar kamu tidak harus menjawab puluhan pertanyaan sekaligus.',
     highlights: [
       {
+        emoji: '⚡',
         title: 'K-10 Cepat (10 Butir)',
         desc: 'Cukup 10 butir awal untuk mengukur distres psikologis global.',
       },
       {
-        title: 'PHQ-9 & GAD-7 Otomatis',
-        desc: 'Terbuka hanya jika terindikasi distres tinggi (skor ≥ 25) untuk memetakan depresi & kecemasan.',
+        emoji: '🎯',
+        title: 'PHQ-9 & GAD-7 Terarah',
+        desc: 'Terbuka otomatis jika terindikasi distres tinggi (skor ≥ 25) untuk memetakan depresi & kecemasan.',
       },
     ],
     iconType: 'quiz',
@@ -92,10 +99,12 @@ const SLIDES: SlideItem[] = [
       'Sedang panik, cemas memuncak, atau sesak? Masuk langsung ke Ruang Tenang tanpa perlu menjawab kuis apa pun terlebih dahulu.',
     highlights: [
       {
-        title: 'Latihan Napas & Grounding 5-4-3-2-1',
-        desc: 'Menurunkan detak jantung dan menstabilkan sistem saraf.',
+        emoji: '🌬️',
+        title: 'Napas & Grounding 5-4-3-2-1',
+        desc: 'Menurunkan denyut jantung dan menstabilkan sistem saraf.',
       },
       {
+        emoji: '✨',
         title: 'Pelepas Beban Pikiran',
         desc: 'Tulis kekhawatiranmu dan bakar secara simbolis di layar.',
       },
@@ -113,10 +122,12 @@ const SLIDES: SlideItem[] = [
       'Bingung bagaimana bicara ke petugas loket atau dokter umum? LENTERA menyediakan panduan 3 langkah berobat dengan BPJS.',
     highlights: [
       {
+        emoji: '📋',
         title: 'Kalimat Siap Pakai di Loket',
         desc: 'Cukup baca atau tunjukkan kalimat yang sudah disiapkan.',
       },
       {
+        emoji: '📄',
         title: 'Cetak Lembar Gejala (PDF)',
         desc: 'Rangkuman keluhan siap cetak untuk dokter umum tanpa perlu bingung merangkai kata.',
       },
@@ -128,6 +139,46 @@ const SLIDES: SlideItem[] = [
 export const WelcomeSplashScreen: React.FC<Props> = ({ onComplete }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const flatListRef = useRef<FlatList>(null);
+
+  // Animasi halus floating badge & bounce
+  const floatAnim = useRef(new Animated.Value(0)).current;
+  const pulseAnim = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(floatAnim, {
+          toValue: -6,
+          duration: 1800,
+          easing: Easing.inOut(Easing.sin),
+          useNativeDriver: true,
+        }),
+        Animated.timing(floatAnim, {
+          toValue: 0,
+          duration: 1800,
+          easing: Easing.inOut(Easing.sin),
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnim, {
+          toValue: 1.05,
+          duration: 1400,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulseAnim, {
+          toValue: 1,
+          duration: 1400,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  }, [floatAnim, pulseAnim]);
 
   const handleFinish = () => {
     void haptics.tap();
@@ -158,31 +209,31 @@ export const WelcomeSplashScreen: React.FC<Props> = ({ onComplete }) => {
     switch (type) {
       case 'logo':
         return (
-          <View style={styles.logoWrap}>
+          <Animated.View style={[styles.logoWrap, { transform: [{ translateY: floatAnim }] }]}>
             <Image
               source={require('../../assets/lentera-icon.png')}
               style={styles.logoImage}
               resizeMode="contain"
             />
-          </View>
+          </Animated.View>
         );
       case 'quiz':
         return (
-          <View style={[styles.iconWrap, { backgroundColor: colors.tertiaryContainer, borderColor: colors.tertiary }]}>
+          <Animated.View style={[styles.iconWrap, { backgroundColor: colors.tertiaryContainer, borderColor: colors.tertiary, transform: [{ scale: pulseAnim }] }]}>
             <HeartPulseIcon size={38} color="#9C6B00" />
-          </View>
+          </Animated.View>
         );
       case 'calm':
         return (
-          <View style={[styles.iconWrap, { backgroundColor: colors.secondaryContainer, borderColor: colors.secondary }]}>
+          <Animated.View style={[styles.iconWrap, { backgroundColor: colors.secondaryContainer, borderColor: colors.secondary, transform: [{ translateY: floatAnim }] }]}>
             <WindIcon size={38} color={colors.primary} />
-          </View>
+          </Animated.View>
         );
       case 'bpjs':
         return (
-          <View style={[styles.iconWrap, { backgroundColor: colors.primaryContainer, borderColor: colors.primary }]}>
+          <Animated.View style={[styles.iconWrap, { backgroundColor: colors.primaryContainer, borderColor: colors.primary, transform: [{ translateY: floatAnim }] }]}>
             <DocumentIcon size={36} color={colors.primary} />
-          </View>
+          </Animated.View>
         );
     }
   };
@@ -241,9 +292,11 @@ export const WelcomeSplashScreen: React.FC<Props> = ({ onComplete }) => {
 
               {/* Box Rincian / Kelebihan Interaktif */}
               <View style={styles.highlightsContainer}>
-                {item.highlights.map((h: { title: string; desc: string }, i: number) => (
+                {item.highlights.map((h: { title: string; desc: string; emoji: string }, i: number) => (
                   <View key={i} style={styles.highlightItem}>
-                    <View style={styles.highlightDot} />
+                    <View style={styles.highlightEmojiBubble}>
+                      <Text style={styles.highlightEmojiText}>{h.emoji}</Text>
+                    </View>
                     <View style={{ flex: 1 }}>
                       <Text style={styles.highlightTitle}>{h.title}</Text>
                       <Text style={styles.highlightDesc}>{h.desc}</Text>
@@ -410,21 +463,27 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
     borderRadius: radius.md,
     padding: spacing.md,
-    gap: spacing.sm + 2,
+    gap: spacing.sm + 4,
     borderWidth: 1,
     borderColor: colors.outlineVariant,
   },
   highlightItem: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: spacing.sm,
+    alignItems: 'center',
+    gap: spacing.sm + 2,
   },
-  highlightDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: colors.tertiary,
-    marginTop: 7,
+  highlightEmojiBubble: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: colors.surface,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: colors.outlineVariant,
+  },
+  highlightEmojiText: {
+    fontSize: 16,
   },
   highlightTitle: {
     ...typography.labelMd,

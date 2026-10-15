@@ -8,7 +8,7 @@ import { addStoryLetter, deleteStoryLetter, getStoryLetters, type StoryLetter } 
 import { haptics } from '../services/haptics';
 
 interface Props {
-  onBack: () => void;
+  onBack?: () => void;
   onQuickClose: () => void;
 }
 
@@ -45,9 +45,13 @@ export const StoryWallScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
   return (
     <View style={styles.container}>
       <View style={styles.topBar}>
-        <TouchableOpacity onPress={onBack} style={styles.iconBtn} accessibilityLabel="Kembali">
-          <ChevronLeftIcon size={22} color={colors.primary} />
-        </TouchableOpacity>
+        {onBack ? (
+          <TouchableOpacity onPress={onBack} style={styles.iconBtn} accessibilityLabel="Kembali">
+            <ChevronLeftIcon size={22} color={colors.primary} />
+          </TouchableOpacity>
+        ) : (
+          <View style={{ width: 40 }} />
+        )}
         <Text style={styles.topTitle}>Dinding Cerita</Text>
         <QuickCloseButton onPress={onQuickClose} label="" />
       </View>
@@ -209,23 +213,24 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: spacing.marginMobile,
-    paddingTop: spacing.md,
+    paddingTop: spacing.xs,
+    paddingBottom: spacing.xs,
   },
   iconBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 38,
+    height: 38,
+    borderRadius: 19,
     backgroundColor: colors.surface,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
     borderColor: colors.outlineVariant,
   },
-  topTitle: { ...typography.headlineMd, color: colors.primary },
+  topTitle: { ...typography.headlineMd, color: colors.primary, fontSize: 18 },
   content: {
     paddingHorizontal: spacing.marginMobile,
-    paddingTop: spacing.md,
-    paddingBottom: spacing.xxl,
+    paddingTop: spacing.xs,
+    paddingBottom: 96,
   },
   intro: { ...typography.bodyMd, color: colors.onSurfaceVariant, marginBottom: spacing.md },
   filterRow: { flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.md },

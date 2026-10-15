@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { CheckIn, Dass21Answer, ScreeningResult } from '../types/domain';
+import type { CheckIn, ScreeningResult } from '../types/domain';
 import {
   initDatabase,
   getLatestScreening,
@@ -10,7 +10,7 @@ import {
   setSetting,
   recordCrisisEvent,
 } from '../db';
-import { calculateDass21, calculateTieredScreening } from '../services/scoring';
+import { calculateTieredScreening } from '../services/scoring';
 import { haptics } from '../services/haptics';
 import { speech } from '../services/speech';
 import { ambient } from '../services/ambientAudio';
@@ -30,7 +30,7 @@ interface AppState {
 
   // Quiz state
   currentQuestionIndex: number;
-  answers: Record<number, 0 | 1 | 2 | 3>;
+  answers: Record<string, number>;
 
   hasSeenSplash: boolean;
 
@@ -47,9 +47,8 @@ interface AppState {
   recordCrisisDial: () => Promise<void>;
 
   // Quiz actions
-  answerQuestion: (itemId: number, value: 0 | 1 | 2 | 3) => void;
+  answerQuestion: (itemId: string, value: number) => void;
   resetQuiz: () => void;
-  submitQuiz: (crisisAnsweredYes?: boolean) => Promise<ScreeningResult>;
   submitTieredQuiz: (
     k10Answers: Record<string, number>,
     phq9Answers?: Record<string, number>,
@@ -94,7 +93,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     ambient.setEnabled(isAmbient);
 
     const latest = await getLatestScreening();
-    const checks = await getCheckIns(7);
+    const checks = await getCheckIns(365);
 
     set({
       isInitialized: true,
@@ -161,17 +160,6 @@ export const useAppStore = create<AppState>((set, get) => ({
     set({ currentQuestionIndex: 0, answers: {} });
   },
 
-  submitQuiz: async (crisisAnsweredYes = false) => {
-    const answersList: Dass21Answer[] = Object.entries(get().answers).map(([k, v]) => ({
-      itemId: Number(k),
-      value: v,
-    }));
-    const result = calculateDass21(answersList, crisisAnsweredYes);
-    await insertScreening(result);
-    set({ latestScreening: result, answers: {}, currentQuestionIndex: 0 });
-    return result;
-  },
-
   submitTieredQuiz: async (
     k10Answers: Record<string, number>,
     phq9Answers: Record<string, number> = {},
@@ -214,7 +202,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   saveTodayCheckIn: async (mood, energy, note = '') => {
     const today = new Date().toISOString().split('T')[0];
     await upsertDailyCheckIn({ date: today, mood, energy, note });
-    const checks = await getCheckIns(7);
+    const checks = await getCheckIns(365);
     set({ recentCheckIns: checks });
     haptics.success();
   },

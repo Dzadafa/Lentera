@@ -1,7 +1,7 @@
-import React from 'react';
-import { TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { colors, typography, radius, spacing } from '../theme';
-import { EyeOffIcon } from './Icons';
+import React from "react";
+import { TouchableOpacity, Text, StyleSheet } from "react-native";
+import { colors, typography, radius, spacing } from "../theme";
+import { EyeOffIcon } from "./Icons";
 
 interface Props {
   onPress: () => void;
@@ -12,7 +12,10 @@ interface Props {
  * Tombol Tutup Cepat (Panic/Stealth Trigger).
  * Menyamarkan atau mengalihkan tampilan seketika ke layar netral demi privasi.
  */
-export const QuickCloseButton: React.FC<Props> = ({ onPress, label = 'Tutup Cepat' }) => {
+export const QuickCloseButton: React.FC<Props> = ({
+  onPress,
+  label = "Tutup Cepat",
+}) => {
   return (
     <TouchableOpacity
       accessibilityRole="button"
@@ -22,15 +25,15 @@ export const QuickCloseButton: React.FC<Props> = ({ onPress, label = 'Tutup Cepa
       onPress={onPress}
     >
       <EyeOffIcon size={14} color={colors.onSurfaceVariant} />
-      <Text style={styles.label}>{label}</Text>
+      {label && <Text style={styles.label}>{label}</Text>}
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   btn: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 4,
     backgroundColor: colors.surfaceContainer,
     paddingHorizontal: spacing.sm + 2,

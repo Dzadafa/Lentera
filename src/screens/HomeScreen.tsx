@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   View,
   Text,
@@ -6,8 +6,8 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
-} from 'react-native';
-import { colors, typography, radius, spacing } from '../theme';
+} from "react-native";
+import { colors, typography, radius, spacing } from "../theme";
 import {
   HeartPulseIcon,
   ShieldLockIcon,
@@ -16,9 +16,11 @@ import {
   SparkleIcon,
   HourglassIcon,
   ChatHeartIcon,
-} from '../components/Icons';
-import { useAppStore } from '../store/appStore';
-import type { ScreenRoute } from '../navigation/routes';
+  SettingsIcon,
+} from "../components/Icons";
+import { YearActivityGrid } from "../components/YearActivityGrid";
+import { useAppStore } from "../store/appStore";
+import type { ScreenRoute } from "../navigation/routes";
 
 interface Props {
   onNavigate: (route: ScreenRoute) => void;
@@ -28,6 +30,10 @@ interface Props {
 export const HomeScreen: React.FC<Props> = ({ onNavigate, onQuickClose }) => {
   const workMode = useAppStore((s) => s.workMode);
   const latest = useAppStore((s) => s.latestScreening);
+  const recentCheckIns = useAppStore((s) => s.recentCheckIns);
+
+  const todayStr = new Date().toISOString().split("T")[0];
+  const hasCheckedInToday = recentCheckIns.some((c) => c.date === todayStr);
 
   return (
     <ScrollView
@@ -42,43 +48,74 @@ export const HomeScreen: React.FC<Props> = ({ onNavigate, onQuickClose }) => {
               <HeartPulseIcon size={18} color={colors.onPrimary} />
             ) : (
               <Image
-                source={require('../../assets/lentera-icon.png')}
+                source={require("../../assets/lentera-icon.png")}
                 style={styles.brandLogoImg}
                 resizeMode="contain"
               />
             )}
           </View>
-          <Text style={styles.brandText}>{workMode ? 'Catatan Harian' : 'LENTERA'}</Text>
+          <Text style={styles.brandText}>
+            {workMode ? "Catatan Harian" : "LENTERA"}
+          </Text>
         </View>
-        <TouchableOpacity onPress={onQuickClose} style={styles.stealthBtn}>
-          <Text style={styles.stealthLabel}>Mode Aman</Text>
-        </TouchableOpacity>
+
+        <View style={styles.headerActions}>
+          <TouchableOpacity
+            onPress={() => onNavigate("settings")}
+            style={styles.settingsIconBtn}
+            accessibilityLabel="Buka Pengaturan"
+          >
+            <SettingsIcon size={18} color={colors.onSurfaceVariant} />
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={onQuickClose} style={styles.stealthBtn}>
+            <Text style={styles.stealthLabel}>Mode Aman</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
+      {/* Grid Aktivitas 365 Hari */}
+      {!workMode && <YearActivityGrid checkIns={recentCheckIns} />}
+
+      {/* Banner Cek-in Harian — muncul jika belum check-in hari ini */}
+      {!hasCheckedInToday && (
+        <TouchableOpacity
+          style={styles.checkinBanner}
+          onPress={() => onNavigate("checkin")}
+          activeOpacity={0.88}
+        >
+          <View style={styles.checkinBannerTextWrap}>
+            <Text style={styles.checkinBannerTitle}>
+              Belum mencatat energi hari ini?
+            </Text>
+            <Text style={styles.checkinBannerSub}>
+              Satu ketukan sudah cukup, data tetap lokal
+            </Text>
+          </View>
+          <View style={styles.checkinBadge}>
+            <Text style={styles.checkinBadgeText}>Catat</Text>
+          </View>
+        </TouchableOpacity>
+      )}
+
       <Text style={styles.headline}>
-        {workMode ? 'Catatan hari ini' : 'Kamu tidak perlu menjelaskan apa pun dulu.'}
+        {workMode
+          ? "Catatan hari ini"
+          : "Kamu tidak perlu menjelaskan apa pun dulu."}
       </Text>
       <Text style={styles.subheadline}>
         {workMode
-          ? 'Tulis apa pun yang ingin kamu catat hari ini.'
-          : 'Pilih satu langkah. Kamu bisa berhenti kapan pun.'}
+          ? "Tulis apa pun yang ingin kamu catat hari ini."
+          : "Pilih satu langkah. Kamu bisa berhenti kapan pun."}
       </Text>
 
       {/* Privasi — ditaruh di atas pintu, bukan sebagai footer. Ini yang meyakinkan pengguna skeptis. */}
-      {!workMode && (
-        <View style={styles.privacyRow}>
-          <ShieldLockIcon size={14} color={colors.onSurfaceVariant} />
-          <Text style={styles.privacyText}>
-            Semua jawaban tersimpan hanya di perangkat ini. Tidak ada server, tidak ada akun.
-          </Text>
-        </View>
-      )}
 
       {/* PINTU 1 — Pertolongan instan */}
       <TouchableOpacity
         style={styles.doorPrimary}
         activeOpacity={0.88}
-        onPress={() => onNavigate('calm')}
+        onPress={() => onNavigate("calm")}
         accessibilityRole="button"
         accessibilityLabel="Aku sedang tidak baik sekarang, buka ruang tenang"
       >
@@ -88,10 +125,12 @@ export const HomeScreen: React.FC<Props> = ({ onNavigate, onQuickClose }) => {
           </View>
           <View style={styles.doorTextGroup}>
             <Text style={styles.doorPrimaryTitle}>
-              {workMode ? 'Mulai sesi fokus' : 'Aku sedang tidak baik sekarang'}
+              {workMode ? "Mulai sesi fokus" : "Aku sedang tidak baik sekarang"}
             </Text>
             <Text style={styles.doorPrimarySub}>
-              {workMode ? 'Latihan pernapasan 1 menit' : 'Langsung dibantu bernapas. Tanpa satu pun pertanyaan.'}
+              {workMode
+                ? "Latihan pernapasan 1 menit"
+                : "Langsung dibantu bernapas. Tanpa satu pun pertanyaan."}
             </Text>
           </View>
         </View>
@@ -106,7 +145,7 @@ export const HomeScreen: React.FC<Props> = ({ onNavigate, onQuickClose }) => {
       <TouchableOpacity
         style={styles.doorSecondary}
         activeOpacity={0.88}
-        onPress={() => onNavigate('quiz')}
+        onPress={() => onNavigate("quiz")}
         accessibilityRole="button"
         accessibilityLabel="Cek kondisi hatimu sekarang"
       >
@@ -116,10 +155,14 @@ export const HomeScreen: React.FC<Props> = ({ onNavigate, onQuickClose }) => {
           </View>
           <View style={styles.doorTextGroup}>
             <Text style={styles.doorSecondaryTitle}>
-              {workMode ? 'Isi catatan terstruktur' : 'Cek kondisi hatiku sekarang'}
+              {workMode
+                ? "Isi catatan terstruktur"
+                : "Cek kondisi hatiku sekarang"}
             </Text>
             <Text style={styles.doorSecondarySub}>
-              {workMode ? 'K-10 sepuluh butir cepat' : 'Skrining K-10 (10 butir) • Bertingkat jika terindikasi'}
+              {workMode
+                ? "K-10 sepuluh butir cepat"
+                : "Skrining • Bertingkat jika terindikasi"}
             </Text>
           </View>
         </View>
@@ -128,27 +171,33 @@ export const HomeScreen: React.FC<Props> = ({ onNavigate, onQuickClose }) => {
       {latest && (
         <TouchableOpacity
           style={styles.lastResultCard}
-          onPress={() => onNavigate('result')}
+          onPress={() => onNavigate("result")}
           activeOpacity={0.85}
         >
           <Text style={styles.lastResultLabel}>HASIL TERAKHIR</Text>
           <Text style={styles.lastResultValue}>
-            {new Date(latest.createdAt).toLocaleDateString('id-ID', {
-              day: 'numeric',
-              month: 'long',
-              year: 'numeric',
+            {new Date(latest.createdAt).toLocaleDateString("id-ID", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
             })}
           </Text>
-          <Text style={styles.lastResultSub}>Ketuk untuk membuka kembali ringkasan kamu</Text>
+          <Text style={styles.lastResultSub}>
+            Ketuk untuk membuka kembali ringkasan kamu
+          </Text>
         </TouchableOpacity>
       )}
 
-      {/* Ruang pendukung — tetap satu ketukan per pintu, tanpa mengubah CTA utama */}
-      <Text style={styles.sectionLabel}>{workMode ? 'Ruang lain' : 'Ruang pendukung'}</Text>
+      {/* Ruang pendukung mandiri — tetap satu ketukan per pintu */}
+      <Text style={styles.sectionLabel}>
+        {workMode
+          ? "Latihan & Teknik Mandiri"
+          : "Kotak Alat & Pemulihan Mandiri"}
+      </Text>
 
       <TouchableOpacity
         style={styles.roomCard}
-        onPress={() => onNavigate('selfcare')}
+        onPress={() => onNavigate("selfcare")}
         activeOpacity={0.85}
       >
         <View style={styles.roomIcon}>
@@ -156,15 +205,17 @@ export const HomeScreen: React.FC<Props> = ({ onNavigate, onQuickClose }) => {
         </View>
         <View style={styles.roomBody}>
           <Text style={styles.roomTitle}>
-            {workMode ? 'Kumpulan teknik praktis' : 'Kotak Pertolongan Mandiri'}
+            {workMode ? "Kumpulan teknik praktis" : "Kotak Pertolongan Mandiri"}
           </Text>
-          <Text style={styles.roomSub}>Kartu teknik, uji ulang pikiran, reset 60 detik</Text>
+          <Text style={styles.roomSub}>
+            Kartu teknik, uji ulang pikiran, reset 60 detik
+          </Text>
         </View>
       </TouchableOpacity>
 
       <TouchableOpacity
         style={styles.roomCard}
-        onPress={() => onNavigate('burnout')}
+        onPress={() => onNavigate("burnout")}
         activeOpacity={0.85}
       >
         <View style={styles.roomIcon}>
@@ -172,31 +223,17 @@ export const HomeScreen: React.FC<Props> = ({ onNavigate, onQuickClose }) => {
         </View>
         <View style={styles.roomBody}>
           <Text style={styles.roomTitle}>
-            {workMode ? 'Manajemen beban kerja' : 'Ruang Kerja Sehat'}
+            {workMode ? "Manajemen beban kerja" : "Ruang Kerja Sehat (Burnout)"}
           </Text>
-          <Text style={styles.roomSub}>Ritual tutup hari, jeda mikro, naskah bicara</Text>
+          <Text style={styles.roomSub}>
+            Ritual tutup hari, jeda mikro, naskah bicara
+          </Text>
         </View>
       </TouchableOpacity>
 
       <TouchableOpacity
         style={styles.roomCard}
-        onPress={() => onNavigate('stories')}
-        activeOpacity={0.85}
-      >
-        <View style={styles.roomIcon}>
-          <ChatHeartIcon size={18} color={colors.tertiary} />
-        </View>
-        <View style={styles.roomBody}>
-          <Text style={styles.roomTitle}>
-            {workMode ? 'Catatan pengalaman' : 'Dinding Cerita'}
-          </Text>
-          <Text style={styles.roomSub}>Pengalaman orang lain yang pernah di titik berat</Text>
-        </View>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.roomCard}
-        onPress={() => onNavigate('support')}
+        onPress={() => onNavigate("support")}
         activeOpacity={0.85}
       >
         <View style={styles.roomIcon}>
@@ -204,51 +241,50 @@ export const HomeScreen: React.FC<Props> = ({ onNavigate, onQuickClose }) => {
         </View>
         <View style={styles.roomBody}>
           <Text style={styles.roomTitle}>
-            {workMode ? 'Jalur bantuan resmi' : 'Konselor & Hotline'}
+            {workMode
+              ? "Direktori faskes & darurat"
+              : "Direktori Kampus & Hotline"}
           </Text>
-          <Text style={styles.roomSub}>Konselor kampus, klinik, dan hotline resmi</Text>
+          <Text style={styles.roomSub}>
+            Hotline Kemenkes 119 dan layanan konselor kampus
+          </Text>
         </View>
       </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.roomCard}
-        onPress={() => onNavigate('trend')}
-        activeOpacity={0.85}
-      >
-        <View style={styles.roomIcon}>
-          <ChartIcon size={18} color={colors.tertiary} />
+      {!workMode && (
+        <View style={styles.privacyRow}>
+          <ShieldLockIcon size={14} color={colors.onSurfaceVariant} />
+          <Text style={styles.privacyText}>
+            Semua jawaban tersimpan hanya di perangkat ini. Tidak ada server,
+            tidak ada akun.
+          </Text>
         </View>
-        <View style={styles.roomBody}>
-          <Text style={styles.roomTitle}>Riwayat & Tren</Text>
-          <Text style={styles.roomSub}>Lihat arah perubahan skormu dari waktu ke waktu</Text>
-        </View>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.settingsLink} onPress={() => onNavigate('settings')}>
-        <Text style={styles.settingsLinkText}>Pengaturan & Mode Kerja</Text>
-      </TouchableOpacity>
+      )}
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
-  content: { paddingHorizontal: spacing.marginMobile, paddingTop: spacing.md, paddingBottom: spacing.xxl },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: spacing.lg,
+  content: {
+    paddingHorizontal: spacing.marginMobile,
+    paddingTop: spacing.xs,
+    paddingBottom: 96,
   },
-  brandRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: spacing.md,
+  },
+  brandRow: { flexDirection: "row", alignItems: "center", gap: spacing.sm },
   brandMark: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: '#FFFFFF',
-    justifyContent: 'center',
-    alignItems: 'center',
-    overflow: 'hidden',
+    backgroundColor: "#FFFFFF",
+    justifyContent: "center",
+    alignItems: "center",
+    overflow: "hidden",
     borderWidth: 1,
     borderColor: colors.outlineVariant,
   },
@@ -257,6 +293,21 @@ const styles = StyleSheet.create({
     height: 28,
   },
   brandText: { ...typography.headlineMd, color: colors.primary },
+  headerActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xs + 2,
+  },
+  settingsIconBtn: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: colors.surfaceContainer,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: colors.outlineVariant,
+  },
   stealthBtn: {
     paddingHorizontal: spacing.sm + 2,
     paddingVertical: 6,
@@ -266,11 +317,52 @@ const styles = StyleSheet.create({
     borderColor: colors.outlineVariant,
   },
   stealthLabel: { ...typography.labelSm, color: colors.onSurfaceVariant },
-  headline: { ...typography.displayLg, color: colors.onBackground, marginBottom: spacing.xs },
+  headline: {
+    ...typography.displayLg,
+    color: colors.onBackground,
+    marginBottom: spacing.xs,
+  },
   subheadline: {
     ...typography.bodyMd,
     color: colors.onSurfaceVariant,
     marginBottom: spacing.lg,
+  },
+  checkinBanner: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: colors.primaryContainer,
+    borderRadius: radius.lg,
+    padding: spacing.md,
+    marginBottom: spacing.md,
+    borderWidth: 1,
+    borderColor: "rgba(120, 67, 228, 0.2)",
+  },
+  checkinBannerTextWrap: {
+    flex: 1,
+    marginRight: spacing.sm,
+  },
+  checkinBannerTitle: {
+    ...typography.labelLg,
+    color: colors.onPrimaryContainer,
+    fontFamily: "Montserrat-Bold",
+  },
+  checkinBannerSub: {
+    ...typography.bodySm,
+    color: colors.onPrimaryContainer,
+    marginTop: 2,
+    fontSize: 12,
+  },
+  checkinBadge: {
+    backgroundColor: colors.primary,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 6,
+    borderRadius: radius.full,
+  },
+  checkinBadgeText: {
+    ...typography.labelSm,
+    color: "#FFFFFF",
+    fontFamily: "Montserrat-SemiBold",
   },
   doorPrimary: {
     backgroundColor: colors.primary,
@@ -278,26 +370,38 @@ const styles = StyleSheet.create({
     padding: spacing.md,
     marginBottom: spacing.gapCard,
   },
-  doorPrimaryTop: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm + 4 },
+  doorPrimaryTop: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm + 4,
+  },
   doorIconCircle: {
     width: 46,
     height: 46,
     borderRadius: 23,
     backgroundColor: colors.primaryContainer,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   doorTextGroup: { flex: 1 },
   doorPrimaryTitle: { ...typography.headlineMd, color: colors.onPrimary },
-  doorPrimarySub: { ...typography.bodySm, color: colors.primaryContainer, marginTop: 2 },
-  doorBadgeRow: { marginTop: spacing.md, flexDirection: 'row' },
+  doorPrimarySub: {
+    ...typography.bodySm,
+    color: colors.primaryContainer,
+    marginTop: 2,
+  },
+  doorBadgeRow: { marginTop: spacing.md, flexDirection: "row" },
   doorBadge: {
-    backgroundColor: 'rgba(255,255,255,0.16)',
+    backgroundColor: "rgba(255,255,255,0.16)",
     paddingHorizontal: spacing.sm,
     paddingVertical: 4,
     borderRadius: radius.full,
   },
-  doorBadgeText: { ...typography.labelSm, color: colors.onPrimary, fontSize: 10 },
+  doorBadgeText: {
+    ...typography.labelSm,
+    color: colors.onPrimary,
+    fontSize: 10,
+  },
   doorSecondary: {
     backgroundColor: colors.surface,
     borderRadius: radius.lg,
@@ -306,17 +410,25 @@ const styles = StyleSheet.create({
     borderColor: colors.outlineVariant,
     marginBottom: spacing.md,
   },
-  doorSecondaryTop: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm + 4 },
+  doorSecondaryTop: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm + 4,
+  },
   doorIconCircleOutline: {
     width: 46,
     height: 46,
     borderRadius: 23,
     backgroundColor: colors.surfaceContainer,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   doorSecondaryTitle: { ...typography.headlineMd, color: colors.onSurface },
-  doorSecondarySub: { ...typography.bodySm, color: colors.onSurfaceVariant, marginTop: 2 },
+  doorSecondarySub: {
+    ...typography.bodySm,
+    color: colors.onSurfaceVariant,
+    marginTop: 2,
+  },
   lastResultCard: {
     backgroundColor: colors.primaryContainer,
     borderRadius: radius.lg,
@@ -324,8 +436,16 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   lastResultLabel: { ...typography.labelSm, color: colors.onPrimaryContainer },
-  lastResultValue: { ...typography.headlineMd, color: colors.onPrimaryContainer, marginTop: 2 },
-  lastResultSub: { ...typography.bodySm, color: colors.onPrimaryContainer, marginTop: 2 },
+  lastResultValue: {
+    ...typography.headlineMd,
+    color: colors.onPrimaryContainer,
+    marginTop: 2,
+  },
+  lastResultSub: {
+    ...typography.bodySm,
+    color: colors.onPrimaryContainer,
+    marginTop: 2,
+  },
   sectionLabel: {
     ...typography.labelSm,
     color: colors.onSurfaceVariant,
@@ -333,8 +453,8 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   roomCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: spacing.sm + 4,
     backgroundColor: colors.surface,
     borderRadius: radius.md,
@@ -348,15 +468,19 @@ const styles = StyleSheet.create({
     height: 38,
     borderRadius: 19,
     backgroundColor: colors.tertiaryContainer,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   roomBody: { flex: 1 },
   roomTitle: { ...typography.labelLg, color: colors.onSurface },
-  roomSub: { ...typography.bodySm, color: colors.onSurfaceVariant, marginTop: 2 },
+  roomSub: {
+    ...typography.bodySm,
+    color: colors.onSurfaceVariant,
+    marginTop: 2,
+  },
   privacyRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: spacing.sm,
     backgroundColor: colors.surfaceContainer,
     borderRadius: radius.chip,
@@ -364,11 +488,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.sm + 4,
     marginBottom: spacing.md,
   },
-  privacyText: { ...typography.bodySm, color: colors.onSurfaceVariant, flex: 1 },
-  settingsLink: { marginTop: spacing.lg, alignItems: 'center', paddingVertical: spacing.sm },
-  settingsLinkText: {
-    ...typography.labelMd,
-    color: colors.secondary,
-    textDecorationLine: 'underline',
+  privacyText: {
+    ...typography.bodySm,
+    color: colors.onSurfaceVariant,
+    flex: 1,
   },
 });

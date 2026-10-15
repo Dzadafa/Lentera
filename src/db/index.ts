@@ -8,7 +8,7 @@ import {
   CREATE_STORY_LETTER_TABLE,
 } from './schema';
 import type { CheckIn, CrisisEvent, ScreeningResult } from '../types/domain';
-import type { ScreeningTrendPoint } from '../types/dass_trend';
+import type { ScreeningTrendPoint } from '../types/screening_trend';
 
 let dbInstance: SQLite.SQLiteDatabase | null = null;
 
@@ -67,6 +67,47 @@ export async function getLatestScreening(): Promise<ScreeningResult | null> {
   const db = await getDb();
   const row = await db.getFirstAsync<any>(
     'SELECT * FROM screening_records ORDER BY created_at DESC LIMIT 1;'
+  );
+  if (!row) return null;
+  let tieredData = undefined;
+  if (row.tiered_json) {
+    try {
+      tieredData = JSON.parse(row.tiered_json);
+    } catch {
+      // ignore
+    }
+  }
+
+  return {
+    id: row.id,
+    createdAt: row.created_at,
+    depression: {
+      raw: Math.round(row.depression_score / 2),
+      score: row.depression_score,
+      severity: row.depression_severity,
+    },
+    anxiety: {
+      raw: Math.round(row.anxiety_score / 2),
+      score: row.anxiety_score,
+      severity: row.anxiety_severity,
+    },
+    stress: {
+      raw: Math.round(row.stress_score / 2),
+      score: row.stress_score,
+      severity: row.stress_severity,
+    },
+    tier: row.tier,
+    crisisFlag: Boolean(row.crisis_flag),
+    answers: JSON.parse(row.answers_json || '[]'),
+    tiered: tieredData,
+  };
+}
+
+export async function getScreeningById(id: string): Promise<ScreeningResult | null> {
+  const db = await getDb();
+  const row = await db.getFirstAsync<any>(
+    'SELECT * FROM screening_records WHERE id = ? LIMIT 1;',
+    [id]
   );
   if (!row) return null;
   let tieredData = undefined;
@@ -215,24 +256,31 @@ export async function deleteStoryLetter(id: string): Promise<void> {
   await db.runAsync('DELETE FROM story_letters WHERE id = ?;', [id]);
 }
 
-/**
- * Titik data tren skrining (C5), dikembalikan urut lama ke baru supaya bisa
- * langsung digambar sebagai garis waktu.
- */
 export async function getScreeningTrend(limit: number = 12): Promise<ScreeningTrendPoint[]> {
   const db = await getDb();
   const rows = await db.getAllAsync<any>(
-    'SELECT id, created_at, depression_score, anxiety_score, stress_score, tier FROM screening_records ORDER BY created_at DESC LIMIT ?;',
+    'SELECT id, created_at, depression_score, anxiety_score, stress_score, tier, tiered_json FROM screening_records ORDER BY created_at DESC LIMIT ?;',
     [limit]
   );
   return rows
-    .map((r) => ({
-      id: r.id as string,
-      createdAt: r.created_at as number,
-      depression: r.depression_score as number,
-      anxiety: r.anxiety_score as number,
-      stress: r.stress_score as number,
-      tier: r.tier as ScreeningTrendPoint['tier'],
-    }))
+    .map((r) => {
+      let tiered = undefined;
+      if (r.tiered_json) {
+        try {
+          tiered = JSON.parse(r.tiered_json);
+        } catch {
+          // ignore
+        }
+      }
+      return {
+        id: r.id as string,
+        createdAt: r.created_at as number,
+        depression: r.depression_score as number,
+        anxiety: r.anxiety_score as number,
+        stress: r.stress_score as number,
+        tier: r.tier as ScreeningTrendPoint['tier'],
+        tiered,
+      };
+    })
     .reverse();
 }

@@ -1,5 +1,5 @@
 import type { Severity } from './severity';
-import type { Tier } from './domain';
+import type { Tier, TieredScreeningResult } from './domain';
 
 export interface ScreeningTrendPoint {
   id: string;
@@ -8,6 +8,7 @@ export interface ScreeningTrendPoint {
   anxiety: number;
   stress: number;
   tier: Tier;
+  tiered?: TieredScreeningResult;
 }
 
 export interface TrendDelta {

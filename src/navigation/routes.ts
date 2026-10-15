@@ -11,5 +11,7 @@ export type ScreenRoute =
   | 'burnout'
   | 'stories'
   | 'support'
+  | 'chat'
+  | 'profile'
   | 'settings'
   | 'stealth';

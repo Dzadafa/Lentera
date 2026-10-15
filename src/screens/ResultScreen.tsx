@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -7,17 +7,21 @@ import {
   ScrollView,
   ActivityIndicator,
   Alert,
-} from 'react-native';
-import { colors, typography, radius, spacing } from '../theme';
-import { ChevronLeftIcon, DocumentIcon, SparkleIcon } from '../components/Icons';
-import { QuickCloseButton } from '../components/QuickCloseButton';
-import { ScreeningDisclaimer } from '../components/ScreeningDisclaimer';
-import { useAppStore } from '../store/appStore';
-import { formatSeverityLabel } from '../services/scoring';
-import { generateAndSharePdfSummary } from '../services/pdfSummary';
-import { PSYCHOED_CARDS } from '../content/psychoed';
-import { PLAN_7_DAY } from '../content/plan7day';
-import type { DimensionScore, Tier } from '../types/domain';
+} from "react-native";
+import { colors, typography, radius, spacing } from "../theme";
+import {
+  ChevronLeftIcon,
+  DocumentIcon,
+  SparkleIcon,
+} from "../components/Icons";
+import { QuickCloseButton } from "../components/QuickCloseButton";
+import { ScreeningDisclaimer } from "../components/ScreeningDisclaimer";
+import { useAppStore } from "../store/appStore";
+import { formatSeverityLabel } from "../services/scoring";
+import { generateAndSharePdfSummary } from "../services/pdfSummary";
+import { PSYCHOED_CARDS } from "../content/psychoed";
+import { PLAN_7_DAY } from "../content/plan7day";
+import type { DimensionScore, Tier } from "../types/domain";
 
 interface Props {
   onBack: () => void;
@@ -38,29 +42,37 @@ const TIER_STYLES: Record<
   low: {
     bg: colors.tierLowContainer,
     fg: colors.onTierLowContainer,
-    label: 'Kondisi Rendah',
-    framing: 'Skor kamu rendah — bukan berarti kamu harus mempertahankannya sendirian.',
+    label: "Kondisi Rendah",
+    framing:
+      "Skor kamu rendah — bukan berarti kamu harus mempertahankannya sendirian.",
   },
   moderate: {
     bg: colors.tierModerateContainer,
     fg: colors.onTierModerateContainer,
-    label: 'Kondisi Sedang',
-    framing: 'Skor kamu sedang. Kondisi ini bisa membaik dengan langkah kecil yang konsisten.',
+    label: "Kondisi Sedang",
+    framing:
+      "Skor kamu sedang. Kondisi ini bisa membaik dengan langkah kecil yang konsisten.",
   },
   high: {
     bg: colors.tierHighContainer,
     fg: colors.onTierHighContainer,
-    label: 'Kondisi Tinggi',
-    framing: 'Skor kamu tinggi. Ada langkah konkret yang bisa diambil hari ini — dan kamu tidak harus menghadapinya sendiri.',
+    label: "Kondisi Tinggi",
+    framing:
+      "Skor kamu tinggi. Ada langkah konkret yang bisa diambil hari ini — dan kamu tidak harus menghadapinya sendiri.",
   },
 };
 
-const DimensionRow: React.FC<{ title: string; data: DimensionScore }> = ({ title, data }) => (
+const DimensionRow: React.FC<{ title: string; data: DimensionScore }> = ({
+  title,
+  data,
+}) => (
   <View style={styles.dimensionRow}>
     <Text style={styles.dimensionTitle}>{title}</Text>
     <View style={styles.dimensionRight}>
       <Text style={styles.dimensionScore}>{data.score}</Text>
-      <Text style={styles.dimensionSeverity}>{formatSeverityLabel(data.severity)}</Text>
+      <Text style={styles.dimensionSeverity}>
+        {formatSeverityLabel(data.severity)}
+      </Text>
     </View>
   </View>
 );
@@ -92,9 +104,14 @@ export const ResultScreen: React.FC<Props> = ({
         <View style={styles.emptyState}>
           <Text style={styles.emptyTitle}>Belum ada hasil skrining</Text>
           <Text style={styles.emptyBody}>
-            Selesaikan 21 pertanyaan skrining untuk melihat ringkasan kondisi kamu di sini.
+            Selesaikan skrining untuk melihat ringkasan kondisi dan rekomendasi
+            langkahmu di sini.
           </Text>
-          <TouchableOpacity style={styles.emptyCtaBtn} onPress={onBack} activeOpacity={0.88}>
+          <TouchableOpacity
+            style={styles.emptyCtaBtn}
+            onPress={onBack}
+            activeOpacity={0.88}
+          >
             <Text style={styles.emptyCtaText}>Mulai skrining sekarang</Text>
           </TouchableOpacity>
         </View>
@@ -110,9 +127,9 @@ export const ResultScreen: React.FC<Props> = ({
       await generateAndSharePdfSummary(result);
     } catch {
       Alert.alert(
-        'Surat tidak bisa dibuat',
-        'PDF gagal dibuat karena penyimpanan perangkat mungkin penuh, atau ada izin yang belum diberikan. Coba periksa ruang penyimpanan dan ulangi.',
-        [{ text: 'Tutup' }]
+        "Surat tidak bisa dibuat",
+        "PDF gagal dibuat karena penyimpanan perangkat mungkin penuh, atau ada izin yang belum diberikan. Coba periksa ruang penyimpanan dan ulangi.",
+        [{ text: "Tutup" }],
       );
     } finally {
       setIsExporting(false);
@@ -122,25 +139,37 @@ export const ResultScreen: React.FC<Props> = ({
   return (
     <View style={styles.container}>
       <View style={styles.topBar}>
-        <TouchableOpacity onPress={onBack} style={styles.iconBtn} accessibilityLabel="Kembali">
+        <TouchableOpacity
+          onPress={onBack}
+          style={styles.iconBtn}
+          accessibilityLabel="Kembali"
+        >
           <ChevronLeftIcon size={22} color={colors.primary} />
         </TouchableOpacity>
         <Text style={styles.topTitle}>Hasil Skrining</Text>
         <QuickCloseButton onPress={onQuickClose} label="" />
       </View>
 
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        {result.tier === 'high' && (
+      <ScrollView
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
+        {result.tier === "high" && (
           <View style={styles.safetyBanner}>
             <Text style={styles.safetyBannerText}>
-              KESELAMATAN DULU — kalau kamu merasa dalam bahaya, hubungi 119 ekstensi 8 sekarang.
+              KESELAMATAN DULU — kalau kamu merasa dalam bahaya, hubungi 119
+              ekstensi 8 sekarang.
             </Text>
           </View>
         )}
 
         <View style={[styles.tierCard, { backgroundColor: tierStyle.bg }]}>
-          <Text style={[styles.tierLabel, { color: tierStyle.fg }]}>{tierStyle.label}</Text>
-          <Text style={[styles.tierFraming, { color: tierStyle.fg }]}>{tierStyle.framing}</Text>
+          <Text style={[styles.tierLabel, { color: tierStyle.fg }]}>
+            {tierStyle.label}
+          </Text>
+          <Text style={[styles.tierFraming, { color: tierStyle.fg }]}>
+            {tierStyle.framing}
+          </Text>
         </View>
 
         <ScreeningDisclaimer />
@@ -151,18 +180,20 @@ export const ResultScreen: React.FC<Props> = ({
               <Text style={styles.scoresTitle}>Skrining Bertingkat</Text>
               <View style={styles.k10Badge}>
                 <Text style={styles.k10BadgeText}>
-                  K-10: {result.tiered.k10Score}/50
+                  Score: {result.tiered.k10Score}/50
                 </Text>
               </View>
             </View>
 
             <View style={styles.k10SummaryBox}>
-              <Text style={styles.k10SummaryTitle}>K-10 (Distres Psikologis Global)</Text>
+              <Text style={styles.k10SummaryTitle}>
+                Distres Psikologis Global
+              </Text>
               <Text style={styles.k10SummaryDesc}>
-                Skor {result.tiered.k10Score} dari 50 •{' '}
+                Skor {result.tiered.k10Score} dari 50 •{" "}
                 {result.tiered.k10Score >= 25
-                  ? 'Terindikasi distres tinggi (≥ 25)'
-                  : 'Distres dalam batas ringan/normal'}
+                  ? "Terindikasi distres tinggi (≥ 25)"
+                  : "Distres dalam batas ringan/normal"}
               </Text>
             </View>
 
@@ -172,18 +203,26 @@ export const ResultScreen: React.FC<Props> = ({
                   Hasil Skrining Spesifik Lanjutan
                 </Text>
                 <View style={styles.dimensionRow}>
-                  <Text style={styles.dimensionTitle}>Depresi (PHQ-9)</Text>
+                  <Text style={styles.dimensionTitle}>Depresi</Text>
                   <View style={styles.dimensionRight}>
-                    <Text style={styles.dimensionScore}>{result.tiered.phq9Score ?? result.depression.score}/27</Text>
-                    <Text style={styles.dimensionSeverity}>{formatSeverityLabel(result.depression.severity)}</Text>
+                    <Text style={styles.dimensionScore}>
+                      {result.tiered.phq9Score ?? result.depression.score}/27
+                    </Text>
+                    <Text style={styles.dimensionSeverity}>
+                      {formatSeverityLabel(result.depression.severity)}
+                    </Text>
                   </View>
                 </View>
                 <View style={styles.divider} />
                 <View style={styles.dimensionRow}>
-                  <Text style={styles.dimensionTitle}>Kecemasan (GAD-7)</Text>
+                  <Text style={styles.dimensionTitle}>Kecemasan</Text>
                   <View style={styles.dimensionRight}>
-                    <Text style={styles.dimensionScore}>{result.tiered.gad7Score ?? result.anxiety.score}/21</Text>
-                    <Text style={styles.dimensionSeverity}>{formatSeverityLabel(result.anxiety.severity)}</Text>
+                    <Text style={styles.dimensionScore}>
+                      {result.tiered.gad7Score ?? result.anxiety.score}/21
+                    </Text>
+                    <Text style={styles.dimensionSeverity}>
+                      {formatSeverityLabel(result.anxiety.severity)}
+                    </Text>
                   </View>
                 </View>
               </View>
@@ -191,7 +230,8 @@ export const ResultScreen: React.FC<Props> = ({
               <View style={styles.k10SafeNotice}>
                 <SparkleIcon size={16} color={colors.primary} />
                 <Text style={styles.k10SafeNoticeText}>
-                  Skor K-10 di bawah ambang batas distres tinggi (25). Skrining lanjutan tidak diperlukan.
+                  Skor di bawah ambang batas distres tinggi. Skrining lanjutan
+                  tidak diperlukan.
                 </Text>
               </View>
             )}
@@ -208,13 +248,17 @@ export const ResultScreen: React.FC<Props> = ({
         )}
 
         {/* CTA utama — tepat satu, sesuai tier */}
-        {result.tier === 'low' && (
-          <TouchableOpacity style={styles.primaryCta} onPress={onOpenCheckIn} activeOpacity={0.88}>
+        {result.tier === "low" && (
+          <TouchableOpacity
+            style={styles.primaryCta}
+            onPress={onOpenCheckIn}
+            activeOpacity={0.88}
+          >
             <Text style={styles.primaryCtaText}>Mulai Cek-in Harian</Text>
           </TouchableOpacity>
         )}
 
-        {result.tier === 'moderate' && (
+        {result.tier === "moderate" && (
           <View>
             <Text style={styles.sectionTitle}>Rencana 7 Hari</Text>
             <View style={styles.planCard}>
@@ -230,20 +274,32 @@ export const ResultScreen: React.FC<Props> = ({
                 </View>
               ))}
             </View>
-            <TouchableOpacity style={styles.primaryCta} onPress={onOpenCheckIn} activeOpacity={0.88}>
-              <Text style={styles.primaryCtaText}>Mulai Rencana & Catat Energi</Text>
+            <TouchableOpacity
+              style={styles.primaryCta}
+              onPress={onOpenCheckIn}
+              activeOpacity={0.88}
+            >
+              <Text style={styles.primaryCtaText}>
+                Mulai Rencana & Catat Energi
+              </Text>
             </TouchableOpacity>
           </View>
         )}
 
-        {result.tier === 'high' && (
-          <TouchableOpacity style={styles.primaryCta} onPress={onOpenReferral} activeOpacity={0.88}>
-            <Text style={styles.primaryCtaText}>Mulai Panduan ke Puskesmas</Text>
+        {result.tier === "high" && (
+          <TouchableOpacity
+            style={styles.primaryCta}
+            onPress={onOpenReferral}
+            activeOpacity={0.88}
+          >
+            <Text style={styles.primaryCtaText}>
+              Mulai Panduan ke Puskesmas
+            </Text>
           </TouchableOpacity>
         )}
 
         {/* CTA sekunder — hanya untuk tier akut, sesuai desain */}
-        {result.tier === 'high' && (
+        {result.tier === "high" && (
           <TouchableOpacity
             style={styles.secondaryCta}
             onPress={handleExport}
@@ -263,7 +319,7 @@ export const ResultScreen: React.FC<Props> = ({
           </TouchableOpacity>
         )}
 
-        {result.tier === 'moderate' && (
+        {result.tier === "moderate" && (
           <TouchableOpacity
             style={styles.secondaryCta}
             onPress={handleExport}
@@ -275,14 +331,16 @@ export const ResultScreen: React.FC<Props> = ({
             ) : (
               <>
                 <DocumentIcon size={18} color={colors.primary} />
-                <Text style={styles.secondaryCtaText}>Unduh Ringkasan Gejala (PDF)</Text>
+                <Text style={styles.secondaryCtaText}>
+                  Unduh Ringkasan Gejala (PDF)
+                </Text>
               </>
             )}
           </TouchableOpacity>
         )}
 
         {/* Ruang pendukung per tier. CTA utama tetap tepat satu di atas. */}
-        {result.tier === 'low' && (
+        {result.tier === "low" && (
           <View>
             <Text style={styles.sectionTitle}>Jaga supaya tetap di sini</Text>
             <View style={styles.linkGroup}>
@@ -296,7 +354,7 @@ export const ResultScreen: React.FC<Props> = ({
           </View>
         )}
 
-        {result.tier === 'moderate' && (
+        {result.tier === "moderate" && (
           <View>
             <Text style={styles.sectionTitle}>Langkah pendukung</Text>
             <View style={styles.linkGroup}>
@@ -304,13 +362,19 @@ export const ResultScreen: React.FC<Props> = ({
                 <Text style={styles.linkText}>Kotak Pertolongan Mandiri</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.linkRow} onPress={onOpenBurnout}>
-                <Text style={styles.linkText}>Latihan bicara & ritual tutup hari</Text>
+                <Text style={styles.linkText}>
+                  Latihan bicara & ritual tutup hari
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.linkRow} onPress={onOpenStories}>
-                <Text style={styles.linkText}>Dinding Cerita: dari kondisi sedang</Text>
+                <Text style={styles.linkText}>
+                  Dinding Cerita: dari kondisi sedang
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.linkRow} onPress={onOpenSupport}>
-                <Text style={styles.linkText}>Direktori konseling kampus dan EAP</Text>
+                <Text style={styles.linkText}>
+                  Direktori konseling kampus dan EAP
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.linkRow} onPress={onOpenTrend}>
                 <Text style={styles.linkText}>Riwayat & tren skor</Text>
@@ -319,35 +383,21 @@ export const ResultScreen: React.FC<Props> = ({
           </View>
         )}
 
-        {result.tier === 'high' && (
-          <View>
-            <Text style={styles.sectionTitle}>Kamu tidak sendirian</Text>
-            <View style={styles.linkGroup}>
-              <TouchableOpacity style={styles.linkRow} onPress={onOpenStories}>
-                <Text style={styles.linkText}>Dinding Cerita: pernah kondisi tinggi, kini membaik</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.linkRow} onPress={onOpenSupport}>
-                <Text style={styles.linkText}>Hotline dan layanan pendamping</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        )}
-
         {/* Psikoedukasi — disembunyikan pada tier akut */}
-        {result.tier !== 'high' && (
+        {result.tier !== "high" && (
           <View>
             <Text style={styles.sectionTitle}>Yang perlu kamu tahu</Text>
-            {PSYCHOED_CARDS.filter((c) => c.tier === result.tier || result.tier === 'moderate').map(
-              (c) => (
-                <View key={c.id} style={styles.psychoCard}>
-                  <SparkleIcon size={16} color={colors.tertiary} />
-                  <View style={{ flex: 1 }}>
-                    <Text style={styles.psychoTitle}>{c.title}</Text>
-                    <Text style={styles.psychoBody}>{c.body}</Text>
-                  </View>
+            {PSYCHOED_CARDS.filter(
+              (c) => c.tier === result.tier || result.tier === "moderate",
+            ).map((c) => (
+              <View key={c.id} style={styles.psychoCard}>
+                <SparkleIcon size={16} color={colors.tertiary} />
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.psychoTitle}>{c.title}</Text>
+                  <Text style={styles.psychoBody}>{c.body}</Text>
                 </View>
-              )
-            )}
+              </View>
+            ))}
           </View>
         )}
       </ScrollView>
@@ -358,9 +408,9 @@ export const ResultScreen: React.FC<Props> = ({
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
   topBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: spacing.marginMobile,
     paddingTop: spacing.md,
   },
@@ -369,13 +419,17 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
     backgroundColor: colors.surface,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     borderWidth: 1,
     borderColor: colors.outlineVariant,
   },
   topTitle: { ...typography.headlineMd, color: colors.primary },
-  content: { paddingHorizontal: spacing.marginMobile, paddingTop: spacing.md, paddingBottom: spacing.xxl },
+  content: {
+    paddingHorizontal: spacing.marginMobile,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.xxl,
+  },
   safetyBanner: {
     backgroundColor: colors.crisisContainer,
     borderRadius: radius.md,
@@ -385,7 +439,11 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   safetyBannerText: { ...typography.labelMd, color: colors.onCrisisContainer },
-  tierCard: { borderRadius: radius.lg, padding: spacing.md, marginBottom: spacing.sm },
+  tierCard: {
+    borderRadius: radius.lg,
+    padding: spacing.md,
+    marginBottom: spacing.sm,
+  },
   tierLabel: { ...typography.labelSm },
   tierFraming: { ...typography.headlineMd, marginTop: spacing.xs },
   scoresCard: {
@@ -397,9 +455,9 @@ const styles = StyleSheet.create({
     marginVertical: spacing.sm,
   },
   tieredHeaderRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: spacing.xs,
   },
   k10Badge: {
@@ -434,8 +492,8 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xs,
   },
   k10SafeNotice: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: spacing.sm,
     backgroundColor: colors.primaryContainer,
     padding: spacing.sm + 2,
@@ -447,15 +505,23 @@ const styles = StyleSheet.create({
     color: colors.onPrimaryContainer,
     flex: 1,
   },
-  scoresTitle: { ...typography.labelLg, color: colors.primary, marginBottom: spacing.sm },
+  scoresTitle: {
+    ...typography.labelLg,
+    color: colors.primary,
+    marginBottom: spacing.sm,
+  },
   dimensionRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingVertical: spacing.sm,
   },
   dimensionTitle: { ...typography.bodyLg, color: colors.onSurface },
-  dimensionRight: { flexDirection: 'row', alignItems: 'baseline', gap: spacing.sm },
+  dimensionRight: {
+    flexDirection: "row",
+    alignItems: "baseline",
+    gap: spacing.sm,
+  },
   dimensionScore: { ...typography.headlineMd, color: colors.primary },
   dimensionSeverity: { ...typography.bodySm, color: colors.onSurfaceVariant },
   divider: { height: 1, backgroundColor: colors.outlineVariant },
@@ -463,15 +529,15 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     height: 54,
     borderRadius: radius.full,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginTop: spacing.md,
   },
-  primaryCtaText: { ...typography.labelLg, color: '#FFFFFF' },
+  primaryCtaText: { ...typography.labelLg, color: "#FFFFFF" },
   secondaryCta: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     gap: spacing.sm,
     backgroundColor: colors.surface,
     height: 50,
@@ -495,24 +561,32 @@ const styles = StyleSheet.create({
     borderColor: colors.outlineVariant,
     gap: spacing.md,
   },
-  planRow: { flexDirection: 'row', gap: spacing.sm + 4, alignItems: 'flex-start' },
+  planRow: {
+    flexDirection: "row",
+    gap: spacing.sm + 4,
+    alignItems: "flex-start",
+  },
   planDayBadge: {
     width: 26,
     height: 26,
     borderRadius: 13,
     backgroundColor: colors.primaryContainer,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   planDayText: { ...typography.labelSm, color: colors.onPrimaryContainer },
   planTitle: { ...typography.labelLg, color: colors.onSurface },
-  planAction: { ...typography.bodySm, color: colors.onSurfaceVariant, marginTop: 2 },
+  planAction: {
+    ...typography.bodySm,
+    color: colors.onSurfaceVariant,
+    marginTop: 2,
+  },
   linkGroup: {
     backgroundColor: colors.surface,
     borderRadius: radius.lg,
     borderWidth: 1,
     borderColor: colors.outlineVariant,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   linkRow: {
     paddingVertical: spacing.md,
@@ -522,7 +596,7 @@ const styles = StyleSheet.create({
   },
   linkText: { ...typography.labelMd, color: colors.secondary },
   psychoCard: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: spacing.sm,
     backgroundColor: colors.surface,
     borderRadius: radius.md,
@@ -532,17 +606,35 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   psychoTitle: { ...typography.labelLg, color: colors.onSurface },
-  psychoBody: { ...typography.bodySm, color: colors.onSurfaceVariant, marginTop: 2 },
-  emptyState: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: spacing.xl },
-  emptyTitle: { ...typography.headlineMd, color: colors.primary, marginBottom: spacing.xs },
-  emptyBody: { ...typography.bodyMd, color: colors.onSurfaceVariant, textAlign: 'center', marginBottom: spacing.lg },
+  psychoBody: {
+    ...typography.bodySm,
+    color: colors.onSurfaceVariant,
+    marginTop: 2,
+  },
+  emptyState: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: spacing.xl,
+  },
+  emptyTitle: {
+    ...typography.headlineMd,
+    color: colors.primary,
+    marginBottom: spacing.xs,
+  },
+  emptyBody: {
+    ...typography.bodyMd,
+    color: colors.onSurfaceVariant,
+    textAlign: "center",
+    marginBottom: spacing.lg,
+  },
   emptyCtaBtn: {
     backgroundColor: colors.primary,
     height: 48,
     borderRadius: radius.full,
     paddingHorizontal: spacing.xl,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   emptyCtaText: { ...typography.labelLg, color: colors.onPrimary },
 });

@@ -79,7 +79,7 @@ export const colors = {
   infoContainer: '#D0F4F7',
   onInfoContainer: '#084852',
 
-  // Tiers DASS-21
+  // Tiers Skrining
   tierLow: '#2E7D32',
   tierLowContainer: '#E8F5E9',
   onTierLowContainer: '#123B14',
