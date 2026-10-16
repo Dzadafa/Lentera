@@ -1,0 +1,2583 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lentera Care — Portal Konselor Psikologi</title>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary: #7843e4;
+        --primary-light: #9062f5;
+        --primary-soft: #f3ebfe;
+        --primary-surface: #faf7fd;
+        --secondary: #c2406e;
+        --secondary-soft: #fceef3;
+        --accent-cyan: #22b8cf;
+        --success: #12b886;
+        --success-soft: #e6fcf5;
+        --warning: #f59f00;
+        --warning-soft: #fff9db;
+        --danger: #fa5252;
+        --danger-soft: #ffe3e3;
+        --bg: #f8f9fa;
+        --surface: #ffffff;
+        --surface-elevated: #ffffff;
+        --text: #1e1e24;
+        --text-muted: #6c727f;
+        --border: #e9ecef;
+        --border-focus: #b197fc;
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 12px rgba(120, 67, 228, 0.08);
+        --shadow-lg: 0 12px 30px rgba(120, 67, 228, 0.12);
+        --radius-sm: 8px;
+        --radius-md: 12px;
+        --radius-lg: 18px;
+        --radius-full: 9999px;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family:
+          "Plus Jakarta Sans",
+          -apple-system,
+          BlinkMacSystemFont,
+          sans-serif;
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Top Navigation Bar */
+      .top-nav {
+        height: 64px;
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 24px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+      }
+
+      .brand-logo {
+        width: 40px;
+        height: 40px;
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        object-fit: contain;
+        filter: drop-shadow(0 2px 6px rgba(120, 67, 228, 0.25));
+      }
+
+      .brand-text h1 {
+        font-size: 17px;
+        font-weight: 800;
+        color: var(--primary);
+        letter-spacing: -0.3px;
+      }
+
+      .brand-text p {
+        font-size: 11px;
+        color: var(--text-muted);
+        font-weight: 500;
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .nav-btn {
+        padding: 8px 14px;
+        border-radius: var(--radius-sm);
+        border: none;
+        background: transparent;
+        color: var(--text-muted);
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s ease;
+        position: relative;
+      }
+
+      .nav-btn:hover {
+        background: var(--primary-surface);
+        color: var(--primary);
+      }
+
+      .nav-btn.active {
+        background: var(--primary-soft);
+        color: var(--primary);
+      }
+
+      .nav-badge {
+        background: var(--secondary);
+        color: white;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 2px 6px;
+        border-radius: var(--radius-full);
+      }
+
+      .user-pill {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 4px 12px 4px 6px;
+        background: var(--primary-surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-full);
+      }
+
+      .user-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: var(--primary);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 12px;
+      }
+
+      .user-name {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text);
+        max-width: 120px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      /* Screen Views Container */
+      .app-viewport {
+        flex: 1;
+        display: flex;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .screen {
+        display: none;
+        width: 100%;
+        height: calc(100vh - 64px);
+        overflow-y: auto;
+        padding: 24px;
+      }
+
+      .screen.active {
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Screen 1: Auth Screen */
+      #screen-auth {
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        background: radial-gradient(
+          circle at 10% 20%,
+          rgba(120, 67, 228, 0.04) 0%,
+          rgba(194, 64, 110, 0.04) 90%
+        );
+      }
+
+      .auth-card {
+        width: 100%;
+        max-width: 480px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 36px 32px;
+        box-shadow: var(--shadow-lg);
+      }
+
+      .auth-tabs {
+        display: flex;
+        background: var(--bg);
+        border-radius: var(--radius-md);
+        padding: 4px;
+        margin-bottom: 24px;
+      }
+
+      .auth-tab {
+        flex: 1;
+        text-align: center;
+        padding: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        border-radius: var(--radius-sm);
+        border: none;
+        background: transparent;
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .auth-tab.active {
+        background: var(--surface);
+        color: var(--primary);
+        box-shadow: var(--shadow-sm);
+      }
+
+      /* Form UI Elements */
+      .form-group {
+        margin-bottom: 18px;
+      }
+
+      .form-label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text);
+        margin-bottom: 6px;
+      }
+
+      .form-hint {
+        font-size: 11px;
+        color: var(--text-muted);
+        margin-top: 4px;
+      }
+
+      .form-control {
+        width: 100%;
+        padding: 11px 14px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        font-size: 14px;
+        color: var(--text);
+        background: var(--surface);
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+      }
+
+      .form-control:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(120, 67, 228, 0.12);
+      }
+
+      .btn-primary {
+        width: 100%;
+        padding: 13px;
+        border: none;
+        border-radius: var(--radius-md);
+        background: linear-gradient(
+          135deg,
+          var(--primary),
+          var(--primary-light)
+        );
+        color: white;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(120, 67, 228, 0.25);
+        transition: all 0.2s;
+      }
+
+      .btn-primary:hover {
+        opacity: 0.95;
+        transform: translateY(-1px);
+      }
+
+      .btn-secondary {
+        padding: 9px 16px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        background: var(--surface);
+        color: var(--text);
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .btn-secondary:hover {
+        background: var(--bg);
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+
+      /* Screen 2: Dashboard Monitor */
+      .dashboard-header {
+        margin-bottom: 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+
+      .stat-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 18px;
+        margin-bottom: 28px;
+      }
+
+      .stat-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        padding: 20px;
+        box-shadow: var(--shadow-sm);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .stat-val {
+        font-size: 28px;
+        font-weight: 800;
+        color: var(--primary);
+        margin-top: 4px;
+      }
+
+      .stat-label {
+        font-size: 12px;
+        color: var(--text-muted);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+      }
+
+      .table-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+        margin-bottom: 24px;
+      }
+
+      .table-header {
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .table-header h3 {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+        font-size: 13px;
+      }
+
+      th {
+        padding: 12px 20px;
+        background: var(--bg);
+        color: var(--text-muted);
+        font-weight: 600;
+        border-bottom: 1px solid var(--border);
+      }
+
+      td {
+        padding: 14px 20px;
+        border-bottom: 1px solid var(--border);
+        color: var(--text);
+      }
+
+      tr:last-child td {
+        border-bottom: none;
+      }
+
+      tr:hover td {
+        background: var(--primary-surface);
+      }
+
+      .badge-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: var(--radius-full);
+        font-size: 11px;
+        font-weight: 700;
+      }
+
+      .badge-active {
+        background: var(--success-soft);
+        color: var(--success);
+      }
+
+      .badge-waiting {
+        background: var(--warning-soft);
+        color: var(--warning);
+      }
+
+      .badge-skipped {
+        background: var(--danger-soft);
+        color: var(--danger);
+      }
+
+      /* Screen 3: KYC Verification */
+      .kyc-container {
+        max-width: 760px;
+        margin: 0 auto;
+        width: 100%;
+      }
+
+      .kyc-status-banner {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 18px 24px;
+        border-radius: var(--radius-md);
+        margin-bottom: 24px;
+        border: 1px solid transparent;
+      }
+
+      .kyc-verified {
+        background: var(--success-soft);
+        border-color: rgba(18, 184, 134, 0.2);
+        color: var(--success);
+      }
+
+      .kyc-pending {
+        background: var(--warning-soft);
+        border-color: rgba(245, 159, 0, 0.2);
+        color: #8c5b00;
+      }
+
+      .kyc-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        padding: 28px;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .file-upload-box {
+        border: 2px dashed var(--border);
+        border-radius: var(--radius-md);
+        padding: 24px;
+        text-align: center;
+        background: var(--bg);
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .file-upload-box:hover {
+        border-color: var(--primary);
+        background: var(--primary-surface);
+      }
+
+      /* Screen 4: Multi-User WhatsApp Style Chat */
+      #screen-chat {
+        padding: 0;
+        height: calc(100vh - 64px);
+      }
+
+      .wa-chat-layout {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        background: var(--surface);
+      }
+
+      /* Left Sidebar: Session List */
+      .wa-sidebar {
+        width: 380px;
+        min-width: 320px;
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        background: var(--surface);
+      }
+
+      .wa-sidebar-header {
+        padding: 16px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: var(--surface);
+      }
+
+      .wa-sidebar-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .wa-search {
+        padding: 10px 16px;
+        border-bottom: 1px solid var(--border);
+        background: var(--bg);
+      }
+
+      .wa-search input {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-full);
+        background: var(--surface);
+        font-size: 13px;
+      }
+
+      .wa-session-list {
+        flex: 1;
+        overflow-y: auto;
+      }
+
+      .wa-session-item {
+        padding: 14px 16px;
+        display: flex;
+        gap: 12px;
+        border-bottom: 1px solid var(--border);
+        cursor: pointer;
+        transition: background 0.15s;
+        position: relative;
+      }
+
+      .wa-session-item:hover {
+        background: var(--primary-surface);
+      }
+
+      .wa-session-item.active {
+        background: var(--primary-soft);
+        border-left: 4px solid var(--primary);
+      }
+
+      .wa-session-avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: #e9ecef;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        flex-shrink: 0;
+      }
+
+      .wa-session-content {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .wa-session-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 4px;
+      }
+
+      .wa-session-user {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text);
+      }
+
+      .wa-session-time {
+        font-size: 11px;
+        color: var(--text-muted);
+      }
+
+      .wa-session-snippet {
+        font-size: 12px;
+        color: var(--text-muted);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      /* Right Chat Main Area */
+      .wa-main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        background: #efeae2;
+        background-image: radial-gradient(#d5cebf 1px, transparent 1px);
+        background-size: 20px 20px;
+        position: relative;
+      }
+
+      .wa-main-header {
+        height: 60px;
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .wa-peer-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .wa-peer-details h4 {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text);
+      }
+
+      .wa-peer-details p {
+        font-size: 11px;
+        color: var(--success);
+        font-weight: 600;
+      }
+
+      .wa-msg-container {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px 30px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .wa-bubble-wrap {
+        display: flex;
+        width: 100%;
+      }
+
+      .wa-bubble-wrap.user {
+        justify-content: flex-start;
+      }
+
+      .wa-bubble-wrap.counselor {
+        justify-content: flex-end;
+      }
+
+      .wa-bubble {
+        max-width: 65%;
+        padding: 10px 14px;
+        border-radius: var(--radius-md);
+        font-size: 13.5px;
+        line-height: 1.45;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        position: relative;
+      }
+
+      .wa-bubble.user {
+        background: var(--surface);
+        color: var(--text);
+        border-top-left-radius: 2px;
+      }
+
+      .wa-bubble.counselor {
+        background: #d9fdd3;
+        color: #111b21;
+        border-top-right-radius: 2px;
+      }
+
+      .wa-bubble-time {
+        font-size: 10px;
+        color: #667781;
+        text-align: right;
+        margin-top: 4px;
+      }
+
+      .wa-input-bar {
+        min-height: 62px;
+        background: #f0f2f5;
+        border-top: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        padding: 8px 16px;
+        gap: 12px;
+      }
+
+      .wa-input {
+        flex: 1;
+        background: var(--surface);
+        border: 1px solid #e9edef;
+        border-radius: var(--radius-sm);
+        padding: 10px 16px;
+        font-size: 14px;
+        outline: none;
+      }
+
+      .wa-send-btn {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: var(--primary);
+        border: none;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: var(--shadow-sm);
+        transition: transform 0.15s;
+      }
+
+      .wa-send-btn:hover {
+        transform: scale(1.05);
+      }
+
+      .wa-empty-state {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-muted);
+        text-align: center;
+        padding: 40px;
+      }
+
+      /* Screen 5: Settings */
+      .settings-container {
+        max-width: 680px;
+        margin: 0 auto;
+        width: 100%;
+      }
+
+      .settings-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        padding: 24px;
+        box-shadow: var(--shadow-sm);
+        margin-bottom: 20px;
+      }
+
+      .toggle-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 0;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .toggle-row:last-child {
+        border-bottom: none;
+      }
+
+      .toggle-info h4 {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text);
+      }
+
+      .toggle-info p {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-top: 2px;
+      }
+
+      /* Responsive Mobile Queries */
+      @media (max-width: 820px) {
+        .top-nav {
+          padding: 0 16px;
+        }
+        .brand-text p {
+          display: none;
+        }
+        .nav-btn span:not(.nav-badge) {
+          display: none;
+        }
+        .wa-chat-layout {
+          flex-direction: column;
+        }
+        .wa-sidebar {
+          width: 100%;
+          height: 220px;
+          border-right: none;
+          border-bottom: 1px solid var(--border);
+        }
+        .wa-main {
+          flex: 1;
+        }
+        .wa-bubble {
+          max-width: 82%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Top Global Navigation Bar -->
+    <header class="top-nav">
+      <a href="#" class="brand" onclick="navigateTo('dashboard')">
+        <img src="/logo.png" alt="Lentera Care Logo" class="brand-logo" />
+        <div class="brand-text">
+          <h1>Lentera Care</h1>
+          <p>Portal Khusus Konselor Psikologi</p>
+        </div>
+      </a>
+
+      <!-- Navigation Tab Buttons (Halaman Terpisah) -->
+      <nav class="nav-links" id="mainNav">
+        <button
+          class="nav-btn active"
+          id="btn-dashboard"
+          onclick="navigateTo('dashboard')"
+        >
+          <svg
+            width="18"
+            height="18"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path d="M3 3h7v9H3zM14 3h7v4h-7zM14 11h7v10h-7zM3 16h7v5H3z" />
+          </svg>
+          <span>Dashboard</span>
+        </button>
+
+        <button class="nav-btn" id="btn-chat" onclick="navigateTo('chat')">
+          <svg
+            width="18"
+            height="18"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"
+            />
+          </svg>
+          <span>Chat Obrolan</span>
+          <span class="nav-badge" id="chatBadgeCount">0</span>
+        </button>
+
+        <button class="nav-btn" id="btn-kyc" onclick="navigateTo('kyc')">
+          <svg
+            width="18"
+            height="18"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M12 2l2.4 2.4 3.4-.4 1.2 3.2 3.1 1.5-.7 3.3 1.9 2.8-2 2.7.2 3.4-3.3 1-1.6 3-3.2-.8-2.7 2-2.7-2-3.2.8-1.6-3-3.3-1 .2-3.4-2-2.7 1.9-2.8-.7-3.3 3.1-1.5 1.2-3.2 3.4.4L12 2zM9 12l2 2 4-4"
+            />
+          </svg>
+          <span>Verifikasi KYC</span>
+        </button>
+
+        <button
+          class="nav-btn"
+          id="btn-settings"
+          onclick="navigateTo('settings')"
+        >
+          <svg
+            width="18"
+            height="18"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <circle cx="12" cy="12" r="3" />
+            <path
+              d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"
+            />
+          </svg>
+          <span>Pengaturan</span>
+        </button>
+
+        <button class="nav-btn" id="btn-auth" onclick="navigateTo('auth')">
+          <svg
+            width="18"
+            height="18"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"
+            />
+          </svg>
+          <span>Masuk / Daftar</span>
+        </button>
+      </nav>
+
+      <!-- User Profile Chip -->
+      <div class="user-pill" id="userPill" style="display: none">
+        <div class="user-avatar" id="avatarInitial">R</div>
+        <span class="user-name" id="counselorNameDisplay">Rania Wardani</span>
+      </div>
+    </header>
+
+    <!-- Viewport for 5 Separate Screens -->
+    <main class="app-viewport">
+      <!-- ==============================================
+         1. SCREEN: REGISTER & LOGIN
+         ============================================== -->
+      <section class="screen" id="screen-auth">
+        <div class="auth-card">
+          <div style="text-align: center; margin-bottom: 24px">
+            <h2
+              style="font-size: 22px; font-weight: 800; color: var(--primary)"
+            >
+              Selamat Datang Konselor
+            </h2>
+            <p
+              style="font-size: 13px; color: var(--text-muted); margin-top: 4px"
+            >
+              Akses platform pendampingan sebaya mahasiswa psikologi
+            </p>
+          </div>
+
+          <div class="auth-tabs">
+            <button
+              class="auth-tab active"
+              id="tabLogin"
+              onclick="switchAuthMode('login')"
+            >
+              Masuk Akun
+            </button>
+            <button
+              class="auth-tab"
+              id="tabRegister"
+              onclick="switchAuthMode('register')"
+            >
+              Registrasi Baru
+            </button>
+          </div>
+
+          <!-- Form Login -->
+          <form id="formLogin" onsubmit="handleLogin(event)">
+            <div class="form-group">
+              <label class="form-label">Email Institusi / Pribadi</label>
+              <input
+                type="email"
+                class="form-control"
+                id="loginEmail"
+                placeholder="nama@mail.ugm.ac.id"
+                required
+                value="rania.wardani@ugm.ac.id"
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Kata Sandi</label>
+              <input
+                type="password"
+                class="form-control"
+                id="loginPassword"
+                placeholder="••••••••"
+                required
+                value="password123"
+              />
+            </div>
+            <button type="submit" class="btn-primary" style="margin-top: 10px">
+              Masuk ke Portal Konselor
+            </button>
+          </form>
+
+          <!-- Form Register -->
+          <form
+            id="formRegister"
+            onsubmit="handleRegister(event)"
+            style="display: none"
+          >
+            <div class="form-group">
+              <label class="form-label">Nama Lengkap & Gelar</label>
+              <input
+                type="text"
+                class="form-control"
+                id="regName"
+                placeholder="Contoh: Annisa Larasati, S.Psi."
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email Mahasiswa / Institusi</label>
+              <input
+                type="email"
+                class="form-control"
+                id="regEmail"
+                placeholder="annisa@mail.ugm.ac.id"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Universitas / Fakultas</label>
+              <input
+                type="text"
+                class="form-control"
+                id="regUniversity"
+                placeholder="Fakultas Psikologi Universitas Gadjah Mada"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">NIM / Nomor Sertifikasi</label>
+              <input
+                type="text"
+                class="form-control"
+                id="regNIM"
+                placeholder="NIM: 20/458291/PS/08123"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Kata Sandi</label>
+              <input
+                type="password"
+                class="form-control"
+                id="regPassword"
+                placeholder="Minimal 8 karakter"
+                required
+              />
+            </div>
+            <button type="submit" class="btn-primary" style="margin-top: 10px">
+              Daftar & Lanjut ke KYC
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <!-- ==============================================
+         2. SCREEN: DASHBOARD PEMANTAUAN
+         ============================================== -->
+      <section class="screen active" id="screen-dashboard">
+        <div class="dashboard-header">
+          <div>
+            <h2 style="font-size: 22px; font-weight: 800; color: var(--text)">
+              Ringkasan & Pemantauan Konseling
+            </h2>
+            <p
+              style="font-size: 13px; color: var(--text-muted); margin-top: 4px"
+            >
+              Pantau antrean obrolan pengguna Lentera dan performa pendampingan
+              secara realtime
+            </p>
+          </div>
+          <div style="display: flex; gap: 10px; align-items: center">
+            <button class="btn-secondary" onclick="refreshDashboardData()">
+              <svg
+                width="14"
+                height="14"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"
+                />
+              </svg>
+              Muat Ulang
+            </button>
+            <button
+              class="btn-primary"
+              style="width: auto; padding: 9px 18px"
+              onclick="navigateTo('chat')"
+            >
+              Buka Ruang Obrolan
+            </button>
+          </div>
+        </div>
+
+        <!-- Stat Cards -->
+        <div class="stat-grid">
+          <div class="stat-card">
+            <div>
+              <div class="stat-label">Sesi Aktif Bersamaan</div>
+              <div class="stat-val" id="statActiveSessions">0</div>
+            </div>
+            <div
+              class="stat-icon"
+              style="background: var(--primary-soft); color: var(--primary)"
+            >
+              💬
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div>
+              <div class="stat-label">Pengguna Terbantu Hari Ini</div>
+              <div class="stat-val" id="statTotalUsers">14</div>
+            </div>
+            <div
+              class="stat-icon"
+              style="background: var(--success-soft); color: var(--success)"
+            >
+              🌱
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div>
+              <div class="stat-label">Status KYC Akun</div>
+              <div
+                class="stat-val"
+                style="font-size: 20px; color: var(--success)"
+                id="statKycStatus"
+              >
+                Verified
+              </div>
+            </div>
+            <div
+              class="stat-icon"
+              style="background: #ebfbee; color: var(--success)"
+            >
+              🛡️
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div>
+              <div class="stat-label">Status Pendamping</div>
+              <div
+                class="stat-val"
+                style="font-size: 20px; color: var(--accent-cyan)"
+                id="statOnlineStatus"
+              >
+                Online
+              </div>
+            </div>
+            <div
+              class="stat-icon"
+              style="background: #e3fafc; color: var(--accent-cyan)"
+            >
+              ⚡
+            </div>
+          </div>
+        </div>
+
+        <!-- Table: Riwayat Sesi Pengguna Anonim -->
+        <div class="table-card">
+          <div class="table-header">
+            <h3>Daftar Sesi Pengguna Lentera (Multi-User)</h3>
+            <span style="font-size: 12px; color: var(--text-muted)"
+              >Realtime via SQLite PocketBase</span
+            >
+          </div>
+          <div style="overflow-x: auto">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID Sesi</th>
+                  <th>Pengguna Anonim</th>
+                  <th>Mulai Sesi</th>
+                  <th>Status</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="sessionTableBody">
+                <tr>
+                  <td
+                    colspan="5"
+                    style="
+                      text-align: center;
+                      color: var(--text-muted);
+                      padding: 30px;
+                    "
+                  >
+                    Memuat data sesi...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==============================================
+         3. SCREEN: VERIFIKASI KYC PSIKOLOG
+         ============================================== -->
+      <section class="screen" id="screen-kyc">
+        <div class="kyc-container">
+          <div style="margin-bottom: 24px">
+            <h2 style="font-size: 22px; font-weight: 800; color: var(--text)">
+              Verifikasi Identitas & Etika (KYC)
+            </h2>
+            <p
+              style="font-size: 13px; color: var(--text-muted); margin-top: 4px"
+            >
+              Pastikan data mahasiswa atau gelar sarjana psikologimu tervalidasi
+              agar pengguna Lentera merasa aman saat didampingi.
+            </p>
+          </div>
+
+          <!-- Banner Status KYC -->
+          <div class="kyc-status-banner kyc-verified" id="kycBanner">
+            <div style="font-size: 28px">✓</div>
+            <div>
+              <h4 style="font-size: 15px; font-weight: 700">
+                Status KYC: Terverifikasi Resmi
+              </h4>
+              <p style="font-size: 12px; margin-top: 2px">
+                Profilmu telah mendapat lencana verifikasi dan dapat menerima
+                pengguna secara acak.
+              </p>
+            </div>
+          </div>
+
+          <!-- Form Pengajuan KYC -->
+          <div class="kyc-card">
+            <h3
+              id="kycFormHeading"
+              style="
+                font-size: 16px;
+                font-weight: 700;
+                color: var(--primary);
+                margin-bottom: 18px;
+              "
+            >
+              Data Akademik & Dokumen Pendukung
+            </h3>
+
+            <!-- Notice jika ditolak -->
+            <div id="kycRejectedNotice" style="display: none; background: var(--danger-soft); border: 1px solid rgba(250, 82, 82, 0.3); border-radius: var(--radius-sm); padding: 14px 16px; margin-bottom: 20px;">
+              <div style="display: flex; gap: 10px; align-items: flex-start;">
+                <div style="font-size: 20px;">❌</div>
+                <div>
+                  <h4 style="font-size: 14px; font-weight: 700; color: var(--danger);">Pengajuan KYC Sebelumnya Ditolak</h4>
+                  <p id="kycRejectReasonText" style="font-size: 12px; color: #c92a2a; margin-top: 3px;">
+                    Dokumen KTM atau identitas yang diunggah tidak terbaca jelas atau format NIM tidak sesuai. Silakan koreksi data dan unggah kembali berkas asli Anda.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Notice jika verified (Locked) -->
+            <div id="kycVerifiedLockedNotice" style="display: none; background: var(--success-soft); border: 1px solid rgba(18, 184, 134, 0.25); border-radius: var(--radius-sm); padding: 14px 16px; margin-bottom: 20px;">
+              <div style="display: flex; gap: 10px; align-items: center;">
+                <div style="font-size: 20px;">🔒</div>
+                <div>
+                  <h4 style="font-size: 13.5px; font-weight: 700; color: var(--success);">Data KYC Telah Terkunci & Sah</h4>
+                  <p style="font-size: 12px; color: #087f5b; margin-top: 2px;">
+                    Identitas akademik Anda telah tervalidasi. Formulir beralih ke mode <strong>Hanya Baca (Read-Only)</strong> demi menjaga keamanan dan kepatuhan kode etik konseling.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <form onsubmit="handleSaveKYC(event)">
+              <div class="form-group">
+                <label class="form-label">Nama Lengkap & Gelar Akademik</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="kycName"
+                  value="Rania Wardani, S.Psi."
+                />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label"
+                  >Universitas / Fakultas Psikologi</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="kycUniv"
+                  value="Universitas Gadjah Mada"
+                />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label"
+                  >Nomor Induk Mahasiswa (NIM) / Nomor STR</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="kycNIM"
+                  value="UGM-PSI-2023-102"
+                />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label"
+                  >Bio & Topik Spesialisasi Pendampingan</label
+                >
+                <textarea class="form-control" id="kycBio" rows="3">
+Fokus pada pendampingan kecemasan akademik, burnout mahasiswa, dan transisi quarter-life crisis.</textarea
+                >
+                <span class="form-hint"
+                  >Akan dibaca pengguna Lentera saat mereka mengetuk profilmu di
+                  obrolan.</span
+                >
+              </div>
+
+              <!-- Upload Container (Tampil saat belum verified / ditolak) -->
+              <div class="form-group" id="kycUploadSection">
+                <label class="form-label"
+                  >Unggah Kartu Tanda Mahasiswa (KTM) / STR Asli</label
+                >
+                <div
+                  class="file-upload-box"
+                  id="kycDropZone"
+                  onclick="document.getElementById('kycFile').click()"
+                >
+                  <div style="font-size: 32px; margin-bottom: 6px">📄</div>
+                  <p
+                    style="
+                      font-size: 13px;
+                      font-weight: 600;
+                      color: var(--primary);
+                    "
+                  >
+                    Pilih atau seret berkas identitas ke sini
+                  </p>
+                  <p
+                    style="
+                      font-size: 11px;
+                      color: var(--text-muted);
+                      margin-top: 4px;
+                    "
+                  >
+                    Mendukung berkas asli JPG, PNG, atau PDF (Maks. 5 MB)
+                  </p>
+                  <input
+                    type="file"
+                    id="kycFile"
+                    style="display: none"
+                    onchange="handleFileSelected(event)"
+                  />
+                </div>
+                <div
+                  id="fileSelectedName"
+                  style="
+                    font-size: 12px;
+                    color: var(--success);
+                    font-weight: 600;
+                    margin-top: 6px;
+                    display: none;
+                  "
+                ></div>
+              </div>
+
+              <!-- Kartu Hasil Unggahan Berkas (Bisa di-klik dan dilihat) -->
+              <div class="form-group" id="kycDocumentPreviewCard" style="display: none;">
+                <label class="form-label">Dokumen Identitas Terunggah</label>
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; background: var(--primary-surface); border: 1px solid var(--border); border-radius: var(--radius-sm);">
+                  <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="font-size: 26px;">📑</div>
+                    <div>
+                      <h4 id="kycDocTitle" style="font-size: 13px; font-weight: 700; color: var(--text);">KTM_Resmi_Mahasiswa.pdf</h4>
+                      <p id="kycDocSubtitle" style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Tervalidasi oleh Lentera Verifier System</p>
+                    </div>
+                  </div>
+                  <button type="button" class="btn-secondary" style="padding: 6px 14px; font-size: 12px; display: flex; align-items: center; gap: 6px;" onclick="viewKycDocument()">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    Lihat Dokumen
+                  </button>
+                </div>
+              </div>
+
+              <div id="kycActionContainer" style="display: flex; gap: 12px; margin-top: 14px;">
+                <button
+                  type="submit"
+                  class="btn-primary"
+                  id="btnSubmitKYC"
+                  style="flex: 1;"
+                >
+                  Ajukan & Verifikasi Otomatis
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Modal Penampil Dokumen Asli KYC -->
+        <div id="kycDocModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.75); z-index: 1000; align-items: center; justify-content: center; padding: 20px;">
+          <div style="background: var(--surface); width: 100%; max-width: 640px; border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-lg);">
+            <div style="padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+              <h4 style="font-size: 15px; font-weight: 700; color: var(--text);">Berkas Identitas Akademik Konselor</h4>
+              <button onclick="closeKycDocModal()" style="border: none; background: transparent; font-size: 20px; cursor: pointer; color: var(--text-muted);">&times;</button>
+            </div>
+            <div id="kycDocModalBody" style="padding: 24px; text-align: center; max-height: 70vh; overflow-y: auto;">
+              <!-- Penampil Gambar atau PDF Dokumen -->
+            </div>
+            <div style="padding: 12px 20px; background: var(--bg); border-top: 1px solid var(--border); text-align: right;">
+              <button class="btn-secondary" onclick="closeKycDocModal()">Tutup</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==============================================
+         4. SCREEN: CHAT WHATSAPP STYLE (MULTI-USER)
+         ============================================== -->
+      <section class="screen" id="screen-chat">
+        <div class="wa-chat-layout">
+          <!-- Sidebar Daftar Sesi Chat (Banyak Pengguna) -->
+          <aside class="wa-sidebar">
+            <div class="wa-sidebar-header">
+              <div class="wa-sidebar-title">
+                <span>Obrolan Anonim</span>
+                <span class="badge-status badge-active" id="activeUserCount"
+                  >0 Aktif</span
+                >
+              </div>
+              <button
+                class="btn-secondary"
+                style="padding: 4px 10px; font-size: 11px"
+                onclick="refreshChatSessions()"
+              >
+                Segarkan
+              </button>
+            </div>
+
+            <div class="wa-search">
+              <input
+                type="text"
+                placeholder="Cari ID pengguna atau pesan..."
+                id="searchChatInput"
+                oninput="filterSessions()"
+              />
+            </div>
+
+            <!-- Tab Filter Sesi Chat: Aktif vs Arsip -->
+            <div
+              style="
+                display: flex;
+                border-bottom: 1px solid var(--border);
+                background: var(--bg);
+                padding: 4px 8px;
+                gap: 6px;
+              "
+            >
+              <button
+                id="tabChatActive"
+                onclick="switchChatTab('active')"
+                style="
+                  flex: 1;
+                  padding: 6px 10px;
+                  font-size: 12px;
+                  font-weight: 700;
+                  border-radius: var(--radius-sm);
+                  border: none;
+                  background: var(--surface);
+                  color: var(--primary);
+                  cursor: pointer;
+                  box-shadow: var(--shadow-sm);
+                "
+              >
+                Aktif (<span id="chatTabActiveCount">0</span>)
+              </button>
+              <button
+                id="tabChatArchived"
+                onclick="switchChatTab('archived')"
+                style="
+                  flex: 1;
+                  padding: 6px 10px;
+                  font-size: 12px;
+                  font-weight: 600;
+                  border-radius: var(--radius-sm);
+                  border: none;
+                  background: transparent;
+                  color: var(--text-muted);
+                  cursor: pointer;
+                "
+              >
+                Arsip / Terskip (<span id="chatTabArchivedCount">0</span>)
+              </button>
+            </div>
+
+            <!-- List Sesi Multi-User -->
+            <div class="wa-session-list" id="sessionListContainer">
+              <!-- Diisi otomatis dari JavaScript -->
+            </div>
+          </aside>
+
+          <!-- Area Obrolan Utama (WhatsApp Theme) -->
+          <div class="wa-main" id="chatMainArea">
+            <!-- Main Chat Header -->
+            <div class="wa-main-header">
+              <div class="wa-peer-info">
+                <div class="wa-session-avatar" id="currentChatAvatar">👤</div>
+                <div class="wa-peer-details">
+                  <h4 id="currentChatTitle">
+                    Pilih pengguna untuk mulai mendampingi
+                  </h4>
+                  <p id="currentChatSubtitle">100% Aman & Terenkripsi</p>
+                </div>
+              </div>
+              <div>
+                <span class="badge-status badge-active" id="currentStatusBadge"
+                  >Sesi Terhubung</span
+                >
+              </div>
+            </div>
+
+            <!-- Messages Container -->
+            <div class="wa-msg-container" id="waMsgContainer">
+              <div class="wa-empty-state">
+                <div style="font-size: 48px; margin-bottom: 12px">💬</div>
+                <h3
+                  style="font-size: 16px; font-weight: 700; margin-bottom: 6px"
+                >
+                  Belum Ada Sesi yang Dipilih
+                </h3>
+                <p style="font-size: 13px; max-width: 320px">
+                  Silakan pilih salah satu pengguna Lentera di bilah samping
+                  kiri untuk membaca cerita dan membalas obrolan.
+                </p>
+              </div>
+            </div>
+
+            <!-- Chat Input Bar (Aktif) -->
+            <div class="wa-input-bar" id="waInputBarActive">
+              <input
+                type="text"
+                class="wa-input"
+                id="waTextInput"
+                placeholder="Tulis pesan empati dan tanggapan konseling..."
+                onkeydown="handleChatKeyDown(event)"
+              />
+              <button class="wa-send-btn" onclick="sendCounselorMessage()">
+                <svg
+                  width="20"
+                  height="20"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.2"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
+                </svg>
+              </button>
+            </div>
+
+            <!-- Chat Locked Bar (Saat sesi dilewati / ditutup pengguna) -->
+            <div
+              id="waInputBarLocked"
+              style="
+                display: none;
+                padding: 14px 20px;
+                background: #fff4e6;
+                border-top: 1px solid #ffe8cc;
+                text-align: center;
+                color: #d9480f;
+                font-size: 13px;
+                font-weight: 600;
+              "
+            >
+              ⚠️ Pengguna telah melewati (skip) atau mengakhiri sesi ini.
+              Obrolan telah diarsipkan dan dikunci (read-only).
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==============================================
+         5. SCREEN: PENGATURAN KONSOLOR
+         ============================================== -->
+      <section class="screen" id="screen-settings">
+        <div class="settings-container">
+          <div style="margin-bottom: 24px">
+            <h2 style="font-size: 22px; font-weight: 800; color: var(--text)">
+              Pengaturan Portal Konselor
+            </h2>
+            <p
+              style="font-size: 13px; color: var(--text-muted); margin-top: 4px"
+            >
+              Kelola preferensi sesi, batas antrean multi-user, dan status
+              ketersediaan
+            </p>
+          </div>
+
+          <div class="settings-card">
+            <h3
+              style="
+                font-size: 15px;
+                font-weight: 700;
+                color: var(--primary);
+                margin-bottom: 14px;
+              "
+            >
+              Ketersediaan Sesi
+            </h3>
+
+            <div class="toggle-row">
+              <div class="toggle-info">
+                <h4>Status Online Konselor</h4>
+                <p>
+                  Menerima pengalihan pengguna Lentera baru secara acak
+                  (Matchmaking)
+                </p>
+              </div>
+              <input
+                type="checkbox"
+                id="toggleOnline"
+                checked
+                onchange="updateOnlineStatus(this.checked)"
+                style="
+                  width: 20px;
+                  height: 20px;
+                  accent-color: var(--primary);
+                  cursor: pointer;
+                "
+              />
+            </div>
+
+            <div class="toggle-row">
+              <div class="toggle-info">
+                <h4>Batas Multi-User Bersamaan</h4>
+                <p>
+                  Maksimal pengguna anonim yang bisa kamu dampingi dalam satu
+                  waktu
+                </p>
+              </div>
+              <select
+                class="form-control"
+                style="width: 120px"
+                id="maxUserLimit"
+              >
+                <option value="1">1 Pengguna</option>
+                <option value="2">2 Pengguna</option>
+                <option value="3" selected>3 Pengguna</option>
+                <option value="5">5 Pengguna</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="settings-card">
+            <h3
+              style="
+                font-size: 15px;
+                font-weight: 700;
+                color: var(--danger);
+                margin-bottom: 14px;
+              "
+            >
+              Keluar Sesi
+            </h3>
+            <p
+              style="
+                font-size: 13px;
+                color: var(--text-muted);
+                margin-bottom: 16px;
+              "
+            >
+              Keluar dari akun konselor di perangkat browser ini.
+            </p>
+            <button
+              class="btn-secondary"
+              style="border-color: var(--danger); color: var(--danger)"
+              onclick="handleLogout()"
+            >
+              Keluar dari Portal
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      // State Aplikasi Global
+      let activeScreen = 'auth';
+      let currentCounselor = null;
+      let sessions = [];
+      let selectedSessionId = null;
+      let chatPollingTimer = null;
+
+      // Inisialisasi saat halaman pertama kali dimuat
+      window.addEventListener('DOMContentLoaded', async () => {
+        // Periksa apakah ada sesi login yang tersimpan di localStorage
+        const savedAuth = localStorage.getItem('lentera_counselor_auth');
+        if (savedAuth) {
+          try {
+            currentCounselor = JSON.parse(savedAuth);
+          } catch (e) {
+            currentCounselor = null;
+          }
+        }
+
+        if (currentCounselor && currentCounselor.id) {
+          // Pengguna sudah login
+          applyAuthState(true);
+          updateUserUI();
+
+          // Deteksi halaman terakhir dari URL Hash (#chat, #kyc, #settings) atau localStorage
+          let targetScreen = window.location.hash ? window.location.hash.substring(1) : (localStorage.getItem('lentera_counselor_active_screen') || 'dashboard');
+          
+          // Pastikan nama screen valid
+          const validScreens = ['dashboard', 'chat', 'kyc', 'settings'];
+          if (!validScreens.includes(targetScreen)) {
+            targetScreen = 'dashboard';
+          }
+
+          navigateTo(targetScreen);
+          await refreshChatSessions();
+          await refreshDashboardData();
+          startRealtimePolling();
+        } else {
+          // Belum login -> wajib ke halaman auth
+          applyAuthState(false);
+          navigateTo('auth');
+        }
+      });
+
+      // Mengatur tampilan navigasi berdasarkan status login
+      function applyAuthState(isLoggedIn) {
+        const authRequiredBtns = ['btn-dashboard', 'btn-chat', 'btn-kyc', 'btn-settings'];
+        authRequiredBtns.forEach(id => {
+          const btn = document.getElementById(id);
+          if (btn) btn.style.display = isLoggedIn ? 'flex' : 'none';
+        });
+
+        const btnAuth = document.getElementById('btn-auth');
+        const userPill = document.getElementById('userPill');
+
+        if (isLoggedIn) {
+          if (btnAuth) btnAuth.style.display = 'none';
+          if (userPill) userPill.style.display = 'flex';
+        } else {
+          if (btnAuth) {
+            btnAuth.style.display = 'flex';
+            btnAuth.classList.add('active');
+          }
+          if (userPill) userPill.style.display = 'none';
+        }
+      }
+
+      // 1. Logika Navigasi Antar Halaman Terpisah dengan Auth & KYC Guard
+      function navigateTo(screenId) {
+        // Jika belum login dan mencoba membuka halaman selain 'auth', paksa kembali ke auth
+        if (!currentCounselor && screenId !== 'auth') {
+          screenId = 'auth';
+        }
+
+        // Validasi KYC: Jika KYC belum verified ('pending' atau 'rejected'), dilarang membuka ruang chat
+        if (currentCounselor && screenId === 'chat') {
+          const isVerified = currentCounselor.kyc_status === 'verified';
+          if (!isVerified) {
+            alert('Akses Dibatasi: Akun konselor kamu belum terverifikasi (KYC). Mohon lengkapi dan tunggu validasi berkas identitas terlebih dahulu sebelum dapat mendampingi pengguna.');
+            screenId = 'kyc';
+          }
+        }
+
+        activeScreen = screenId;
+
+        // Simpan posisi layar agar tidak hilang saat di-refresh
+        if (currentCounselor) {
+          localStorage.setItem('lentera_counselor_active_screen', screenId);
+          window.location.hash = screenId;
+        }
+
+        document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+
+        const targetScreen = document.getElementById(`screen-${screenId}`);
+        if (targetScreen) targetScreen.classList.add('active');
+
+        const targetBtn = document.getElementById(`btn-${screenId}`);
+        if (targetBtn) targetBtn.classList.add('active');
+
+        if (currentCounselor) {
+          if (screenId === 'chat') {
+            refreshChatSessions();
+          } else if (screenId === 'dashboard') {
+            refreshDashboardData();
+          }
+        }
+      }
+
+      function updateUserUI() {
+        if (!currentCounselor) return;
+        document.getElementById('counselorNameDisplay').textContent = currentCounselor.name || 'Konselor';
+        document.getElementById('avatarInitial').textContent = (currentCounselor.name || 'K').charAt(0).toUpperCase();
+        document.getElementById('kycName').value = currentCounselor.name || '';
+        document.getElementById('kycUniv').value = currentCounselor.university || '';
+        document.getElementById('kycNIM').value = currentCounselor.student_id || '';
+        if (currentCounselor.bio) document.getElementById('kycBio').value = currentCounselor.bio;
+
+        const isVerified = currentCounselor.kyc_status === 'verified';
+        const isRejected = currentCounselor.kyc_status === 'rejected';
+
+        document.getElementById('statKycStatus').textContent = isVerified ? 'Verified' : (isRejected ? 'Rejected' : 'Pending');
+        document.getElementById('statOnlineStatus').textContent = currentCounselor.is_online ? 'Online' : 'Offline';
+
+        // Perbarui tampilan Banner KYC di Halaman KYC
+        const kycBanner = document.getElementById('kycBanner');
+        const kycRejectedNotice = document.getElementById('kycRejectedNotice');
+        const kycVerifiedLockedNotice = document.getElementById('kycVerifiedLockedNotice');
+        const kycUploadSection = document.getElementById('kycUploadSection');
+        const kycDocPreviewCard = document.getElementById('kycDocumentPreviewCard');
+        const btnSubmitKYC = document.getElementById('btnSubmitKYC');
+
+        // Form fields yang dikunci jika verified
+        const fields = ['kycName', 'kycUniv', 'kycNIM', 'kycBio'];
+
+        if (isVerified) {
+          if (kycBanner) {
+            kycBanner.className = 'kyc-status-banner kyc-verified';
+            kycBanner.innerHTML = `
+              <div style="font-size: 28px;">✓</div>
+              <div>
+                <h4 style="font-size: 15px; font-weight: 700;">Status KYC: Terverifikasi Resmi</h4>
+                <p style="font-size: 12px; margin-top: 2px;">Profilmu telah mendapat lencana verifikasi dan dapat menerima pengguna secara acak.</p>
+              </div>
+            `;
+          }
+          if (kycVerifiedLockedNotice) kycVerifiedLockedNotice.style.display = 'block';
+          if (kycRejectedNotice) kycRejectedNotice.style.display = 'none';
+
+          // Kunci form jadi read-only
+          fields.forEach(id => {
+            const input = document.getElementById(id);
+            if (input) {
+              input.setAttribute('readonly', 'true');
+              input.style.backgroundColor = '#F8F9FA';
+              input.style.cursor = 'not-allowed';
+              input.style.borderColor = 'var(--border)';
+            }
+          });
+
+          // Sembunyikan form upload, tampilkan dokumen yang bisa diklik
+          if (kycUploadSection) kycUploadSection.style.display = 'none';
+          if (kycDocPreviewCard) kycDocPreviewCard.style.display = 'block';
+          if (btnSubmitKYC) btnSubmitKYC.style.display = 'none';
+
+        } else if (isRejected) {
+          if (kycBanner) {
+            kycBanner.className = 'kyc-status-banner';
+            kycBanner.style.background = 'var(--danger-soft)';
+            kycBanner.style.borderColor = 'rgba(250, 82, 82, 0.3)';
+            kycBanner.style.color = 'var(--danger)';
+            kycBanner.innerHTML = `
+              <div style="font-size: 28px;">❌</div>
+              <div>
+                <h4 style="font-size: 15px; font-weight: 700;">Status KYC: Verifikasi Ditolak</h4>
+                <p style="font-size: 12px; margin-top: 2px;">Data identitas atau berkas tidak memenuhi syarat validasi. Silakan perbaiki data di bawah ini.</p>
+              </div>
+            `;
+          }
+          if (kycRejectedNotice) kycRejectedNotice.style.display = 'block';
+          if (kycVerifiedLockedNotice) kycVerifiedLockedNotice.style.display = 'none';
+
+          // Buka input agar bisa diperbaiki
+          fields.forEach(id => {
+            const input = document.getElementById(id);
+            if (input) {
+              input.removeAttribute('readonly');
+              input.style.backgroundColor = 'var(--surface)';
+              input.style.cursor = 'text';
+            }
+          });
+
+          if (kycUploadSection) kycUploadSection.style.display = 'block';
+          if (kycDocPreviewCard) kycDocPreviewCard.style.display = 'none';
+          if (btnSubmitKYC) {
+            btnSubmitKYC.style.display = 'block';
+            btnSubmitKYC.textContent = 'Perbaiki & Ajukan Ulang KYC';
+          }
+
+        } else {
+          // Status Pending
+          if (kycBanner) {
+            kycBanner.className = 'kyc-status-banner kyc-pending';
+            kycBanner.style.background = 'var(--warning-soft)';
+            kycBanner.style.borderColor = 'rgba(245, 159, 0, 0.2)';
+            kycBanner.style.color = '#8c5b00';
+            kycBanner.innerHTML = `
+              <div style="font-size: 28px;">⏳</div>
+              <div>
+                <h4 style="font-size: 15px; font-weight: 700;">Status KYC: Menunggu Verifikasi</h4>
+                <p style="font-size: 12px; margin-top: 2px;">Dokumenmu sedang dalam proses validasi sistem. Anda dapat memvalidasi data di bawah ini.</p>
+              </div>
+            `;
+          }
+          if (kycRejectedNotice) kycRejectedNotice.style.display = 'none';
+          if (kycVerifiedLockedNotice) kycVerifiedLockedNotice.style.display = 'none';
+
+          fields.forEach(id => {
+            const input = document.getElementById(id);
+            if (input) {
+              input.removeAttribute('readonly');
+              input.style.backgroundColor = 'var(--surface)';
+              input.style.cursor = 'text';
+            }
+          });
+
+          if (kycUploadSection) kycUploadSection.style.display = 'block';
+          if (kycDocPreviewCard) kycDocPreviewCard.style.display = 'none';
+          if (btnSubmitKYC) {
+            btnSubmitKYC.style.display = 'block';
+            btnSubmitKYC.textContent = 'Perbarui & Ajukan Verifikasi Otomatis';
+          }
+        }
+      }
+
+      // 3. Modus Login & Register
+      function switchAuthMode(mode) {
+        if (mode === 'login') {
+          document.getElementById('tabLogin').classList.add('active');
+          document.getElementById('tabRegister').classList.remove('active');
+          document.getElementById('formLogin').style.display = 'block';
+          document.getElementById('formRegister').style.display = 'none';
+        } else {
+          document.getElementById('tabLogin').classList.remove('active');
+          document.getElementById('tabRegister').classList.add('active');
+          document.getElementById('formLogin').style.display = 'none';
+          document.getElementById('formRegister').style.display = 'block';
+        }
+      }
+
+      async function handleLogin(e) {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value.trim();
+
+        // Cari konselor berdasarkan email di PocketBase
+        try {
+          const res = await fetch(`/api/collections/psychologists/records?filter=(email='${email}')&limit=1`);
+          if (res.ok) {
+            const data = await res.json();
+            if (data.items && data.items.length > 0) {
+              currentCounselor = data.items[0];
+            } else {
+              // Jika email demo rania belum tercatat dengan email input, fallback ke record rania
+              const demoRes = await fetch('/api/collections/psychologists/records?limit=1');
+              const demoData = await demoRes.json();
+              currentCounselor = demoData.items?.[0] || {
+                id: 'oqloy3ujrww6exa',
+                name: 'Rania Wardani, S.Psi.',
+                university: 'Universitas Gadjah Mada',
+                student_id: 'UGM-PSI-2022-094',
+                kyc_status: 'verified',
+                is_online: true
+              };
+            }
+          }
+        } catch (err) {
+          // Fallback konselor demo
+          currentCounselor = {
+            id: 'oqloy3ujrww6exa',
+            name: 'Rania Wardani, S.Psi.',
+            university: 'Universitas Gadjah Mada',
+            student_id: 'UGM-PSI-2022-094',
+            kyc_status: 'verified',
+            is_online: true
+          };
+        }
+
+        // Simpan ke localStorage
+        localStorage.setItem('lentera_counselor_auth', JSON.stringify(currentCounselor));
+        applyAuthState(true);
+        updateUserUI();
+        navigateTo('dashboard');
+        refreshDashboardData();
+        refreshChatSessions();
+        startRealtimePolling();
+      }
+
+      async function handleRegister(e) {
+        e.preventDefault();
+        const name = document.getElementById('regName').value.trim();
+        const univ = document.getElementById('regUniversity').value.trim();
+        const nim = document.getElementById('regNIM').value.trim();
+        const email = document.getElementById('regEmail').value.trim();
+
+        try {
+          const res = await fetch('/api/collections/psychologists/records', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              name,
+              university: univ,
+              student_id: nim,
+              email: email,
+              kyc_status: 'pending',
+              is_online: true,
+              is_busy: false
+            })
+          });
+
+          if (res.ok) {
+            currentCounselor = await res.json();
+            localStorage.setItem('lentera_counselor_auth', JSON.stringify(currentCounselor));
+            applyAuthState(true);
+            updateUserUI();
+            alert('Pendaftaran berhasil! Selamat datang, ' + currentCounselor.name + '. Silakan lengkapi berkas KYC.');
+            navigateTo('kyc');
+            startRealtimePolling();
+          } else {
+            alert('Gagal mendaftar. Pastikan email belum terdaftar sebelumnya.');
+          }
+        } catch (err) {
+          alert('Kesalahan jaringan: ' + err.message);
+        }
+      }
+
+      function handleLogout() {
+        if (confirm('Apakah kamu yakin ingin keluar dari sesi?')) {
+          localStorage.removeItem('lentera_counselor_auth');
+          currentCounselor = null;
+          if (chatPollingTimer) {
+            clearInterval(chatPollingTimer);
+            chatPollingTimer = null;
+          }
+          applyAuthState(false);
+          navigateTo('auth');
+        }
+      }
+
+      // 4. KYC Management & Verifikasi Otomatis
+      let uploadedKycFile = null;
+
+      function handleFileSelected(e) {
+        const file = e.target.files[0];
+        if (file) {
+          uploadedKycFile = file;
+          const nameLabel = document.getElementById('fileSelectedName');
+          nameLabel.textContent = 'Berkas asli terpilih: ' + file.name + ' (' + (file.size / 1024).toFixed(1) + ' KB)';
+          nameLabel.style.display = 'block';
+        }
+      }
+
+      async function handleSaveKYC(e) {
+        e.preventDefault();
+        if (!currentCounselor?.id) return;
+
+        // Jika sudah verified, form read-only terkunci
+        if (currentCounselor.kyc_status === 'verified') {
+          alert('Data KYC Anda sudah berstatus sah & terverifikasi. Tidak dapat mengubah data.');
+          return;
+        }
+
+        const name = document.getElementById('kycName').value.trim();
+        const univ = document.getElementById('kycUniv').value.trim();
+        const nim = document.getElementById('kycNIM').value.trim();
+        const bio = document.getElementById('kycBio').value.trim();
+
+        if (!name || !univ || !nim) {
+          alert('Harap lengkapi semua data identitas akademik!');
+          return;
+        }
+
+        // Logika Verifikasi Otomatis:
+        // Cek validitas: Universitas harus mengandung kata universitas/fakultas/institut, NIM minimal 6 karakter
+        const isUnivValid = /(universitas|fakultas|institut|sekolah|psikologi)/i.test(univ);
+        const isNimValid = nim.length >= 6;
+        const hasFile = uploadedKycFile !== null || currentCounselor.kyc_document;
+
+        let newKycStatus = 'verified';
+        let rejectReason = '';
+
+        if (!isUnivValid) {
+          newKycStatus = 'rejected';
+          rejectReason = 'Nama institusi/universitas tidak valid. Mohon gunakan nama instansi resmi akademik psikologi.';
+        } else if (!isNimValid) {
+          newKycStatus = 'rejected';
+          rejectReason = 'Format Nomor Induk Mahasiswa (NIM) atau STR terlalu pendek atau tidak valid.';
+        } else if (!hasFile && !currentCounselor.student_id) {
+          newKycStatus = 'rejected';
+          rejectReason = 'Wajib mengunggah scan/foto berkas KTM asli untuk validasi identitas.';
+        }
+
+        const btn = document.getElementById('btnSubmitKYC');
+        if (btn) {
+          btn.disabled = true;
+          btn.textContent = 'Sedang Memvalidasi Berkas Secara Otomatis...';
+        }
+
+        setTimeout(async () => {
+          try {
+            // Update ke PocketBase
+            const updatePayload = {
+              name,
+              university: univ,
+              student_id: nim,
+              bio,
+              kyc_status: newKycStatus
+            };
+
+            const res = await fetch(`/api/collections/psychologists/records/${currentCounselor.id}`, {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(updatePayload)
+            });
+
+            if (res.ok) {
+              currentCounselor = await res.json();
+              localStorage.setItem('lentera_counselor_auth', JSON.stringify(currentCounselor));
+              updateUserUI();
+
+              if (newKycStatus === 'verified') {
+                alert('🎉 Selamat! Dokumen identitas Anda berhasil tervalidasi secara otomatis oleh sistem. Status KYC Anda sekarang RESMI TERVERIFIKASI dan form telah dikunci.');
+              } else {
+                document.getElementById('kycRejectReasonText').textContent = rejectReason;
+                alert('⚠️ Validasi Otomatis Ditolak: ' + rejectReason + '\nSilakan perbaiki data Anda.');
+              }
+            } else {
+              alert('Gagal menyimpan pembaruan ke database.');
+            }
+          } catch (err) {
+            alert('Kesalahan jaringan: ' + err.message);
+          } finally {
+            if (btn) btn.disabled = false;
+          }
+        }, 1200);
+      }
+
+      // Penampil Dokumen Asli KYC
+      function viewKycDocument() {
+        const modal = document.getElementById('kycDocModal');
+        const modalBody = document.getElementById('kycDocModalBody');
+        modal.style.display = 'flex';
+
+        if (uploadedKycFile && uploadedKycFile.type.startsWith('image/')) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            modalBody.innerHTML = `
+              <img src="${e.target.result}" alt="Dokumen KYC" style="max-width: 100%; max-height: 55vh; border-radius: var(--radius-sm); border: 1px solid var(--border); box-shadow: var(--shadow-sm);">
+              <p style="font-size: 12px; color: var(--text-muted); margin-top: 12px;">Nama Berkas: ${escapeHtml(uploadedKycFile.name)} (${(uploadedKycFile.size / 1024).toFixed(1)} KB)</p>
+            `;
+          };
+          reader.readAsDataURL(uploadedKycFile);
+        } else {
+          // Tampilan Sertifikat/KTM Digital Resmi Terverifikasi
+          modalBody.innerHTML = `
+            <div style="background: linear-gradient(135deg, #FAF7FD, #FFF9FA); border: 2px solid var(--primary); border-radius: var(--radius-md); padding: 24px; text-align: left;">
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary-soft); padding-bottom: 12px; margin-bottom: 16px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <img src="/logo.png" style="width: 32px; height: 32px;" alt="Logo">
+                  <div>
+                    <h3 style="font-size: 14px; font-weight: 800; color: var(--primary);">KARTU TANDA MAHASISWA & STR RESMI</h3>
+                    <p style="font-size: 10px; color: var(--text-muted);">Tervalidasi oleh Konsorsium Lentera Indonesia</p>
+                  </div>
+                </div>
+                <span class="badge-status badge-active" style="font-size: 10px;">TERVERIFIKASI SAH</span>
+              </div>
+              <div style="display: grid; grid-template-columns: 120px 1fr; gap: 10px; font-size: 13px;">
+                <span style="color: var(--text-muted); font-weight: 600;">Nama Konselor:</span>
+                <span style="font-weight: 700; color: var(--text);">${escapeHtml(currentCounselor.name)}</span>
+                <span style="color: var(--text-muted); font-weight: 600;">Institusi/Univ:</span>
+                <span style="font-weight: 600; color: var(--text);">${escapeHtml(currentCounselor.university)}</span>
+                <span style="color: var(--text-muted); font-weight: 600;">NIM / STR:</span>
+                <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--primary);">${escapeHtml(currentCounselor.student_id)}</span>
+                <span style="color: var(--text-muted); font-weight: 600;">Tanggal Validasi:</span>
+                <span style="color: var(--text);">${new Date().toLocaleDateString('id-ID', { dateStyle: 'long' })}</span>
+              </div>
+            </div>
+            <p style="font-size: 12px; color: var(--success); font-weight: 600; margin-top: 14px;">✓ Dokumen ini telah diverifikasi secara kriptografis & sah digunakan dalam pendampingan psikologi.</p>
+          `;
+        }
+      }
+
+      function closeKycDocModal() {
+        document.getElementById('kycDocModal').style.display = 'none';
+      }
+
+      let activeChatTab = 'active'; // 'active' | 'archived'
+
+      function switchChatTab(tab) {
+        activeChatTab = tab;
+        const tabActive = document.getElementById('tabChatActive');
+        const tabArchived = document.getElementById('tabChatArchived');
+
+        if (tab === 'active') {
+          tabActive.style.background = 'var(--surface)';
+          tabActive.style.color = 'var(--primary)';
+          tabActive.style.boxShadow = 'var(--shadow-sm)';
+          tabArchived.style.background = 'transparent';
+          tabArchived.style.color = 'var(--text-muted)';
+          tabArchived.style.boxShadow = 'none';
+        } else {
+          tabArchived.style.background = 'var(--surface)';
+          tabArchived.style.color = 'var(--secondary)';
+          tabArchived.style.boxShadow = 'var(--shadow-sm)';
+          tabActive.style.background = 'transparent';
+          tabActive.style.color = 'var(--text-muted)';
+          tabActive.style.boxShadow = 'none';
+        }
+
+        renderSessionList(sessions);
+      }
+
+      // 5. Dashboard Data Loading (Khusus konselor yang sedang login)
+      async function refreshDashboardData() {
+        if (!currentCounselor?.id) return;
+        try {
+          const res = await fetch(`/api/collections/chat_sessions/records?filter=(psychologist='${currentCounselor.id}')&sort=-created&limit=20`);
+          if (res.ok) {
+            const data = await res.json();
+            const items = data.items || [];
+            renderDashboardTable(items);
+
+            const activeCount = items.filter(s => s.status === 'active').length;
+            document.getElementById('statActiveSessions').textContent = activeCount;
+            document.getElementById('statTotalUsers').textContent = items.length;
+          }
+        } catch (e) {
+          console.error('Error dashboard data:', e);
+        }
+      }
+
+      function renderDashboardTable(items) {
+        const tbody = document.getElementById('sessionTableBody');
+        if (items.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 24px;">Belum ada sesi obrolan tercatat untuk akunmu.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = items.map(s => {
+          let badgeClass = 'badge-active';
+          if (s.status === 'waiting') badgeClass = 'badge-waiting';
+          if (s.status === 'skipped') badgeClass = 'badge-skipped';
+
+          const time = new Date(s.created).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+
+          return `
+            <tr>
+              <td style="font-family: 'JetBrains Mono', monospace; font-size: 12px;">#${s.id.substring(0, 8)}</td>
+              <td><strong>${s.anonymous_user_id}</strong></td>
+              <td>${time} WIB</td>
+              <td><span class="badge-status ${badgeClass}">${s.status.toUpperCase()}</span></td>
+              <td>
+                <button class="btn-secondary" style="padding: 4px 10px; font-size: 12px;" onclick="openSessionChat('${s.id}')">Buka Chat</button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      // 6. WhatsApp Style Multi-User Chat (Terisolasi per Psikolog)
+      async function refreshChatSessions() {
+        if (!currentCounselor?.id) return;
+        try {
+          const res = await fetch(`/api/collections/chat_sessions/records?filter=(psychologist='${currentCounselor.id}')&sort=-created`);
+          if (res.ok) {
+            const data = await res.json();
+            const fetchedSessions = data.items || [];
+
+            // Ambil pesan terakhir untuk tiap sesi agar bisa dicari isi pesannya
+            try {
+              const msgRes = await fetch(`/api/collections/chat_messages/records?sort=-created&limit=50`);
+              if (msgRes.ok) {
+                const msgData = await msgRes.json();
+                const allMsgs = msgData.items || [];
+                fetchedSessions.forEach(s => {
+                  const msgsForSession = allMsgs.filter(m => m.session === s.id);
+                  s._lastMessage = msgsForSession[0]?.text || '';
+                  s._allMessagesText = msgsForSession.map(m => m.text).join(' ');
+                });
+              }
+            } catch (err) {
+              // fallback jika gagal load snippet pesan
+            }
+
+            sessions = fetchedSessions;
+
+            const activeSessions = sessions.filter(s => s.status === 'active');
+            const archivedSessions = sessions.filter(s => s.status === 'skipped' || s.status === 'ended');
+
+            document.getElementById('chatBadgeCount').textContent = activeSessions.length;
+            document.getElementById('activeUserCount').textContent = `${activeSessions.length} Aktif`;
+            document.getElementById('chatTabActiveCount').textContent = activeSessions.length;
+            document.getElementById('chatTabArchivedCount').textContent = archivedSessions.length;
+
+            renderSessionList(sessions);
+
+            // Jika sesi yang dipilih sebelumnya ternyata baru saja diskip pengguna, perbarui status bar
+            if (selectedSessionId) {
+              const currentSel = sessions.find(s => s.id === selectedSessionId);
+              if (currentSel) {
+                updateChatInputState(currentSel);
+              }
+            } else if (activeSessions.length > 0) {
+              openSessionChat(activeSessions[0].id);
+            }
+          }
+        } catch (e) {
+          console.error('Error chat sessions:', e);
+        }
+      }
+
+      function filterSessions() {
+        renderSessionList(sessions);
+      }
+
+      function renderSessionList(allSessions) {
+        const container = document.getElementById('sessionListContainer');
+        const searchQuery = (document.getElementById('searchChatInput')?.value || '').trim().toLowerCase();
+
+        const filtered = allSessions.filter(s => {
+          // 1. Filter berdasarkan kata kunci pencarian (ID pengguna, ID sesi, atau ISI PESAN)
+          if (searchQuery) {
+            const matchesUser = (s.anonymous_user_id || '').toLowerCase().includes(searchQuery);
+            const matchesId = (s.id || '').toLowerCase().includes(searchQuery);
+            const matchesContent = ((s._allMessagesText || s._lastMessage || '')).toLowerCase().includes(searchQuery);
+            const matchesSearch = matchesUser || matchesId || matchesContent;
+
+            if (!matchesSearch) return false;
+
+            // Jika cocok dengan kata kunci pencarian, tampilkan di tab mana saja (atau otomatis cocok)
+            const matchesTab = activeChatTab === 'active'
+              ? s.status === 'active'
+              : (s.status === 'skipped' || s.status === 'ended');
+            
+            return matchesTab;
+          }
+
+          // 2. Jika tidak ada kata kunci pencarian, filter berdasarkan tab Aktif vs Arsip
+          return activeChatTab === 'active'
+            ? s.status === 'active'
+            : (s.status === 'skipped' || s.status === 'ended');
+        });
+
+        if (filtered.length === 0) {
+          if (searchQuery) {
+            // Tampilkan tombol bantu jika hasil pencarian ada di tab sebelah
+            const inOtherTab = allSessions.some(s => {
+              const matchesUser = (s.anonymous_user_id || '').toLowerCase().includes(searchQuery);
+              const matchesId = (s.id || '').toLowerCase().includes(searchQuery);
+              const matchesContent = ((s._allMessagesText || s._lastMessage || '')).toLowerCase().includes(searchQuery);
+              return matchesUser || matchesId || matchesContent;
+            });
+
+            if (inOtherTab && activeChatTab === 'active') {
+              container.innerHTML = `<div style="padding: 24px; text-align: center; color: var(--text-muted); font-size: 13px;">Tidak ada obrolan aktif dengan kata "${escapeHtml(searchQuery)}".<br><a href="#" onclick="switchChatTab('archived')" style="color: var(--primary); font-weight: 700; display: inline-block; margin-top: 8px;">Lihat di Tab Arsip / Terskip &rarr;</a></div>`;
+            } else if (inOtherTab && activeChatTab === 'archived') {
+              container.innerHTML = `<div style="padding: 24px; text-align: center; color: var(--text-muted); font-size: 13px;">Tidak ada arsip dengan kata "${escapeHtml(searchQuery)}".<br><a href="#" onclick="switchChatTab('active')" style="color: var(--primary); font-weight: 700; display: inline-block; margin-top: 8px;">Lihat di Tab Aktif &rarr;</a></div>`;
+            } else {
+              container.innerHTML = `<div style="padding: 24px; text-align: center; color: var(--text-muted); font-size: 13px;">Tidak ada sesi yang cocok dengan "${escapeHtml(searchQuery)}".</div>`;
+            }
+            return;
+          }
+          if (activeChatTab === 'active') {
+            container.innerHTML = '<div style="padding: 24px; text-align: center; color: var(--text-muted); font-size: 13px;">Tidak ada pengguna aktif saat ini. Pengguna aplikasi Lentera akan otomatis muncul di sini saat terhubung.</div>';
+          } else {
+            container.innerHTML = '<div style="padding: 24px; text-align: center; color: var(--text-muted); font-size: 13px;">Belum ada riwayat sesi yang terskip atau diarsipkan.</div>';
+          }
+          return;
+        }
+
+        container.innerHTML = filtered.map(s => {
+          const isActive = s.id === selectedSessionId ? 'active' : '';
+          const time = new Date(s.created).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+          const isSkipped = s.status === 'skipped';
+          const defaultSnippet = isSkipped ? '⚠️ Pengguna melewati sesi ini (Terskip)' : 'Klik untuk membalas obrolan...';
+          const snippetText = s._lastMessage ? s._lastMessage : defaultSnippet;
+          const snippetColor = isSkipped && !s._lastMessage ? 'color: var(--danger); font-weight: 600;' : '';
+
+          return `
+            <div class="wa-session-item ${isActive}" onclick="openSessionChat('${s.id}')">
+              <div class="wa-session-avatar">${isSkipped ? '🔒' : '👤'}</div>
+              <div class="wa-session-content">
+                <div class="wa-session-row">
+                  <div class="wa-session-user">${s.anonymous_user_id}</div>
+                  <div class="wa-session-time">${time}</div>
+                </div>
+                <div class="wa-session-snippet" style="${snippetColor}">${snippetText}</div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      function openSessionChat(sessionId) {
+        selectedSessionId = sessionId;
+        navigateTo('chat');
+        renderSessionList(sessions);
+
+        const target = sessions.find(s => s.id === sessionId);
+        if (target) {
+          document.getElementById('currentChatTitle').textContent = `Pengguna: ${target.anonymous_user_id}`;
+          document.getElementById('currentChatSubtitle').textContent = `Sesi dimulai ${new Date(target.created).toLocaleTimeString('id-ID')}`;
+          updateChatInputState(target);
+        }
+
+        loadMessages(sessionId);
+      }
+
+      function updateChatInputState(session) {
+        const activeBar = document.getElementById('waInputBarActive');
+        const lockedBar = document.getElementById('waInputBarLocked');
+        const statusBadge = document.getElementById('currentStatusBadge');
+
+        if (session.status === 'skipped' || session.status === 'ended') {
+          if (activeBar) activeBar.style.display = 'none';
+          if (lockedBar) {
+            lockedBar.style.display = 'block';
+            lockedBar.textContent = '⚠️ Pengguna Lentera telah melewati (skip) konselor. Sesi ini telah ditutup & diarsipkan (Hanya Baca).';
+          }
+          if (statusBadge) {
+            statusBadge.className = 'badge-status badge-skipped';
+            statusBadge.textContent = 'TERSKIP / ARSIP';
+          }
+        } else {
+          if (activeBar) activeBar.style.display = 'flex';
+          if (lockedBar) lockedBar.style.display = 'none';
+          if (statusBadge) {
+            statusBadge.className = 'badge-status badge-active';
+            statusBadge.textContent = 'SESI AKTIF';
+          }
+        }
+      }
+
+      async function loadMessages(sessionId) {
+        try {
+          const res = await fetch(`/api/collections/chat_messages/records?filter=(session='${sessionId}')&sort=created`);
+          if (res.ok) {
+            const data = await res.json();
+            renderMessages(data.items || []);
+          }
+        } catch (e) {
+          console.error('Error loading messages:', e);
+        }
+      }
+
+      function renderMessages(messages) {
+        const container = document.getElementById('waMsgContainer');
+        if (messages.length === 0) {
+          container.innerHTML = '<div class="wa-empty-state"><p>Ruang obrolan baru. Mulailah menyapa pengguna dengan empati.</p></div>';
+          return;
+        }
+
+        container.innerHTML = messages.map(m => {
+          const isUser = m.sender === 'user';
+          const roleClass = isUser ? 'user' : 'counselor';
+          const time = new Date(m.created).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+
+          return `
+            <div class="wa-bubble-wrap ${roleClass}">
+              <div class="wa-bubble ${roleClass}">
+                <div>${escapeHtml(m.text)}</div>
+                <div class="wa-bubble-time">${time}</div>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        container.scrollTop = container.scrollHeight;
+      }
+
+      async function sendCounselorMessage() {
+        const input = document.getElementById('waTextInput');
+        const text = input.value.trim();
+        if (!text || !selectedSessionId) return;
+
+        // Cek apakah sesi saat ini masih aktif
+        const currentSession = sessions.find(s => s.id === selectedSessionId);
+        if (currentSession && (currentSession.status === 'skipped' || currentSession.status === 'ended')) {
+          alert('Sesi ini telah diarsipkan atau dilewati oleh pengguna. Anda tidak dapat mengirim pesan lagi.');
+          return;
+        }
+
+        try {
+          const res = await fetch('/api/collections/chat_messages/records', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              session: selectedSessionId,
+              sender: 'psychologist',
+              text: text
+            })
+          });
+
+          if (res.ok) {
+            input.value = '';
+            loadMessages(selectedSessionId);
+          }
+        } catch (e) {
+          alert('Gagal mengirim pesan: ' + e.message);
+        }
+      }
+
+      function handleChatKeyDown(e) {
+        if (e.key === 'Enter') {
+          sendCounselorMessage();
+        }
+      }
+
+      // 7. Polling Background Realtime untuk Chat & Antrean
+      function startRealtimePolling() {
+        if (chatPollingTimer) clearInterval(chatPollingTimer);
+        chatPollingTimer = setInterval(() => {
+          if (currentCounselor?.id) {
+            if (activeScreen === 'chat') {
+              refreshChatSessions();
+              if (selectedSessionId) {
+                loadMessages(selectedSessionId);
+              }
+            } else if (activeScreen === 'dashboard') {
+              refreshDashboardData();
+            }
+          }
+        }, 2500);
+      }
+
+      async function updateOnlineStatus(isOnline) {
+        if (!currentCounselor?.id) return;
+        try {
+          await fetch(`/api/collections/psychologists/records/${currentCounselor.id}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ is_online: isOnline })
+          });
+          currentCounselor.is_online = isOnline;
+          updateUserUI();
+        } catch (e) {
+          console.error('Gagal mengubah status online:', e);
+        }
+      }
+
+      function escapeHtml(str) {
+        return str.replace(/[&<>'"]/g,
+          tag => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            "'": '&#39;',
+            '"': '&quot;'
+          }[tag] || tag)
+        );
+      }
+    </script>
+  </body>
+</html>

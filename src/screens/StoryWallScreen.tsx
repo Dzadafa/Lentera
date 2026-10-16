@@ -114,6 +114,17 @@ export const StoryWallScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
   const [letters, setLetters] = useState<StoryLetter[]>([]);
   const [draft, setDraft] = useState('');
   const [composerOpen, setComposerOpen] = useState(false);
+  const [shareToPublic, setShareToPublic] = useState(false);
+  const [isSharing, setIsSharing] = useState(false);
+
+  const [serverStories, setServerStories] = useState<StoryItem[]>(() => {
+    // Curated stories lokal diberi default waktu yang bervariasi
+    const now = Date.now();
+    return CURATED_STORIES.map((s, idx) => ({
+      ...s,
+      created: now - (idx + 1) * 3600 * 1000 * (idx === 0 ? 2 : idx === 1 ? 24 : 72),
+    }));
+  });
 
   // Submisi cerita oleh pengguna
   const [userSubmissions, setUserSubmissions] = useState<UserStorySubmission[]>([]);
@@ -266,8 +277,32 @@ export const StoryWallScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
 
   const saveLetter = async () => {
     if (!draft.trim()) return;
+
+    if (shareToPublic) {
+      setIsSharing(true);
+      try {
+        const { shareStoryToServer } = await import('../services/pocketbase');
+        const res = await shareStoryToServer({
+          story: draft.trim(),
+          quote: draft.trim().length > 60 ? draft.trim().substring(0, 60) + '...' : draft.trim(),
+          action_taken: 'Menulis refleksi dan berbagi penguatan',
+          now_status: 'Lebih tenang setelah menuangkan perasaan',
+          from_tier: 'moderate',
+        });
+        if (res) {
+          await loadServerStories();
+        }
+      } catch {
+        // Fallback simpan lokal
+      } finally {
+        setIsSharing(false);
+      }
+    }
+
+    // Selalu simpan di arsip surat pribadi perangkat
     await addStoryLetter(draft.trim());
     setDraft('');
+    setShareToPublic(false);
     setComposerOpen(false);
     void haptics.success();
     await refreshData();
@@ -529,7 +564,7 @@ export const StoryWallScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
 
         {/* Bagian Surat Pribadi untuk Dirimu Nanti */}
         <View style={styles.letterSection}>
-          <Text style={styles.sectionHeading}>Surat untuk Dirimu Nanti</Text>
+          <Text style={styles.sectionHeading}>Tulis & Bagikan Cerita</Text>
           <Text style={styles.sectionSub}>
             Tuliskan kata-kata pengingat saat kamu sedang lapang. Tulisan ini murni tersimpan secara pribadi di perangkatmu dan bisa kamu hapus kapan saja.
           </Text>
@@ -544,6 +579,26 @@ export const StoryWallScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
                 onChangeText={setDraft}
                 multiline
               />
+
+              {/* Opsi Berbagi ke Dinding Publik (Backend) */}
+              <TouchableOpacity
+                style={styles.shareOptionRow}
+                onPress={() => setShareToPublic(!shareToPublic)}
+                activeOpacity={0.8}
+              >
+                <View
+                  style={[
+                    styles.checkboxBox,
+                    shareToPublic && { backgroundColor: colors.primary, borderColor: colors.primary },
+                  ]}
+                >
+                  {shareToPublic && <Text style={{ color: '#fff', fontSize: 11, fontWeight: '700' }}>✓</Text>}
+                </View>
+                <Text style={styles.shareOptionText}>
+                  Bagikan secara anonim ke Dinding Cerita Publik
+                </Text>
+              </TouchableOpacity>
+
               <View style={styles.composerRow}>
                 <TouchableOpacity
                   style={styles.ghostBtn}
@@ -551,6 +606,7 @@ export const StoryWallScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
                     setDraft('');
                     setComposerOpen(false);
                   }}
+                  disabled={isSharing}
                 >
                   <Text style={styles.ghostBtnText}>Batal</Text>
                 </TouchableOpacity>
