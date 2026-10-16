@@ -25,13 +25,37 @@ export const StoryWallScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
   const [draft, setDraft] = useState('');
   const [composerOpen, setComposerOpen] = useState(false);
 
+  const [serverStories, setServerStories] = useState<typeof CURATED_STORIES>(CURATED_STORIES);
+
   const refresh = async () => setLetters(await getStoryLetters(10));
 
   useEffect(() => {
     void refresh();
+    // Ambil data cerita langsung dari server PocketBase secara dinamis
+    (async () => {
+      try {
+        const { fetchServerStories } = await import('../services/pocketbase');
+        const items = await fetchServerStories();
+        if (items && items.length > 0) {
+          const mapped = items.map((it) => ({
+            id: it.id,
+            authorLabel: it.author_label,
+            story: it.story,
+            actionTaken: it.action_taken,
+            nowStatus: it.now_status,
+            quote: it.quote,
+            fromTier: it.from_tier,
+            tags: it.tags || [],
+          }));
+          setServerStories(mapped);
+        }
+      } catch {
+        // Tetap gunakan curated stories jika offline/tidak terhubung
+      }
+    })();
   }, []);
 
-  const filtered = CURATED_STORIES.filter((s) => (filter === 'all' ? true : s.fromTier === filter));
+  const filtered = serverStories.filter((s) => (filter === 'all' ? true : s.fromTier === filter));
 
   const saveLetter = async () => {
     if (!draft.trim()) return;

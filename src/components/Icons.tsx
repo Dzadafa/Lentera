@@ -268,4 +268,19 @@ export const UserProfileIcon: React.FC<IconProps> = ({ size = 24, color = '#7843
   </Svg>
 );
 
+export const RefreshCwIcon: React.FC<IconProps> = ({ size = 20, color = '#7843E4' }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Path d="M23 4v6h-6M1 20v-6h6" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+    <Path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+  </Svg>
+);
+
+export const BadgeCheckIcon: React.FC<IconProps> = ({ size = 20, color = '#2E7D32' }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Path d="M12 2l2.4 2.4 3.4-.4 1.2 3.2 3.1 1.5-.7 3.3 1.9 2.8-2 2.7.2 3.4-3.3 1-1.6 3-3.2-.8-2.7 2-2.7-2-3.2.8-1.6-3-3.3-1 .2-3.4-2-2.7 1.9-2.8-.7-3.3 3.1-1.5 1.2-3.2 3.4.4L12 2z" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+    <Path d="M9 12l2 2 4-4" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+  </Svg>
+);
+
+
 

@@ -1,0 +1,20 @@
+services:
+  pocketbase:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tautjiwa-pocketbase
+    restart: unless-stopped
+    ports:
+      - "8090:8090"
+    volumes:
+      - ./pb_data:/pb/pb_data
+      - ./pb_hooks:/pb/pb_hooks
+      - ./pb_public:/pb/pb_public
+      - ./pb_migrations:/pb/pb_migrations
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:8090/api/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
