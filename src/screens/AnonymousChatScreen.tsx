@@ -10,6 +10,7 @@ import {
   Platform,
   Modal,
   ActivityIndicator,
+  Keyboard,
 } from 'react-native';
 import { colors, typography, radius, spacing, shadows } from '../theme';
 import {
@@ -74,6 +75,28 @@ export const AnonymousChatScreen: React.FC<Props> = ({ onBack, onQuickClose, onO
   const scrollToBottom = (animated = true) => {
     scrollViewRef.current?.scrollToEnd({ animated });
   };
+
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+
+  useEffect(() => {
+    const showSub = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
+      () => {
+        setIsKeyboardVisible(true);
+        setTimeout(() => scrollToBottom(true), 100);
+      }
+    );
+    const hideSub = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
+      () => {
+        setIsKeyboardVisible(false);
+      }
+    );
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
 
   // Mulai mencocokkan konselor saat pertama kali masuk dengan ID perangkat permanen
   useEffect(() => {
@@ -334,7 +357,18 @@ export const AnonymousChatScreen: React.FC<Props> = ({ onBack, onQuickClose, onO
       </ScrollView>
 
       {/* Input chat bar */}
-      <View style={styles.inputBar}>
+      <View
+        style={[
+          styles.inputBar,
+          {
+            paddingBottom: isKeyboardVisible
+              ? spacing.sm
+              : Platform.OS === 'android'
+              ? 82
+              : 88,
+          },
+        ]}
+      >
         <TextInput
           style={styles.textInput}
           placeholder="Ketik apa yang sedang kamu rasakan..."
