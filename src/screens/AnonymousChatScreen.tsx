@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -11,18 +11,18 @@ import {
   Modal,
   ActivityIndicator,
   Keyboard,
-} from 'react-native';
-import { colors, typography, radius, spacing, shadows } from '../theme';
+} from "react-native";
+import { colors, typography, radius, spacing, shadows } from "../theme";
 import {
   ChevronLeftIcon,
   ShieldLockIcon,
   RefreshCwIcon,
   BadgeCheckIcon,
   UserProfileIcon,
-} from '../components/Icons';
-import { QuickCloseButton } from '../components/QuickCloseButton';
-import { haptics } from '../services/haptics';
-import { getOrCreateAnonymousUserId } from '../db';
+} from "../components/Icons";
+import { QuickCloseButton } from "../components/QuickCloseButton";
+import { haptics } from "../services/haptics";
+import { getOrCreateAnonymousUserId } from "../db";
 import {
   matchRandomCounselor,
   skipCurrentCounselor,
@@ -30,7 +30,7 @@ import {
   sendChatMessage,
   type CounselorInfo,
   type ChatMessageRecord,
-} from '../services/pocketbase';
+} from "../services/pocketbase";
 
 interface Props {
   onBack?: () => void;
@@ -40,34 +40,38 @@ interface Props {
 
 interface Message {
   id: string;
-  sender: 'counselor' | 'user';
+  sender: "counselor" | "user";
   text: string;
   time: string;
 }
 
 const INITIAL_MESSAGES: Message[] = [
   {
-    id: 'm1',
-    sender: 'counselor',
-    text: 'Halo! Aku konselor pendamping anonim Lentera. Semua obrolan di sini aman, tanpa nama asli, dan tidak disimpan ke server mana pun.',
-    time: '10:00',
+    id: "m1",
+    sender: "counselor",
+    text: "Halo! Aku konselor pendamping anonim Lentera. Semua obrolan di sini aman, tanpa nama asli, dan tidak disimpan ke server mana pun.",
+    time: "10:00",
   },
   {
-    id: 'm2',
-    sender: 'counselor',
-    text: 'Bagaimana perasaanmu atau apa yang sedang terasa berat hari ini? Kamu boleh bercerita seadanya, tanpa perlu terburu-buru.',
-    time: '10:01',
+    id: "m2",
+    sender: "counselor",
+    text: "Bagaimana perasaanmu atau apa yang sedang terasa berat hari ini? Kamu boleh bercerita seadanya, tanpa perlu terburu-buru.",
+    time: "10:01",
   },
 ];
 
-export const AnonymousChatScreen: React.FC<Props> = ({ onBack, onQuickClose, onOpenSupport }) => {
+export const AnonymousChatScreen: React.FC<Props> = ({
+  onBack,
+  onQuickClose,
+  onOpenSupport,
+}) => {
   const [messages, setMessages] = useState<Message[]>(INITIAL_MESSAGES);
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [counselor, setCounselor] = useState<CounselorInfo | null>(null);
   const [isMatching, setIsMatching] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
-  const [deviceId, setDeviceId] = useState<string>('');
+  const [deviceId, setDeviceId] = useState<string>("");
 
   const scrollViewRef = useRef<ScrollView>(null);
   const pollIntervalRef = useRef<any>(null);
@@ -80,17 +84,17 @@ export const AnonymousChatScreen: React.FC<Props> = ({ onBack, onQuickClose, onO
 
   useEffect(() => {
     const showSub = Keyboard.addListener(
-      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
+      Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow",
       () => {
         setIsKeyboardVisible(true);
         setTimeout(() => scrollToBottom(true), 100);
-      }
+      },
     );
     const hideSub = Keyboard.addListener(
-      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
+      Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide",
       () => {
         setIsKeyboardVisible(false);
-      }
+      },
     );
     return () => {
       showSub.remove();
@@ -132,14 +136,20 @@ export const AnonymousChatScreen: React.FC<Props> = ({ onBack, onQuickClose, onO
         if (records && records.length > 0) {
           const mapped: Message[] = records.map((r: ChatMessageRecord) => ({
             id: r.id,
-            sender: r.sender === 'user' ? 'user' : 'counselor',
+            sender: r.sender === "user" ? "user" : "counselor",
             text: r.text,
-            time: new Date(r.created).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+            time: new Date(r.created).toLocaleTimeString("id-ID", {
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
           }));
 
           setMessages((prev) => {
             // Cek apakah ada pesan baru
-            if (mapped.length !== prev.length || mapped[mapped.length - 1]?.id !== prev[prev.length - 1]?.id) {
+            if (
+              mapped.length !== prev.length ||
+              mapped[mapped.length - 1]?.id !== prev[prev.length - 1]?.id
+            ) {
               setTimeout(() => scrollToBottom(true), 100);
               return mapped;
             }
@@ -163,7 +173,8 @@ export const AnonymousChatScreen: React.FC<Props> = ({ onBack, onQuickClose, onO
     void haptics.tap();
 
     try {
-      const uid = userIdToUse || deviceId || (await getOrCreateAnonymousUserId());
+      const uid =
+        userIdToUse || deviceId || (await getOrCreateAnonymousUserId());
       if (!deviceId) setDeviceId(uid);
 
       const match = await matchRandomCounselor(uid);
@@ -176,21 +187,24 @@ export const AnonymousChatScreen: React.FC<Props> = ({ onBack, onQuickClose, onO
         setMessages(
           records.map((r) => ({
             id: r.id,
-            sender: r.sender === 'user' ? 'user' : 'counselor',
+            sender: r.sender === "user" ? "user" : "counselor",
             text: r.text,
-            time: new Date(r.created).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
-          }))
+            time: new Date(r.created).toLocaleTimeString("id-ID", {
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+          })),
         );
       }
       void haptics.success();
     } catch {
       // Fallback lokal jika backend belum terjangkau
       setCounselor({
-        id: 'cns_demo',
-        name: 'Rania Wardani, S.Psi.',
-        university: 'Universitas Gadjah Mada',
-        bio: 'Fokus pada pendampingan kecemasan akademik, burnout mahasiswa, dan transisi quarter-life crisis.',
-        kyc_status: 'verified',
+        id: "cns_demo",
+        name: "Rania Wardani, S.Psi.",
+        university: "Universitas Gadjah Mada",
+        bio: "Fokus pada pendampingan kecemasan akademik, burnout mahasiswa, dan transisi quarter-life crisis.",
+        kyc_status: "verified",
       });
       setMessages(INITIAL_MESSAGES);
     } finally {
@@ -216,13 +230,16 @@ export const AnonymousChatScreen: React.FC<Props> = ({ onBack, onQuickClose, onO
     const tempId = `usr_${Date.now()}`;
     const userMsg: Message = {
       id: tempId,
-      sender: 'user',
+      sender: "user",
       text: textToSend,
-      time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+      time: new Date().toLocaleTimeString("id-ID", {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
     };
 
     setMessages((prev) => [...prev, userMsg]);
-    setInput('');
+    setInput("");
     void haptics.tap();
     setTimeout(() => scrollToBottom(true), 80);
 
@@ -237,9 +254,12 @@ export const AnonymousChatScreen: React.FC<Props> = ({ onBack, onQuickClose, onO
       setTimeout(() => {
         const reply: Message = {
           id: `cns_${Date.now()}`,
-          sender: 'counselor',
-          text: 'Terima kasih sudah mau berbagi. Yang kamu rasakan itu valid dan manusiawi. Ambil napas pelan dulu, kamu sedang aman di sini.',
-          time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+          sender: "counselor",
+          text: "Terima kasih sudah mau berbagi. Yang kamu rasakan itu valid dan manusiawi. Ambil napas pelan dulu, kamu sedang aman di sini.",
+          time: new Date().toLocaleTimeString("id-ID", {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
         };
         setMessages((prev) => [...prev, reply]);
         void haptics.success();
@@ -251,11 +271,15 @@ export const AnonymousChatScreen: React.FC<Props> = ({ onBack, onQuickClose, onO
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <View style={styles.topBar}>
         {onBack ? (
-          <TouchableOpacity onPress={onBack} style={styles.iconBtn} accessibilityLabel="Kembali">
+          <TouchableOpacity
+            onPress={onBack}
+            style={styles.iconBtn}
+            accessibilityLabel="Kembali"
+          >
             <ChevronLeftIcon size={22} color={colors.primary} />
           </TouchableOpacity>
         ) : (
@@ -268,16 +292,18 @@ export const AnonymousChatScreen: React.FC<Props> = ({ onBack, onQuickClose, onO
         >
           <View style={styles.nameHeaderRow}>
             <Text style={styles.topTitle}>
-              {counselor ? counselor.name : 'Mencari Konselor...'}
+              {counselor ? counselor.name : "Mencari Konselor..."}
             </Text>
-            {counselor?.kyc_status === 'verified' && (
+            {counselor?.kyc_status === "verified" && (
               <BadgeCheckIcon size={16} color={colors.tertiary} />
             )}
           </View>
           <View style={styles.statusRow}>
             <View style={styles.onlineDot} />
             <Text style={styles.statusText}>
-              {counselor ? `${counselor.university} • Ketuk profil` : '100% Rahasia & Privat'}
+              {counselor
+                ? `${counselor.university} • Ketuk profil`
+                : "100% Rahasia & Privat"}
             </Text>
           </View>
         </TouchableOpacity>
@@ -304,7 +330,8 @@ export const AnonymousChatScreen: React.FC<Props> = ({ onBack, onQuickClose, onO
       <View style={styles.bannerRow}>
         <ShieldLockIcon size={14} color={colors.primary} />
         <Text style={styles.bannerText}>
-          Obrolan anonim tanpa login{deviceId ? ` (${deviceId})` : ''}. Jika dalam bahaya darurat, buka{' '}
+          Obrolan anonim tanpa login{deviceId ? ` (${deviceId})` : ""}. Jika
+          dalam bahaya darurat, buka{" "}
           <Text style={styles.bannerLink} onPress={onOpenSupport}>
             Hotline 119
           </Text>
@@ -319,7 +346,7 @@ export const AnonymousChatScreen: React.FC<Props> = ({ onBack, onQuickClose, onO
         onContentSizeChange={() => scrollToBottom(true)}
       >
         {messages.map((m) => {
-          const isUser = m.sender === 'user';
+          const isUser = m.sender === "user";
           return (
             <View
               key={m.id}
@@ -363,9 +390,9 @@ export const AnonymousChatScreen: React.FC<Props> = ({ onBack, onQuickClose, onO
           {
             paddingBottom: isKeyboardVisible
               ? spacing.sm
-              : Platform.OS === 'android'
-              ? 82
-              : 88,
+              : Platform.OS === "android"
+                ? 82
+                : 88,
           },
         ]}
       >
@@ -406,10 +433,12 @@ export const AnonymousChatScreen: React.FC<Props> = ({ onBack, onQuickClose, onO
 
             <View style={styles.modalHeaderRow}>
               <Text style={styles.modalCounselorName}>{counselor?.name}</Text>
-              {counselor?.kyc_status === 'verified' && (
+              {counselor?.kyc_status === "verified" && (
                 <View style={styles.verifiedBadge}>
                   <BadgeCheckIcon size={14} color={colors.tertiary} />
-                  <Text style={styles.verifiedBadgeText}>KYC Terverifikasi</Text>
+                  <Text style={styles.verifiedBadgeText}>
+                    KYC Terverifikasi
+                  </Text>
                 </View>
               )}
             </View>
@@ -420,13 +449,15 @@ export const AnonymousChatScreen: React.FC<Props> = ({ onBack, onQuickClose, onO
 
             <Text style={styles.modalSectionTitle}>Tentang Konselor</Text>
             <Text style={styles.modalBio}>
-              {counselor?.bio || 'Konselor pendamping sebaya dari fakultas psikologi.'}
+              {counselor?.bio ||
+                "Konselor pendamping sebaya dari fakultas psikologi."}
             </Text>
 
             <View style={styles.kycGuaranteeBox}>
               <ShieldLockIcon size={16} color={colors.primary} />
               <Text style={styles.kycGuaranteeText}>
-                Konselor telah melalui validasi KTM & identitas akademik resmi untuk menjamin etika dan kenyamanan obrolanmu.
+                Konselor telah melalui validasi KTM & identitas akademik resmi
+                untuk menjamin etika dan kenyamanan obrolanmu.
               </Text>
             </View>
 
@@ -447,9 +478,9 @@ export const AnonymousChatScreen: React.FC<Props> = ({ onBack, onQuickClose, onO
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
   topBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: spacing.marginMobile,
     paddingTop: spacing.xs,
     paddingBottom: spacing.xs,
@@ -459,20 +490,34 @@ const styles = StyleSheet.create({
     height: 38,
     borderRadius: 19,
     backgroundColor: colors.surface,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     borderWidth: 1,
     borderColor: colors.outlineVariant,
   },
-  titleWrap: { alignItems: 'center', flex: 1, paddingHorizontal: 6 },
-  nameHeaderRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  titleWrap: { alignItems: "center", flex: 1, paddingHorizontal: 6 },
+  nameHeaderRow: { flexDirection: "row", alignItems: "center", gap: 4 },
   topTitle: { ...typography.headlineMd, color: colors.primary, fontSize: 16 },
-  statusRow: { flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 1 },
-  onlineDot: { width: 7, height: 7, borderRadius: 4, backgroundColor: colors.success },
-  statusText: { ...typography.bodySm, fontSize: 11, color: colors.onSurfaceVariant },
+  statusRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+    marginTop: 1,
+  },
+  onlineDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    backgroundColor: colors.success,
+  },
+  statusText: {
+    ...typography.bodySm,
+    fontSize: 11,
+    color: colors.onSurfaceVariant,
+  },
   skipBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 4,
     paddingHorizontal: spacing.sm + 2,
     paddingVertical: 6,
@@ -484,12 +529,12 @@ const styles = StyleSheet.create({
   skipBtnText: {
     ...typography.labelSm,
     color: colors.primary,
-    fontFamily: 'Montserrat-Bold',
+    fontFamily: "Montserrat-Bold",
     fontSize: 12,
   },
   bannerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: spacing.xs + 2,
     backgroundColor: colors.primarySoft,
     paddingVertical: 6,
@@ -506,8 +551,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   bannerLink: {
-    fontFamily: 'Montserrat-Bold',
-    textDecorationLine: 'underline',
+    fontFamily: "Montserrat-Bold",
+    textDecorationLine: "underline",
   },
   chatList: {
     paddingHorizontal: spacing.marginMobile,
@@ -516,17 +561,17 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   bubbleWrap: {
-    flexDirection: 'row',
-    width: '100%',
+    flexDirection: "row",
+    width: "100%",
   },
   bubbleWrapCounselor: {
-    justifyContent: 'flex-start',
+    justifyContent: "flex-start",
   },
   bubbleWrapUser: {
-    justifyContent: 'flex-end',
+    justifyContent: "flex-end",
   },
   bubble: {
-    maxWidth: '82%',
+    maxWidth: "82%",
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm + 2,
     borderRadius: radius.card,
@@ -557,17 +602,17 @@ const styles = StyleSheet.create({
     ...typography.bodySm,
     fontSize: 10,
     marginTop: 4,
-    alignSelf: 'flex-end',
+    alignSelf: "flex-end",
   },
   bubbleTimeCounselor: {
     color: colors.onSurfaceVariant,
   },
   bubbleTimeUser: {
-    color: 'rgba(255, 255, 255, 0.75)',
+    color: "rgba(255, 255, 255, 0.75)",
   },
   inputBar: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
+    flexDirection: "row",
+    alignItems: "flex-end",
     paddingHorizontal: spacing.marginMobile,
     paddingVertical: spacing.sm,
     backgroundColor: colors.surface,
@@ -582,8 +627,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surfaceContainer,
     borderRadius: radius.card,
     paddingHorizontal: spacing.md,
-    paddingTop: Platform.OS === 'ios' ? 10 : 8,
-    paddingBottom: Platform.OS === 'ios' ? 10 : 8,
+    paddingTop: Platform.OS === "ios" ? 10 : 8,
+    paddingBottom: Platform.OS === "ios" ? 10 : 8,
     ...typography.bodyMd,
     color: colors.onSurface,
   },
@@ -592,8 +637,8 @@ const styles = StyleSheet.create({
     borderRadius: radius.card,
     paddingHorizontal: spacing.md,
     height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   sendBtnDisabled: {
     backgroundColor: colors.outlineVariant,
@@ -601,21 +646,21 @@ const styles = StyleSheet.create({
   sendBtnText: {
     ...typography.labelMd,
     color: colors.onPrimary,
-    fontFamily: 'Montserrat-Bold',
+    fontFamily: "Montserrat-Bold",
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.45)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(0, 0, 0, 0.45)",
+    justifyContent: "center",
+    alignItems: "center",
     paddingHorizontal: spacing.marginMobile,
   },
   modalCard: {
-    width: '100%',
+    width: "100%",
     backgroundColor: colors.surface,
     borderRadius: radius.card,
     padding: spacing.lg,
-    alignItems: 'center',
+    alignItems: "center",
     ...shadows.card,
   },
   avatarWrap: {
@@ -623,26 +668,26 @@ const styles = StyleSheet.create({
     height: 68,
     borderRadius: 34,
     backgroundColor: colors.primarySoft,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: spacing.sm,
   },
   modalHeaderRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    flexWrap: "wrap",
+    justifyContent: "center",
     gap: 6,
   },
   modalCounselorName: {
     ...typography.headlineMd,
     color: colors.primary,
-    textAlign: 'center',
+    textAlign: "center",
     fontSize: 18,
   },
   verifiedBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 3,
     backgroundColor: colors.tierModerateContainer,
     paddingHorizontal: 6,
@@ -653,7 +698,7 @@ const styles = StyleSheet.create({
     ...typography.labelSm,
     fontSize: 10,
     color: colors.tertiary,
-    fontFamily: 'Montserrat-Bold',
+    fontFamily: "Montserrat-Bold",
   },
   modalUniversity: {
     ...typography.bodyMd,
@@ -661,7 +706,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   modalDivider: {
-    width: '100%',
+    width: "100%",
     height: 1,
     backgroundColor: colors.outlineVariant,
     marginVertical: spacing.md,
@@ -669,26 +714,26 @@ const styles = StyleSheet.create({
   modalSectionTitle: {
     ...typography.labelMd,
     color: colors.primary,
-    fontFamily: 'Montserrat-Bold',
-    alignSelf: 'flex-start',
+    fontFamily: "Montserrat-Bold",
+    alignSelf: "flex-start",
     marginBottom: 4,
   },
   modalBio: {
     ...typography.bodyMd,
     color: colors.onSurface,
     lineHeight: 20,
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
     marginBottom: spacing.md,
   },
   kycGuaranteeBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: spacing.xs + 2,
     backgroundColor: colors.primarySoft,
     padding: spacing.sm + 2,
     borderRadius: radius.card,
     marginBottom: spacing.lg,
-    width: '100%',
+    width: "100%",
   },
   kycGuaranteeText: {
     ...typography.bodySm,
@@ -702,12 +747,12 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm + 2,
     paddingHorizontal: spacing.lg,
     borderRadius: radius.button,
-    width: '100%',
-    alignItems: 'center',
+    width: "100%",
+    alignItems: "center",
   },
   modalCloseBtnText: {
     ...typography.labelMd,
     color: colors.onPrimary,
-    fontFamily: 'Montserrat-Bold',
+    fontFamily: "Montserrat-Bold",
   },
 });
