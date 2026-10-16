@@ -148,14 +148,6 @@ export default function App() {
     handleNavigate(tab);
   };
 
-  if (!isInitialized || (!fontsLoaded && !fontError)) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
-    );
-  }
-
   // Listener Keyboard untuk menyembunyikan floating BottomNavBar saat mengetik di layar chat
   const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
   useEffect(() => {
@@ -172,6 +164,14 @@ export default function App() {
       hideSub.remove();
     };
   }, []);
+
+  if (!isInitialized || (!fontsLoaded && !fontError)) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
+  }
 
   // Tampilkan BottomNavBar hanya pada layar utama tab (sembunyikan di chat saat keyboard muncul)
   const showBottomNav =
