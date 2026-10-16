@@ -9,7 +9,32 @@ routerAdd("POST", "/api/chat/match-random", (c) => {
 
   const dao = $app.dao();
 
-  // 1. Cari psikolog yang KYC-nya verified dan sedang online
+  // 1. Cek dan arsipkan seluruh sesi aktif sebelumnya milik anonymousUserId ini
+  // Menjamin 1 device/ID hanya memiliki TEPAT 1 sesi aktif kapan pun!
+  try {
+    const existingActiveSessions = dao.findRecordsByFilter(
+      "chat_sessions",
+      "anonymous_user_id = {:userId} && status = 'active'",
+      "-created",
+      50,
+      0,
+      { userId: anonymousUserId }
+    );
+
+    if (existingActiveSessions && existingActiveSessions.length > 0) {
+      const nowStr = new Date().toISOString();
+      for (let i = 0; i < existingActiveSessions.length; i++) {
+        const s = existingActiveSessions[i];
+        s.set("status", "skipped");
+        s.set("ended_at", nowStr);
+        dao.saveRecord(s);
+      }
+    }
+  } catch (err) {
+    // ignore
+  }
+
+  // 2. Cari psikolog yang KYC-nya verified dan sedang online
   const psychologists = dao.findRecordsByFilter(
     "psychologists",
     "kyc_status = 'verified' && is_online = true",
@@ -29,7 +54,7 @@ routerAdd("POST", "/api/chat/match-random", (c) => {
   const randomIndex = Math.floor(Math.random() * psychologists.length);
   const matchedPsychologist = psychologists[randomIndex];
 
-  // 2. Buat chat session baru
+  // 3. Buat chat session baru yang bersih (chat reset)
   const chatSessionsCollection = dao.findCollectionByNameOrId("chat_sessions");
   const sessionRecord = new Record(chatSessionsCollection, {
     anonymous_user_id: anonymousUserId,
@@ -39,6 +64,7 @@ routerAdd("POST", "/api/chat/match-random", (c) => {
   });
 
   dao.saveRecord(sessionRecord);
+
 
   // 3. Tambahkan pesan sambutan awal dari konselor
   const chatMessagesCollection = dao.findCollectionByNameOrId("chat_messages");
@@ -140,7 +166,9 @@ routerAdd("POST", "/api/stories/share", (c) => {
       created: newStory.getString("created")
     }
   });
-});// Endpoint untuk Mengirim Pesan Chat (Aman dari kendala relasi collectionId kosong)
+});
+
+// Endpoint untuk Mengirim Pesan Chat (Aman dari kendala validasi relasi)
 routerAdd("POST", "/api/chat/send-message", (c) => {
   const data = $apis.requestInfo(c).data;
   const sessionId = (data.session_id || data.session || "").trim();

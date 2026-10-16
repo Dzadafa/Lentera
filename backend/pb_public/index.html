@@ -1571,14 +1571,15 @@ Fokus pada pendampingan kecemasan akademik, burnout mahasiswa, dan transisi quar
 
             <!-- Chat Input Bar (Aktif) -->
             <div class="wa-input-bar" id="waInputBarActive">
-              <input
-                type="text"
+              <textarea
                 class="wa-input"
                 id="waTextInput"
-                placeholder="Tulis pesan empati dan tanggapan konseling..."
+                rows="1"
+                placeholder="Tulis pesan empati... (Tekan Enter untuk kirim, Shift+Enter untuk baris baru)"
                 onkeydown="handleChatKeyDown(event)"
-              />
-              <button class="wa-send-btn" onclick="sendCounselorMessage()">
+                style="resize: none; max-height: 120px; overflow-y: auto; padding-top: 10px; padding-bottom: 10px; line-height: 1.4;"
+              ></textarea>
+              <button class="wa-send-btn" onclick="sendCounselorMessage()" title="Kirim Pesan (Enter)">
                 <svg
                   width="20"
                   height="20"
@@ -2510,22 +2511,37 @@ Fokus pada pendampingan kecemasan akademik, burnout mahasiswa, dan transisi quar
         }
 
         try {
-          const res = await fetch('/api/chat/send-message', {
+          // 1. Coba kirim via endpoint hook aman /api/chat/send-message
+          let res = await fetch('/api/chat/send-message', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              session_id: selectedSessionId,
+              session: selectedSessionId,
               sender: 'psychologist',
               text: text
             })
           });
 
+          // 2. Fallback ke collections records jika hook belum di-load
+          if (!res.ok) {
+            res = await fetch('/api/collections/chat_messages/records', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                session: selectedSessionId,
+                sender: 'psychologist',
+                text: text
+              })
+            });
+          }
+
           if (res.ok) {
             input.value = '';
+            input.style.height = 'auto';
             loadMessages(selectedSessionId);
           } else {
-            const err = await res.json().catch(() => ({}));
-            alert('Gagal mengirim pesan: ' + (err.message || 'Terjadi kesalahan'));
+            const errData = await res.json().catch(() => ({}));
+            alert('Gagal mengirim pesan: ' + (errData.message || 'Terjadi kesalahan pada server.'));
           }
         } catch (e) {
           alert('Gagal mengirim pesan: ' + e.message);
@@ -2533,11 +2549,14 @@ Fokus pada pendampingan kecemasan akademik, burnout mahasiswa, dan transisi quar
       }
 
       function handleChatKeyDown(e) {
+        // Tekan Enter tanpa Shift untuk Mengirim Pesan
         if (e.key === 'Enter' && !e.shiftKey) {
           e.preventDefault();
           sendCounselorMessage();
         }
+        // Shift + Enter membuat baris baru secara alami di textarea
       }
+
 
       // 7. Polling Background Realtime untuk Chat & Antrean
       function startRealtimePolling() {
