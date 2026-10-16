@@ -5,9 +5,10 @@ import {
   StatusBar,
   ActivityIndicator,
   BackHandler,
+  Linking,
 } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import { colors } from "./theme";
+import { colors, FontScaleProvider } from "./theme";
 import { useAppStore } from "./store/appStore";
 import type { ScreenRoute } from "./navigation/routes";
 import { HomeScreen } from "./screens/HomeScreen";
@@ -121,7 +122,17 @@ export default function App() {
     return () => backHandler.remove();
   }, [handleGoBack]);
 
+  const quickCloseTarget = useAppStore((s) => s.quickCloseTarget);
+
   const handleQuickClose = () => {
+    if (quickCloseTarget === "google") {
+      void Linking.openURL("https://www.google.com");
+      return;
+    }
+    if (quickCloseTarget === "wikipedia") {
+      void Linking.openURL("https://id.wikipedia.org");
+      return;
+    }
     setRouteHistory((prev) => [...prev, "stealth"]);
     setCurrentRoute("stealth");
   };
@@ -152,16 +163,17 @@ export default function App() {
     currentRoute === "profile";
 
   return (
-    <SafeAreaProvider>
-      <SafeAreaView style={styles.safeArea} edges={["left", "right"]}>
-        <StatusBar
-          barStyle={
-            currentRoute === "stealth" ? "dark-content" : "dark-content"
-          }
-          backgroundColor={
-            currentRoute === "stealth" ? "#FFFFFF" : colors.background
-          }
-        />
+    <FontScaleProvider>
+      <SafeAreaProvider>
+        <SafeAreaView style={styles.safeArea} edges={["left", "right"]}>
+          <StatusBar
+            barStyle={
+              currentRoute === "stealth" ? "dark-content" : "dark-content"
+            }
+            backgroundColor={
+              currentRoute === "stealth" ? "#FFFFFF" : colors.background
+            }
+          />
         <View style={styles.container}>
           <View style={styles.screenContent}>
             {currentRoute === "splash" && (
@@ -300,6 +312,7 @@ export default function App() {
         </View>
       </SafeAreaView>
     </SafeAreaProvider>
+    </FontScaleProvider>
   );
 }
 

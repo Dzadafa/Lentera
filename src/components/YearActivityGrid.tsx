@@ -100,7 +100,7 @@ export const YearActivityGrid: React.FC<Props> = ({ checkIns }) => {
                 let dotColor = '#D1D1DB'; // Abu-abu: hari ini atau masa depan belum checkin
 
                 if (day.isCheckedIn) {
-                  dotColor = colors.primary; // Ungu LENTERA: sudah check-in
+                  dotColor = colors.primary; // Ungu Lentera: sudah check-in
                 } else if (day.isPastMissed) {
                   dotColor = colors.error; // Merah: terlewati / belum check-in di hari lalu
                 }

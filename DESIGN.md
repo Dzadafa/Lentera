@@ -1,21 +1,21 @@
-# DESIGN.md — LENTERA (Listening, Empathy, Nurture, Togetherness, Encouragement, Resilience, Awareness)
+# DESIGN.md — Lentera (Listening, Empathy, Nurture, Togetherness, Encouragement, Resilience, Awareness)
 
 Dokumen ini diturunkan dari tangkapan layar dua halaman (Beranda dan Profil Psikolog). Seluruh nilai warna, ukuran, dan font adalah estimasi visual, bukan hasil ekstraksi dari file desain asli. Verifikasi ke file Figma sumber sebelum dipakai sebagai acuan final.
 
 ## 1. Karakter Desain
 
-LENTERA (Listening, Empathy, Nurture, Togetherness, Encouragement, Resilience, Awareness) adalah aplikasi mobile untuk menemukan psikolog dan mengikuti acara kesehatan mental. Nuansanya tenang, lembut, dan ramah: latar putih keunguan yang sangat pucat, satu warna aksen ungu yang tegas, sudut membulat di hampir semua elemen, dan tipografi sans-serif geometris yang bersih. Hierarki dibangun lewat ukuran dan bobot huruf, bukan lewat garis atau bayangan tebal. Setiap layar hanya punya satu aksi utama yang berwarna ungu penuh.
+Lentera (Listening, Empathy, Nurture, Togetherness, Encouragement, Resilience, Awareness) adalah aplikasi mobile untuk menemukan psikolog dan mengikuti acara kesehatan mental. Nuansanya tenang, lembut, dan ramah: latar putih keunguan yang sangat pucat, satu warna aksen ungu yang tegas, sudut membulat di hampir semua elemen, dan tipografi sans-serif geometris yang bersih. Hierarki dibangun lewat ukuran dan bobot huruf, bukan lewat garis atau bayangan tebal. Setiap layar hanya punya satu aksi utama yang berwarna ungu penuh.
 
 ## 2. Warna
 
-Palet warna diturunkan langsung dari identitas visual logo **LENTERA**:
+Palet warna diturunkan langsung dari identitas visual logo **Lentera**:
 - **Ungu Utama (`#7843E4`)**: warna aksi utama, tombol primer, dan status aktif.
 - **Ungu Muda (`#C7A6FB`)**: kelopak lentera, warna sekunder, dan aksen lembut.
 - **Kuning Lentera (`#FEC565`)**: pendar cahaya/api lentera, kehangatan, dan aksen perhatian.
 
 ```css
 :root {
-  /* Brand (Warna Logo LENTERA) */
+  /* Brand (Warna Logo Lentera) */
   --color-primary: #7843E4;          /* tombol utama, tab aktif, ikon nav aktif */
   --color-primary-soft: #EFE6FD;     /* latar chip & badge lembut */
   --color-primary-on: #FFFFFF;       /* teks di atas primary */
@@ -60,7 +60,7 @@ Aplikasi menggunakan keluarga huruf geometris **Montserrat** yang memberikan kes
 :root {
   --font-family: "Montserrat", system-ui, -apple-system, sans-serif;
 
-  --text-display: 700 24px/32px var(--font-family);  /* "LENTERA" (Bold) */
+  --text-display: 700 24px/32px var(--font-family);  /* "Lentera" (Bold) */
   --text-title:   700 20px/26px var(--font-family);  /* judul bagian utama (Bold) */
   --text-headline:600 18px/24px var(--font-family);  /* judul kartu / subbagian (SemiBold) */
   --text-card:    600 16px/22px var(--font-family);  /* judul kartu acara / konten (SemiBold) */

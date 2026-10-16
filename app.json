@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "LENTERA",
+    "name": "Lentera",
     "slug": "tautjiwa",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -34,8 +34,8 @@
       [
         "expo-speech-recognition",
         {
-          "microphonePermission": "LENTERA memakai mikrofon hanya saat kamu menekan tombol suara di latihan grounding. Tidak ada rekaman yang disimpan atau dikirim.",
-          "speechRecognitionPermission": "LENTERA mengubah ucapanmu menjadi teks di perangkat ini saja, supaya latihan grounding bisa dilakukan tanpa mengetik.",
+          "microphonePermission": "Lentera memakai mikrofon hanya saat kamu menekan tombol suara di latihan grounding. Tidak ada rekaman yang disimpan atau dikirim.",
+          "speechRecognitionPermission": "Lentera mengubah ucapanmu menjadi teks di perangkat ini saja, supaya latihan grounding bisa dilakukan tanpa mengetik.",
           "androidSpeechServicePackages": [
             "com.google.android.googlequicksearchbox",
             "com.google.android.as",

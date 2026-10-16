@@ -4,6 +4,7 @@ import Svg, { Path, Circle, Rect } from 'react-native-svg';
 interface IconProps {
   size?: number;
   color?: string;
+  fill?: string;
 }
 
 export const HeartPulseIcon: React.FC<IconProps> = ({ size = 24, color = '#7843E4' }) => (
@@ -260,6 +261,49 @@ export const UserProfileIcon: React.FC<IconProps> = ({ size = 24, color = '#7843
     <Circle cx="12" cy="7" r="4" stroke={color} strokeWidth={2} strokeLinecap="round" />
     <Path
       d="M4 21v-2a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v2"
+      stroke={color}
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </Svg>
+);
+
+export const MicrophoneIcon: React.FC<IconProps> = ({ size = 24, color = '#7843E4' }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Path
+      d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"
+      stroke={color}
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <Path
+      d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4M8 23h8"
+      stroke={color}
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </Svg>
+);
+
+export const HeartIcon: React.FC<IconProps> = ({ size = 24, color = '#7843E4', fill = 'none' }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill={fill}>
+    <Path
+      d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+      stroke={color}
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </Svg>
+);
+
+export const ShareIcon: React.FC<IconProps> = ({ size = 20, color = '#7843E4' }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Path
+      d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13"
       stroke={color}
       strokeWidth={2}
       strokeLinecap="round"

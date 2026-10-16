@@ -33,35 +33,35 @@ const TABS: TabDef[] = [
     key: 'home',
     label: 'Beranda',
     renderIcon: (active) => (
-      <HomeIcon size={20} color={active ? '#FFFFFF' : '#8A8A96'} />
+      <HomeIcon size={20} color={active ? '#FFFFFF' : colors.textSecondary} />
     ),
   },
   {
     key: 'trend',
     label: 'Riwayat',
     renderIcon: (active) => (
-      <HistoryIcon size={20} color={active ? '#FFFFFF' : '#8A8A96'} />
+      <HistoryIcon size={20} color={active ? '#FFFFFF' : colors.textSecondary} />
     ),
   },
   {
     key: 'chat',
     label: 'Konselor',
     renderIcon: (active) => (
-      <MessageChatIcon size={20} color={active ? '#FFFFFF' : '#8A8A96'} />
+      <MessageChatIcon size={20} color={active ? '#FFFFFF' : colors.textSecondary} />
     ),
   },
   {
     key: 'stories',
     label: 'Cerita',
     renderIcon: (active) => (
-      <BookOpenIcon size={20} color={active ? '#FFFFFF' : '#8A8A96'} />
+      <BookOpenIcon size={20} color={active ? '#FFFFFF' : colors.textSecondary} />
     ),
   },
   {
     key: 'profile',
     label: 'Profil',
     renderIcon: (active) => (
-      <UserProfileIcon size={20} color={active ? '#FFFFFF' : '#8A8A96'} />
+      <UserProfileIcon size={20} color={active ? '#FFFFFF' : colors.textSecondary} />
     ),
   },
 ];
@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
     minHeight: 40,
   },
   activePill: {
-    backgroundColor: colors.primary, // Ungu utama LENTERA #7843E4
+    backgroundColor: colors.primary, // Ungu utama Lentera #7843E4
     paddingHorizontal: 14,
     shadowColor: colors.primary,
     shadowOffset: { width: 0, height: 3 },

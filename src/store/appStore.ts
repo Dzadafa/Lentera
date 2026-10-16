@@ -9,12 +9,18 @@ import {
   getSetting,
   setSetting,
   recordCrisisEvent,
+  clearAllLocalData,
+  recordSmallWin,
+  calculateStreakDays,
 } from '../db';
 import { calculateTieredScreening } from '../services/scoring';
 import { haptics } from '../services/haptics';
 import { speech } from '../services/speech';
 import { ambient } from '../services/ambientAudio';
 import { reminders } from '../services/reminders';
+
+export type FontScale = 'small' | 'medium' | 'large';
+export type QuickCloseTarget = 'stealth' | 'google' | 'wikipedia';
 
 interface AppState {
   isInitialized: boolean;
@@ -23,8 +29,11 @@ interface AppState {
   voiceGuide: boolean;
   ambientEnabled: boolean;
   nightlyReminder: boolean;
+  fontScale: FontScale;
+  quickCloseTarget: QuickCloseTarget;
   latestScreening: ScreeningResult | null;
   recentCheckIns: CheckIn[];
+  streakCount: number;
   isCrisisModalVisible: boolean;
   crisisSource: string;
 
@@ -42,6 +51,11 @@ interface AppState {
   toggleVoiceGuide: () => Promise<void>;
   toggleAmbient: () => Promise<void>;
   toggleNightlyReminder: () => Promise<void>;
+  setFontScale: (scale: FontScale) => Promise<void>;
+  setQuickCloseTarget: (target: QuickCloseTarget) => Promise<void>;
+  logWin: (title: string) => Promise<void>;
+  refreshStreak: () => Promise<void>;
+  resetAllData: () => Promise<void>;
   openCrisisModal: (source?: string) => void;
   closeCrisisModal: () => void;
   recordCrisisDial: () => Promise<void>;
@@ -67,8 +81,11 @@ export const useAppStore = create<AppState>((set, get) => ({
   voiceGuide: false,
   ambientEnabled: false,
   nightlyReminder: false,
+  fontScale: 'medium',
+  quickCloseTarget: 'stealth',
   latestScreening: null,
   recentCheckIns: [],
+  streakCount: 0,
   isCrisisModalVisible: false,
   crisisSource: 'manual',
   currentQuestionIndex: 0,
@@ -92,8 +109,15 @@ export const useAppStore = create<AppState>((set, get) => ({
     const isAmbient = ab === 'true';
     ambient.setEnabled(isAmbient);
 
+    const fs = await getSetting('font_scale');
+    const qc = await getSetting('quick_close_target');
+    const fontScale: FontScale = fs === 'small' || fs === 'large' ? fs : 'medium';
+    const quickCloseTarget: QuickCloseTarget =
+      qc === 'google' || qc === 'wikipedia' ? qc : 'stealth';
+
     const latest = await getLatestScreening();
     const checks = await getCheckIns(365);
+    const streak = await calculateStreakDays();
 
     set({
       isInitialized: true,
@@ -103,8 +127,11 @@ export const useAppStore = create<AppState>((set, get) => ({
       voiceGuide: isVoiceGuide,
       ambientEnabled: isAmbient,
       nightlyReminder: nr === 'true',
+      fontScale,
+      quickCloseTarget,
       latestScreening: latest,
       recentCheckIns: checks,
+      streakCount: streak,
     });
   },
 
@@ -168,7 +195,9 @@ export const useAppStore = create<AppState>((set, get) => ({
   ) => {
     const result = calculateTieredScreening(k10Answers, phq9Answers, gad7Answers, crisisAnsweredYes);
     await insertScreening(result);
-    set({ latestScreening: result, answers: {}, currentQuestionIndex: 0 });
+    await recordSmallWin('Menyelesaikan skrining kondisi pikiran');
+    const streak = await calculateStreakDays();
+    set({ latestScreening: result, answers: {}, currentQuestionIndex: 0, streakCount: streak });
     return result;
   },
 
@@ -202,8 +231,53 @@ export const useAppStore = create<AppState>((set, get) => ({
   saveTodayCheckIn: async (mood, energy, note = '') => {
     const today = new Date().toISOString().split('T')[0];
     await upsertDailyCheckIn({ date: today, mood, energy, note });
+    await recordSmallWin('Mencatat energi & suasana hati hari ini');
     const checks = await getCheckIns(365);
-    set({ recentCheckIns: checks });
+    const streak = await calculateStreakDays();
+    set({ recentCheckIns: checks, streakCount: streak });
     haptics.success();
+  },
+
+  logWin: async (title: string) => {
+    await recordSmallWin(title);
+    const streak = await calculateStreakDays();
+    set({ streakCount: streak });
+    haptics.success();
+  },
+
+  refreshStreak: async () => {
+    const streak = await calculateStreakDays();
+    set({ streakCount: streak });
+  },
+
+  setFontScale: async (scale: FontScale) => {
+    await setSetting('font_scale', scale);
+    set({ fontScale: scale });
+  },
+
+  setQuickCloseTarget: async (target: QuickCloseTarget) => {
+    await setSetting('quick_close_target', target);
+    set({ quickCloseTarget: target });
+  },
+
+  resetAllData: async () => {
+    await reminders.cancelNightly();
+    ambient.stop();
+    await clearAllLocalData();
+    set({
+      workMode: false,
+      hapticsEnabled: true,
+      voiceGuide: false,
+      ambientEnabled: false,
+      nightlyReminder: false,
+      fontScale: 'medium',
+      quickCloseTarget: 'stealth',
+      latestScreening: null,
+      recentCheckIns: [],
+      streakCount: 0,
+      hasSeenSplash: false,
+      answers: {},
+      currentQuestionIndex: 0,
+    });
   },
 }));

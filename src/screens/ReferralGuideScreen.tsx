@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -9,9 +9,10 @@ import {
 } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 import { colors, typography, radius, spacing } from '../theme';
-import { ChevronLeftIcon, DocumentIcon, PhoneAlertIcon } from '../components/Icons';
+import { ChevronLeftIcon, DocumentIcon, PhoneAlertIcon, MicrophoneIcon } from '../components/Icons';
 import { QuickCloseButton } from '../components/QuickCloseButton';
 import { ScreeningDisclaimer } from '../components/ScreeningDisclaimer';
+import { SpeechPracticeModal } from '../components/SpeechPracticeModal';
 import { REFERRAL_STEPS, EMERGENCY_CONTACT } from '../content/referral';
 
 interface Props {
@@ -20,8 +21,16 @@ interface Props {
 }
 
 export const ReferralGuideScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
+  const [practiceModalOpen, setPracticeModalOpen] = useState(false);
+  const [practiceScript, setPracticeScript] = useState('');
+
   const handleCopy = async (text: string) => {
     await Clipboard.setStringAsync(text);
+  };
+
+  const handleOpenPractice = (script: string) => {
+    setPracticeScript(script);
+    setPracticeModalOpen(true);
   };
 
   return (
@@ -56,14 +65,25 @@ export const ReferralGuideScreen: React.FC<Props> = ({ onBack, onQuickClose }) =
               <View style={styles.scriptBox}>
                 <Text style={styles.scriptLabel}>UCAPKAN INI DI LOKET</Text>
                 <Text style={styles.scriptText}>{step.script}</Text>
-                <TouchableOpacity
-                  style={styles.copyBtn}
-                  onPress={() => handleCopy(step.script!)}
-                  activeOpacity={0.85}
-                >
-                  <DocumentIcon size={14} color={colors.primary} />
-                  <Text style={styles.copyBtnText}>Salin Kalimat</Text>
-                </TouchableOpacity>
+                <View style={styles.scriptActionRow}>
+                  <TouchableOpacity
+                    style={styles.practiceBtn}
+                    onPress={() => handleOpenPractice(step.script!)}
+                    activeOpacity={0.85}
+                  >
+                    <MicrophoneIcon size={14} color="#FFFFFF" />
+                    <Text style={styles.practiceBtnText}>Latih Bicara (Suara)</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={styles.copyBtn}
+                    onPress={() => handleCopy(step.script!)}
+                    activeOpacity={0.85}
+                  >
+                    <DocumentIcon size={14} color={colors.primary} />
+                    <Text style={styles.copyBtnText}>Salin Kalimat</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             )}
           </View>
@@ -80,6 +100,15 @@ export const ReferralGuideScreen: React.FC<Props> = ({ onBack, onQuickClose }) =
           </Text>
         </TouchableOpacity>
       </ScrollView>
+
+      {/* Modal Latihan Bicara STT */}
+      <SpeechPracticeModal
+        visible={practiceModalOpen}
+        targetScript={practiceScript}
+        title="Latihan Naskah Loket Puskesmas"
+        contextDesc="Latih suaramu mengucapkan kalimat ini sebelum melangkah ke loket faskes. Dengarkan artikulasimu sendiri agar lebih percaya diri dan tenang."
+        onClose={() => setPracticeModalOpen(false)}
+      />
     </View>
   );
 };
@@ -135,18 +164,40 @@ const styles = StyleSheet.create({
   },
   scriptLabel: { ...typography.labelSm, color: colors.onPrimaryContainer, marginBottom: 4 },
   scriptText: { ...typography.bodyMd, color: colors.onPrimaryContainer, fontStyle: 'italic' },
+  scriptActionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    marginTop: spacing.sm,
+    flexWrap: 'wrap',
+  },
+  practiceBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: colors.primary,
+    paddingHorizontal: spacing.sm + 4,
+    paddingVertical: 7,
+    borderRadius: radius.full,
+  },
+  practiceBtnText: {
+    ...typography.labelSm,
+    fontSize: 11,
+    fontFamily: 'Montserrat-SemiBold',
+    color: '#FFFFFF',
+  },
   copyBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    alignSelf: 'flex-start',
-    marginTop: spacing.sm,
     backgroundColor: colors.surface,
     paddingHorizontal: spacing.sm + 2,
     paddingVertical: 6,
     borderRadius: radius.full,
+    borderWidth: 1,
+    borderColor: colors.outlineVariant,
   },
-  copyBtnText: { ...typography.labelSm, color: colors.primary },
+  copyBtnText: { ...typography.labelSm, fontSize: 11, color: colors.primary },
   emergencyRow: {
     flexDirection: 'row',
     alignItems: 'center',

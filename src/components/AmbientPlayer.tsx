@@ -2,42 +2,74 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { colors, typography, radius, spacing } from '../theme';
 import { AMBIENT_TRACKS, ambient, type AmbientTrack } from '../services/ambientAudio';
+import { useAppStore } from '../store/appStore';
 import { haptics } from '../services/haptics';
 import { SpeakerIcon, SpeakerOffIcon } from './Icons';
 
+type VolumeLevel = 0.3 | 0.6 | 1.0;
+
+const VOLUME_OPTIONS: { level: VolumeLevel; label: string }[] = [
+  { level: 0.3, label: 'Lembut' },
+  { level: 0.6, label: 'Sedang' },
+  { level: 1.0, label: 'Jelas' },
+];
+
 /**
  * Pemutar suara latar luring (hujan, ombak, derau coklat).
- * Berkas audio dibundel di dalam APK, jadi tetap bekerja dalam mode pesawat.
+ * Berkas audio dibundel di dalam APK, jadi tetap bekerja tanpa koneksi internet.
  */
 export const AmbientPlayer: React.FC = () => {
   const [active, setActive] = useState<AmbientTrack | null>(null);
+  const [volume, setVolume] = useState<VolumeLevel>(0.6);
   const [unsupported, setUnsupported] = useState(false);
+
+  const ambientEnabled = useAppStore((s) => s.ambientEnabled);
+  const toggleAmbient = useAppStore((s) => s.toggleAmbient);
+  const logWin = useAppStore((s) => s.logWin);
 
   useEffect(() => {
     setUnsupported(!ambient.isSupported());
-    return () => ambient.stop();
+    return () => {
+      ambient.stop();
+    };
   }, []);
 
-  const toggle = (track: AmbientTrack) => {
+  const handleToggleTrack = (track: AmbientTrack) => {
     void haptics.tap();
+
+    // Jika toggle ambient di Pengaturan belum aktif, aktifkan
+    if (!ambientEnabled) {
+      void toggleAmbient();
+    }
+
     if (active === track) {
       ambient.pause();
       setActive(null);
       return;
     }
+
     ambient.play(track);
+    ambient.setVolume(volume);
     setActive(track);
+
+    // Catat kemenangan kecil setelah relaksasi
+    void logWin('Mendengarkan suara latar relaksasi');
+  };
+
+  const handleChangeVolume = (lvl: VolumeLevel) => {
+    void haptics.tap();
+    setVolume(lvl);
+    ambient.setVolume(lvl);
   };
 
   return (
     <View style={styles.card}>
       <View style={styles.header}>
-        <SpeakerIcon size={18} color={colors.secondary} />
-        <Text style={styles.title}>Suara Latar</Text>
+        <SpeakerIcon size={18} color={colors.primary} />
+        <Text style={styles.title}>Suara Latar Relaksasi</Text>
       </View>
       <Text style={styles.sub}>
-        Berkas suara sudah ada di dalam aplikasi, jadi tetap bisa dipakai tanpa internet. Pilih satu
-        untuk menemani latihanmu.
+        Berkas audio tersimpan luring di perangkatmu. Pilih salah satu untuk menenangkan pikiran tanpa jaringan internet.
       </Text>
 
       <View style={styles.trackRow}>
@@ -45,7 +77,7 @@ export const AmbientPlayer: React.FC = () => {
           <TouchableOpacity
             key={t.id}
             style={[styles.track, active === t.id && styles.trackActive]}
-            onPress={() => toggle(t.id)}
+            onPress={() => handleToggleTrack(t.id)}
             activeOpacity={0.85}
             accessibilityLabel={t.label}
           >
@@ -59,6 +91,30 @@ export const AmbientPlayer: React.FC = () => {
         ))}
       </View>
 
+      {/* Kontrol Volume saat track aktif */}
+      {active !== null && !unsupported && (
+        <View style={styles.volumeRow}>
+          <Text style={styles.volumeTitle}>Tingkat Volume:</Text>
+          <View style={styles.volumePills}>
+            {VOLUME_OPTIONS.map((v) => {
+              const isSelected = volume === v.level;
+              return (
+                <TouchableOpacity
+                  key={v.label}
+                  style={[styles.volumePill, isSelected && styles.volumePillActive]}
+                  onPress={() => handleChangeVolume(v.level)}
+                  activeOpacity={0.8}
+                >
+                  <Text style={[styles.volumePillText, isSelected && styles.volumePillTextActive]}>
+                    {v.label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </View>
+      )}
+
       {unsupported && (
         <View style={styles.notice}>
           <SpeakerOffIcon size={14} color={colors.onWarningContainer} />
@@ -69,8 +125,12 @@ export const AmbientPlayer: React.FC = () => {
       )}
 
       {active !== null && !unsupported && (
-        <TouchableOpacity style={styles.stopHint} onPress={() => toggle(active)} activeOpacity={0.7}>
-          <Text style={styles.stopHintText}>Ketuk lagi untuk menghentikan suara</Text>
+        <TouchableOpacity
+          style={styles.stopHint}
+          onPress={() => handleToggleTrack(active)}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.stopHintText}>Ketuk tombol suara lagi untuk menghentikan</Text>
         </TouchableOpacity>
       )}
     </View>
@@ -88,7 +148,7 @@ const styles = StyleSheet.create({
   },
   header: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 4 },
   title: { ...typography.labelLg, color: colors.primary },
-  sub: { ...typography.bodySm, color: colors.onSurfaceVariant, marginBottom: spacing.sm },
+  sub: { ...typography.bodySm, color: colors.textSecondary, marginBottom: spacing.sm, lineHeight: 18 },
   trackRow: { flexDirection: 'row', gap: spacing.sm },
   track: {
     flex: 1,
@@ -99,11 +159,67 @@ const styles = StyleSheet.create({
     borderColor: colors.outlineVariant,
     alignItems: 'center',
   },
-  trackActive: { backgroundColor: colors.secondaryContainer, borderColor: colors.secondary },
-  trackLabel: { ...typography.labelMd, color: colors.onSurface, marginBottom: 2 },
-  trackLabelActive: { color: colors.onSecondaryContainer },
-  trackHint: { ...typography.bodySm, color: colors.onSurfaceVariant, textAlign: 'center' },
-  trackHintActive: { color: colors.onSecondaryContainer },
+  trackActive: {
+    backgroundColor: colors.primarySoft,
+    borderColor: colors.primary,
+  },
+  trackLabel: {
+    ...typography.labelMd,
+    color: colors.textPrimary,
+    marginBottom: 2,
+    fontFamily: 'Montserrat-SemiBold',
+  },
+  trackLabelActive: { color: colors.primary },
+  trackHint: {
+    ...typography.bodySm,
+    fontSize: 11,
+    color: colors.textSecondary,
+    textAlign: 'center',
+    lineHeight: 15,
+  },
+  trackHintActive: { color: colors.primary },
+
+  volumeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: colors.surfaceContainer,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 8,
+    borderRadius: radius.md,
+    marginTop: spacing.md,
+  },
+  volumeTitle: {
+    ...typography.labelSm,
+    color: colors.textSecondary,
+    fontSize: 11,
+  },
+  volumePills: {
+    flexDirection: 'row',
+    gap: 4,
+  },
+  volumePill: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: radius.sm,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.outlineVariant,
+  },
+  volumePillActive: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+  },
+  volumePillText: {
+    fontSize: 11,
+    fontFamily: 'Montserrat-Medium',
+    color: colors.textSecondary,
+  },
+  volumePillTextActive: {
+    color: '#FFFFFF',
+    fontFamily: 'Montserrat-Bold',
+  },
+
   notice: {
     flexDirection: 'row',
     gap: 6,
@@ -115,5 +231,5 @@ const styles = StyleSheet.create({
   },
   noticeText: { ...typography.bodySm, color: colors.onWarningContainer, flex: 1 },
   stopHint: { marginTop: spacing.sm, alignItems: 'center' },
-  stopHintText: { ...typography.bodySm, color: colors.onSurfaceVariant },
+  stopHintText: { ...typography.bodySm, fontSize: 11, color: colors.textSecondary },
 });

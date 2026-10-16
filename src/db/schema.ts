@@ -10,7 +10,8 @@ CREATE TABLE IF NOT EXISTS screening_records (
   stress_severity TEXT NOT NULL,
   tier TEXT NOT NULL,
   crisis_flag INTEGER NOT NULL,
-  answers_json TEXT NOT NULL
+  answers_json TEXT NOT NULL,
+  tiered_json TEXT
 );
 `;
 
@@ -53,6 +54,22 @@ export const CREATE_STORY_LETTER_TABLE = `
 CREATE TABLE IF NOT EXISTS story_letters (
   id TEXT PRIMARY KEY NOT NULL,
   body TEXT NOT NULL,
+  created_at INTEGER NOT NULL
+);
+`;
+
+export const CREATE_STORY_SUBMISSION_TABLE = `
+CREATE TABLE IF NOT EXISTS story_submissions (
+  id TEXT PRIMARY KEY NOT NULL,
+  author TEXT NOT NULL,
+  category TEXT NOT NULL,
+  felt TEXT NOT NULL,
+  turning_point TEXT NOT NULL,
+  action_taken TEXT NOT NULL,
+  result_text TEXT NOT NULL,
+  message TEXT NOT NULL,
+  status TEXT NOT NULL,
+  helpful_count INTEGER DEFAULT 0,
   created_at INTEGER NOT NULL
 );
 `;

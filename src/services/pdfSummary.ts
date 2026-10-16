@@ -111,7 +111,7 @@ export async function generateAndSharePdfSummary(result: ScreeningResult): Promi
 </head>
 <body>
   <div class="header">
-    <h1 class="title">LENTERA — Ringkasan Skrining Awal Mandiri</h1>
+    <h1 class="title">Lentera — Ringkasan Skrining Awal Mandiri</h1>
     <div class="subtitle">${result.tiered ? 'Instrumen Bertingkat (K-10, PHQ-9, GAD-7)' : 'Instrumen Skrining Awal'} • Dicetak: ${dateStr}</div>
   </div>
 
@@ -177,7 +177,7 @@ export async function generateAndSharePdfSummary(result: ScreeningResult): Promi
   </div>
 
   <div class="footer">
-    LENTERA Mobile • 100% On-Device & Zero-Cloud Storage • Tidak memuat identitas pasien
+    Lentera Mobile • 100% On-Device & Zero-Cloud Storage • Tidak memuat identitas pasien
   </div>
 </body>
 </html>

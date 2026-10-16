@@ -55,7 +55,7 @@ export const HomeScreen: React.FC<Props> = ({ onNavigate, onQuickClose }) => {
             )}
           </View>
           <Text style={styles.brandText}>
-            {workMode ? "Catatan Harian" : "LENTERA"}
+            {workMode ? "Catatan Harian" : "Lentera"}
           </Text>
         </View>
 

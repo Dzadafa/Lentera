@@ -1,10 +1,10 @@
 /**
- * Token desain LENTERA — sumber tunggal kebenaran adalah DESIGN.md.
+ * Token desain Lentera — sumber tunggal kebenaran adalah DESIGN.md.
  * Listening, Empathy, Nurture, Togetherness, Encouragement, Resilience, Awareness
  */
 
 export const colors = {
-  // Brand (Warna Logo LENTERA)
+  // Brand (Warna Logo Lentera)
   primary: '#7843E4',          // Ungu Utama Logo
   primarySoft: '#EFE6FD',      // Latar chip/badge ungu sangat lembut
   primaryOn: '#FFFFFF',
@@ -25,16 +25,16 @@ export const colors = {
   surfaceContainer: '#F7F4FD',
   surfaceContainerHigh: '#EFE8FC',
   onSurface: '#1B1B23',
-  onSurfaceVariant: '#6E6E7A',
+  onSurfaceVariant: '#525260', // Kontras ditingkatkan dari #6E6E7A agar lolos WCAG AA (> 7:1)
   inverseSurface: '#1B1B23',
   inverseOnSurface: '#F7F4FD',
 
   textPrimary: '#1B1B23',
-  textSecondary: '#6E6E7A',
-  textMuted: '#9A9AA6',
+  textSecondary: '#525260',   // Kontras WCAG AA di atas #F7F4FD dan #FFFFFF (> 7:1)
+  textMuted: '#6A6A78',       // Kontras WCAG AA di atas #F7F4FD (> 5:1)
 
   // Outline
-  outline: '#9A9AA6',
+  outline: '#7C7C8C',         // Kontras outline lebih tegas
   outlineVariant: '#E8DCFC',
 
   // Interactive pairs

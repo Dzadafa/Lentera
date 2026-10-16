@@ -31,7 +31,7 @@ const INITIAL_MESSAGES: Message[] = [
   {
     id: 'm1',
     sender: 'counselor',
-    text: 'Halo! Aku konselor pendamping anonim LENTERA. Semua obrolan di sini aman, tanpa nama asli, dan tidak disimpan ke server mana pun.',
+    text: 'Halo! Aku konselor pendamping anonim Lentera. Semua obrolan di sini aman, tanpa nama asli, dan tidak disimpan ke server mana pun.',
     time: '10:00',
   },
   {

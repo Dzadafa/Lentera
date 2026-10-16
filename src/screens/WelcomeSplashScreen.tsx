@@ -47,10 +47,10 @@ const SLIDES: SlideItem[] = [
     badge: '100% LOKAL & ANONIM',
     badgeColor: colors.primary,
     badgeBg: colors.primaryContainer,
-    title: 'Selamat Datang di LENTERA',
+    title: 'Selamat Datang di Lentera',
     subtitle: 'Ruang aman kesehatan mental mandiri',
     description:
-      'LENTERA adalah jembatan pertama untuk memahami kondisi pikiranmu secara mandiri, tanpa login, tanpa akun, dan tanpa data yang dikirim ke internet.',
+      'Lentera adalah jembatan pertama untuk memahami kondisi pikiranmu secara mandiri, tanpa login, tanpa akun, dan tanpa data yang dikirim ke internet.',
     highlights: [
       {
         emoji: '🔒',
@@ -119,7 +119,7 @@ const SLIDES: SlideItem[] = [
     title: 'Langkah Nyata ke Faskes',
     subtitle: 'Naskah siap pakai di loket puskesmas',
     description:
-      'Bingung bagaimana bicara ke petugas loket atau dokter umum? LENTERA menyediakan panduan 3 langkah berobat dengan BPJS.',
+      'Bingung bagaimana bicara ke petugas loket atau dokter umum? Lentera menyediakan panduan 3 langkah berobat dengan BPJS.',
     highlights: [
       {
         emoji: '📋',
@@ -250,7 +250,7 @@ export const WelcomeSplashScreen: React.FC<Props> = ({ onComplete }) => {
             style={styles.smallLogo}
             resizeMode="contain"
           />
-          <Text style={styles.smallBrandName}>LENTERA</Text>
+          <Text style={styles.smallBrandName}>Lentera</Text>
         </View>
 
         {!isLastSlide ? (
@@ -334,7 +334,7 @@ export const WelcomeSplashScreen: React.FC<Props> = ({ onComplete }) => {
           activeOpacity={0.88}
           onPress={handleNextSlide}
           accessibilityRole="button"
-          accessibilityLabel={isLastSlide ? 'Buka LENTERA, tanpa akun' : 'Lanjut ke slide berikutnya'}
+          accessibilityLabel={isLastSlide ? 'Buka Lentera, tanpa akun' : 'Lanjut ke slide berikutnya'}
         >
           <Text style={styles.primaryBtnText}>
             {isLastSlide ? 'Mulai Sekarang, Tanpa Akun' : 'Lanjut'}
