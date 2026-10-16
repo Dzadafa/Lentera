@@ -10,7 +10,6 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native';
-import { captureRef } from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
 import * as Clipboard from 'expo-clipboard';
 import { colors, typography, radius, spacing } from '../theme';
@@ -78,7 +77,23 @@ export const StoryCardModal: React.FC<Props> = ({ visible, onClose, data }) => {
       await Clipboard.setStringAsync(captionText);
 
       // Tangkap View kartu menjadi gambar PNG beresolusi tinggi
-      const uri = await captureRef(cardRef, {
+      let captureRefFunc: any = null;
+      try {
+        const viewShot = require('react-native-view-shot');
+        captureRefFunc = viewShot?.captureRef || viewShot?.default?.captureRef;
+      } catch {
+        // Fallback jika native module belum tersedia di client tertentu
+      }
+
+      if (!captureRefFunc) {
+        Alert.alert(
+          'Teks Telah Disalin',
+          'Pesan penguat berhasil disalin ke clipboard! Fitur ekspor gambar kartu membutuhkan build native mandiri (apk/prebuild).'
+        );
+        return;
+      }
+
+      const uri = await captureRefFunc(cardRef, {
         format: 'png',
         quality: 1,
         result: 'tmpfile',

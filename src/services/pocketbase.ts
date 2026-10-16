@@ -13,11 +13,12 @@ const debuggerHost =
   "";
 const hostIp = debuggerHost ? debuggerHost.split(":")[0] : "192.168.78.79";
 
+export const PB_PROD_URL = "https://lenterabe.danipinion.my.id";
 export const PB_BASE_URL = `http://${hostIp}:8090`;
 export const PB_EMULATOR_URL = "http://10.0.2.2:8090";
 export const PB_LAN_URL = "http://192.168.78.79:8090";
 
-let activeBaseUrl = PB_BASE_URL;
+let activeBaseUrl = PB_PROD_URL;
 
 export function setPocketBaseUrl(url: string) {
   if (url) {
@@ -70,6 +71,7 @@ export async function shareStoryToServer(data: {
 }): Promise<ServerStory | null> {
   const urls = [
     activeBaseUrl,
+    PB_PROD_URL,
     PB_LAN_URL,
     PB_EMULATOR_URL,
     "http://127.0.0.1:8090",
@@ -99,6 +101,7 @@ export async function shareStoryToServer(data: {
 export async function fetchServerStories(): Promise<ServerStory[]> {
   const urls = [
     activeBaseUrl,
+    PB_PROD_URL,
     PB_LAN_URL,
     PB_EMULATOR_URL,
     "http://127.0.0.1:8090",
@@ -136,6 +139,7 @@ export async function matchRandomCounselor(anonymousUserId?: string): Promise<{
 }> {
   const urls = [
     activeBaseUrl,
+    PB_PROD_URL,
     PB_LAN_URL,
     PB_EMULATOR_URL,
     "http://127.0.0.1:8090",
