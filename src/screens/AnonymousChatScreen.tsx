@@ -60,7 +60,7 @@ const INITIAL_MESSAGES: Message[] = [
 ];
 
 export const AnonymousChatScreen: React.FC<Props> = ({ onBack, onQuickClose, onOpenSupport }) => {
-  const [messages, setMessages] = useState<Message[]>([DEFAULT_WELCOME_MESSAGE]);
+  const [messages, setMessages] = useState<Message[]>(INITIAL_MESSAGES);
   const [input, setInput] = useState('');
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [counselor, setCounselor] = useState<CounselorInfo | null>(null);
@@ -169,7 +169,7 @@ export const AnonymousChatScreen: React.FC<Props> = ({ onBack, onQuickClose, onO
         bio: 'Fokus pada pendampingan kecemasan akademik, burnout mahasiswa, dan transisi quarter-life crisis.',
         kyc_status: 'verified',
       });
-      setMessages([DEFAULT_WELCOME_MESSAGE]);
+      setMessages(INITIAL_MESSAGES);
     } finally {
       setIsMatching(false);
       setTimeout(() => scrollToBottom(true), 200);

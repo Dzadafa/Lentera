@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from "react";
 import {
   View,
   Text,
@@ -9,8 +9,8 @@ import {
   Modal,
   Alert,
   Share,
-} from 'react-native';
-import { colors, typography, radius, spacing } from '../theme';
+} from "react-native";
+import { colors, typography, radius, spacing } from "../theme";
 import {
   ChevronLeftIcon,
   SparkleIcon,
@@ -19,10 +19,13 @@ import {
   HeartIcon,
   CheckIcon,
   ShareIcon,
-} from '../components/Icons';
-import { QuickCloseButton } from '../components/QuickCloseButton';
-import { StoryCardModal, type StoryCardData } from '../components/StoryCardModal';
-import { CURATED_STORIES, type CuratedStory } from '../content/storyWall';
+} from "../components/Icons";
+import { QuickCloseButton } from "../components/QuickCloseButton";
+import {
+  StoryCardModal,
+  type StoryCardData,
+} from "../components/StoryCardModal";
+import { CURATED_STORIES, type CuratedStory } from "../content/storyWall";
 import {
   addStoryLetter,
   deleteStoryLetter,
@@ -36,31 +39,31 @@ import {
   hideReportedStory,
   getHiddenStoryIds,
   getSetting,
-} from '../db';
-import { useAppStore } from '../store/appStore';
-import { haptics } from '../services/haptics';
+} from "../db";
+import { useAppStore } from "../store/appStore";
+import { haptics } from "../services/haptics";
 
 interface Props {
   onBack?: () => void;
   onQuickClose: () => void;
 }
 
-type Filter = 'all' | 'high' | 'moderate' | 'college' | 'worker';
+type Filter = "all" | "high" | "moderate" | "college" | "worker";
 
 const FILTER_TABS: { id: Filter; label: string }[] = [
-  { id: 'all', label: 'Semua Cerita' },
-  { id: 'high', label: 'Dari Kondisi Tinggi' },
-  { id: 'moderate', label: 'Dari Kondisi Sedang' },
-  { id: 'college', label: 'Kuliah & Skripsi' },
-  { id: 'worker', label: 'Pekerja Muda' },
+  { id: "all", label: "Semua Cerita" },
+  { id: "high", label: "Dari Kondisi Tinggi" },
+  { id: "moderate", label: "Dari Kondisi Sedang" },
+  { id: "college", label: "Kuliah & Skripsi" },
+  { id: "worker", label: "Pekerja Muda" },
 ];
 
 const CATEGORY_CHOICES = [
-  'Kuliah & Akademik',
-  'Pekerja & Karier',
-  'Kecemasan & Overthinking',
-  'Keluarga & Relasi',
-  'Faskes & Bantuan Klinis',
+  "Kuliah & Akademik",
+  "Pekerja & Karier",
+  "Kecemasan & Overthinking",
+  "Keluarga & Relasi",
+  "Faskes & Bantuan Klinis",
 ];
 
 /**
@@ -72,7 +75,7 @@ export const formatRelativeTime = (timestamp: number): string => {
   const diffSec = Math.max(0, Math.floor((now - timestamp) / 1000));
 
   if (diffSec < 60) {
-    return 'Baru saja';
+    return "Baru saja";
   }
   const diffMin = Math.floor(diffSec / 60);
   if (diffMin < 60) {
@@ -98,21 +101,25 @@ export const formatRelativeTime = (timestamp: number): string => {
   return `${diffYears} tahun yang lalu`;
 };
 
+export interface StoryItem extends CuratedStory {
+  created?: number;
+}
+
 /**
  * Offset waktu dinamis untuk cerita kurasi agar terasa hidup & alami layaknya linimasa komunitas aktif.
  */
 const CURATED_TIME_OFFSETS: Record<string, number> = {
-  'story-1': 15 * 60 * 1000,          // 15 menit yang lalu
-  'story-2': 3 * 3600 * 1000,         // 3 jam yang lalu
-  'story-3': 1 * 24 * 3600 * 1000,    // 1 hari yang lalu
-  'story-4': 3 * 24 * 3600 * 1000,    // 3 hari yang lalu
-  'story-5': 7 * 24 * 3600 * 1000,    // 1 minggu yang lalu
+  "story-1": 15 * 60 * 1000, // 15 menit yang lalu
+  "story-2": 3 * 3600 * 1000, // 3 jam yang lalu
+  "story-3": 1 * 24 * 3600 * 1000, // 1 hari yang lalu
+  "story-4": 3 * 24 * 3600 * 1000, // 3 hari yang lalu
+  "story-5": 7 * 24 * 3600 * 1000, // 1 minggu yang lalu
 };
 
 export const StoryWallScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
-  const [filter, setFilter] = useState<Filter>('all');
+  const [filter, setFilter] = useState<Filter>("all");
   const [letters, setLetters] = useState<StoryLetter[]>([]);
-  const [draft, setDraft] = useState('');
+  const [draft, setDraft] = useState("");
   const [composerOpen, setComposerOpen] = useState(false);
   const [shareToPublic, setShareToPublic] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
@@ -122,33 +129,62 @@ export const StoryWallScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
     const now = Date.now();
     return CURATED_STORIES.map((s, idx) => ({
       ...s,
-      created: now - (idx + 1) * 3600 * 1000 * (idx === 0 ? 2 : idx === 1 ? 24 : 72),
+      created:
+        now - (idx + 1) * 3600 * 1000 * (idx === 0 ? 2 : idx === 1 ? 24 : 72),
     }));
   });
 
   // Submisi cerita oleh pengguna
-  const [userSubmissions, setUserSubmissions] = useState<UserStorySubmission[]>([]);
+  const [userSubmissions, setUserSubmissions] = useState<UserStorySubmission[]>(
+    [],
+  );
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
 
   // Modal Kartu Penguat (Medium-style share card)
-  const [selectedShareStory, setSelectedShareStory] = useState<StoryCardData | null>(null);
+  const [selectedShareStory, setSelectedShareStory] =
+    useState<StoryCardData | null>(null);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
   // Form 5 bagian
-  const [authorName, setAuthorName] = useState('');
+  const [authorName, setAuthorName] = useState("");
   const [category, setCategory] = useState(CATEGORY_CHOICES[0]);
-  const [feltText, setFeltText] = useState('');
-  const [turningPointText, setTurningPointText] = useState('');
-  const [actionText, setActionText] = useState('');
-  const [resultText, setResultText] = useState('');
-  const [messageText, setMessageText] = useState('');
+  const [feltText, setFeltText] = useState("");
+  const [turningPointText, setTurningPointText] = useState("");
+  const [actionText, setActionText] = useState("");
+  const [resultText, setResultText] = useState("");
+  const [messageText, setMessageText] = useState("");
 
   // Reaksi helpful per cerita
-  const [reactions, setReactions] = useState<Record<string, { count: number; isHelped: boolean }>>({});
+  const [reactions, setReactions] = useState<
+    Record<string, { count: number; isHelped: boolean }>
+  >({});
   const [hiddenIds, setHiddenIds] = useState<string[]>([]);
 
   const latestScreening = useAppStore((s) => s.latestScreening);
   const logWin = useAppStore((s) => s.logWin);
+
+  const loadServerStories = async () => {
+    try {
+      const { fetchServerStories } = await import('../services/pocketbase');
+      const items = await fetchServerStories();
+      if (items && items.length > 0) {
+        const mapped: StoryItem[] = items.map((it) => ({
+          id: it.id,
+          authorLabel: it.author_label,
+          story: it.story,
+          actionTaken: it.action_taken,
+          nowStatus: it.now_status,
+          quote: it.quote,
+          fromTier: it.from_tier,
+          tags: it.tags || [],
+          created: it.created ? new Date(it.created).getTime() : undefined,
+        }));
+        setServerStories(mapped);
+      }
+    } catch {
+      // Tetap gunakan curated stories jika offline/tidak terhubung
+    }
+  };
 
   const refreshData = async () => {
     const ltrs = await getStoryLetters(10);
@@ -161,7 +197,10 @@ export const StoryWallScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
     // Muat reaksi helpful untuk cerita bawaan
     const initialMap: Record<string, { count: number; isHelped: boolean }> = {};
     for (const story of CURATED_STORIES) {
-      const status = await getStoryHelpfulStatus(story.id, story.id === 'story-1' ? 42 : story.id === 'story-3' ? 38 : 24);
+      const status = await getStoryHelpfulStatus(
+        story.id,
+        story.id === "story-1" ? 42 : story.id === "story-3" ? 38 : 24,
+      );
       initialMap[story.id] = status;
     }
     setReactions(initialMap);
@@ -169,8 +208,9 @@ export const StoryWallScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
 
   useEffect(() => {
     void refreshData();
+    void loadServerStories();
     void (async () => {
-      const savedNick = await getSetting('user_nickname');
+      const savedNick = await getSetting("user_nickname");
       if (savedNick) setAuthorName(savedNick);
     })();
   }, []);
@@ -187,20 +227,23 @@ export const StoryWallScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
   const handleReportStory = (storyId: string) => {
     void haptics.alert();
     Alert.alert(
-      'Laporkan Cerita Ini?',
-      'Jika cerita ini memicu ketidaknyamanan atau dirasa kurang pantas, kami akan menyembunyikannya dari perangkatmu dan meneruskannya ke antrean peninjauan.',
+      "Laporkan Cerita Ini?",
+      "Jika cerita ini memicu ketidaknyamanan atau dirasa kurang pantas, kami akan menyembunyikannya dari perangkatmu dan meneruskannya ke antrean peninjauan.",
       [
-        { text: 'Batal', style: 'cancel' },
+        { text: "Batal", style: "cancel" },
         {
-          text: 'Sembunyikan & Laporkan',
-          style: 'destructive',
+          text: "Sembunyikan & Laporkan",
+          style: "destructive",
           onPress: async () => {
             await hideReportedStory(storyId);
             setHiddenIds((prev) => [...prev, storyId]);
-            Alert.alert('Terima kasih', 'Cerita ini telah disembunyikan dari layarmu.');
+            Alert.alert(
+              "Terima kasih",
+              "Cerita ini telah disembunyikan dari layarmu.",
+            );
           },
         },
-      ]
+      ],
     );
   };
 
@@ -208,15 +251,17 @@ export const StoryWallScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
     author: string,
     quote: string,
     story: string,
-    actionTaken?: string
+    actionTaken?: string,
   ) => {
     try {
       void haptics.tap();
-      const actionText = actionTaken ? `\n\nLangkah nyata:\n${actionTaken}` : '';
+      const actionText = actionTaken
+        ? `\n\nLangkah nyata:\n${actionTaken}`
+        : "";
       const shareMessage = `"${quote}"\n\n${story}${actionText}\n\n— Dari ${author} via Lentera`;
       await Share.share({
         message: shareMessage,
-        title: 'Kisah Penguat dari Lentera',
+        title: "Kisah Penguat dari Lentera",
       });
     } catch {
       // User membatalkan dialog share
@@ -237,41 +282,43 @@ export const StoryWallScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
   const handleSubmitStory = async () => {
     if (!feltText.trim() || !actionText.trim() || !messageText.trim()) {
       Alert.alert(
-        'Formulir Belum Lengkap',
-        'Mohon isi setidaknya kondisi yang kamu rasakan, langkah nyata yang kamu ambil, dan pesan untuk pembaca.'
+        "Formulir Belum Lengkap",
+        "Mohon isi setidaknya kondisi yang kamu rasakan, langkah nyata yang kamu ambil, dan pesan untuk pembaca.",
       );
       return;
     }
 
     try {
       await insertStorySubmission({
-        author: authorName.trim() || 'Teman Lentera',
+        author: authorName.trim() || "Teman Lentera",
         category,
         felt: feltText.trim(),
-        turningPoint: turningPointText.trim() || 'Momen saat merasa perlu berubah',
+        turningPoint:
+          turningPointText.trim() || "Momen saat merasa perlu berubah",
         actionTaken: actionText.trim(),
-        resultText: resultText.trim() || 'Mulai menemukan ritme yang lebih tenang',
+        resultText:
+          resultText.trim() || "Mulai menemukan ritme yang lebih tenang",
         message: messageText.trim(),
       });
 
       void haptics.success();
-      await logWin('Menulis dan membagikan cerita penguat');
+      await logWin("Menulis dan membagikan cerita penguat");
 
       Alert.alert(
-        'Cerita Berhasil Dikirim',
-        'Terima kasih telah berbagi pengalaman berhargamu. Ceritamu telah tersimpan di perangkat ini dan masuk dalam antrean kurasi.'
+        "Cerita Berhasil Dikirim",
+        "Terima kasih telah berbagi pengalaman berhargamu. Ceritamu telah tersimpan di perangkat ini dan masuk dalam antrean kurasi.",
       );
 
       // Reset form
-      setFeltText('');
-      setTurningPointText('');
-      setActionText('');
-      setResultText('');
-      setMessageText('');
+      setFeltText("");
+      setTurningPointText("");
+      setActionText("");
+      setResultText("");
+      setMessageText("");
       setIsSubmitModalOpen(false);
       await refreshData();
     } catch {
-      Alert.alert('Gagal', 'Terjadi kesalahan saat menyimpan cerita.');
+      Alert.alert("Gagal", "Terjadi kesalahan saat menyimpan cerita.");
     }
   };
 
@@ -281,13 +328,16 @@ export const StoryWallScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
     if (shareToPublic) {
       setIsSharing(true);
       try {
-        const { shareStoryToServer } = await import('../services/pocketbase');
+        const { shareStoryToServer } = await import("../services/pocketbase");
         const res = await shareStoryToServer({
           story: draft.trim(),
-          quote: draft.trim().length > 60 ? draft.trim().substring(0, 60) + '...' : draft.trim(),
-          action_taken: 'Menulis refleksi dan berbagi penguatan',
-          now_status: 'Lebih tenang setelah menuangkan perasaan',
-          from_tier: 'moderate',
+          quote:
+            draft.trim().length > 60
+              ? draft.trim().substring(0, 60) + "..."
+              : draft.trim(),
+          action_taken: "Menulis refleksi dan berbagi penguatan",
+          now_status: "Lebih tenang setelah menuangkan perasaan",
+          from_tier: "moderate",
         });
         if (res) {
           await loadServerStories();
@@ -301,7 +351,7 @@ export const StoryWallScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
 
     // Selalu simpan di arsip surat pribadi perangkat
     await addStoryLetter(draft.trim());
-    setDraft('');
+    setDraft("");
     setShareToPublic(false);
     setComposerOpen(false);
     void haptics.success();
@@ -313,21 +363,25 @@ export const StoryWallScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
     let list = CURATED_STORIES.filter((s) => !hiddenIds.includes(s.id));
 
     // Filter kategori
-    if (filter === 'high') {
-      list = list.filter((s) => s.fromTier === 'high');
-    } else if (filter === 'moderate') {
-      list = list.filter((s) => s.fromTier === 'moderate');
-    } else if (filter === 'college') {
-      list = list.filter((s) => s.tags.includes('Kuliah') || s.tags.includes('Akademik'));
-    } else if (filter === 'worker') {
-      list = list.filter((s) => s.tags.includes('Pekerja muda') || s.tags.includes('Kebiasaan'));
+    if (filter === "high") {
+      list = list.filter((s) => s.fromTier === "high");
+    } else if (filter === "moderate") {
+      list = list.filter((s) => s.fromTier === "moderate");
+    } else if (filter === "college") {
+      list = list.filter(
+        (s) => s.tags.includes("Kuliah") || s.tags.includes("Akademik"),
+      );
+    } else if (filter === "worker") {
+      list = list.filter(
+        (s) => s.tags.includes("Pekerja muda") || s.tags.includes("Kebiasaan"),
+      );
     }
 
     // Prioritaskan cerita sesuai kondisi pengguna (Personalized Sorting On-Device)
-    if (latestScreening?.tier === 'high' && filter === 'all') {
-      list = [...list].sort((a, b) => (a.fromTier === 'high' ? -1 : 1));
-    } else if (latestScreening?.tier === 'moderate' && filter === 'all') {
-      list = [...list].sort((a, b) => (a.fromTier === 'moderate' ? -1 : 1));
+    if (latestScreening?.tier === "high" && filter === "all") {
+      list = [...list].sort((a, b) => (a.fromTier === "high" ? -1 : 1));
+    } else if (latestScreening?.tier === "moderate" && filter === "all") {
+      list = [...list].sort((a, b) => (a.fromTier === "moderate" ? -1 : 1));
     }
 
     return list;
@@ -337,7 +391,11 @@ export const StoryWallScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
     <View style={styles.container}>
       <View style={styles.topBar}>
         {onBack ? (
-          <TouchableOpacity onPress={onBack} style={styles.iconBtn} accessibilityLabel="Kembali">
+          <TouchableOpacity
+            onPress={onBack}
+            style={styles.iconBtn}
+            accessibilityLabel="Kembali"
+          >
             <ChevronLeftIcon size={22} color={colors.primary} />
           </TouchableOpacity>
         ) : (
@@ -347,12 +405,17 @@ export const StoryWallScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
         <QuickCloseButton onPress={onQuickClose} label="" />
       </View>
 
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
         {/* Banner Hero */}
         <View style={styles.heroCard}>
           <Text style={styles.heroTitle}>Kamu Tidak Berjalan Sendirian</Text>
           <Text style={styles.heroSub}>
-            Kumpulan jejak dan titik balik dari teman-teman yang pernah berada di titik terendah mereka. Setiap cerita adalah bukti bahwa kondisi berat bisa membaik.
+            Kumpulan jejak dan titik balik dari teman-teman yang pernah berada
+            di titik terendah mereka. Setiap cerita adalah bukti bahwa kondisi
+            berat bisa membaik.
           </Text>
 
           <TouchableOpacity
@@ -382,7 +445,12 @@ export const StoryWallScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
                   setFilter(f.id);
                 }}
               >
-                <Text style={[styles.filterChipText, isActive && styles.filterChipTextActive]}>
+                <Text
+                  style={[
+                    styles.filterChipText,
+                    isActive && styles.filterChipTextActive,
+                  ]}
+                >
                   {f.label}
                 </Text>
               </TouchableOpacity>
@@ -398,9 +466,13 @@ export const StoryWallScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
               <View key={sub.id} style={styles.storyCard}>
                 <View style={styles.storyTop}>
                   <View style={styles.pendingBadge}>
-                    <Text style={styles.pendingBadgeText}>Terkirim • Dalam Moderasi</Text>
+                    <Text style={styles.pendingBadgeText}>
+                      Terkirim • Dalam Moderasi
+                    </Text>
                   </View>
-                  <Text style={styles.timeAgoText}>{formatRelativeTime(sub.createdAt)}</Text>
+                  <Text style={styles.timeAgoText}>
+                    {formatRelativeTime(sub.createdAt)}
+                  </Text>
                 </View>
 
                 <View style={styles.storyBlock}>
@@ -409,7 +481,9 @@ export const StoryWallScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
                 </View>
 
                 <View style={styles.storyBlock}>
-                  <Text style={styles.blockLabel}>TITIK BALIK & LANGKAH NYATA:</Text>
+                  <Text style={styles.blockLabel}>
+                    TITIK BALIK & LANGKAH NYATA:
+                  </Text>
                   <Text style={styles.storyBodyText}>{sub.actionTaken}</Text>
                 </View>
 
@@ -430,7 +504,7 @@ export const StoryWallScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
                           story: sub.felt,
                           actionTaken: sub.actionTaken,
                           author: sub.author,
-                          conditionLabel: 'Cerita Pengguna',
+                          conditionLabel: "Cerita Pengguna",
                           timeAgo: formatRelativeTime(sub.createdAt),
                         })
                       }
@@ -451,7 +525,7 @@ export const StoryWallScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
         {visibleCuratedStories.map((s) => {
           const reaction = reactions[s.id] ?? { count: 24, isHelped: false };
           const postedTimeAgo = formatRelativeTime(
-            Date.now() - (CURATED_TIME_OFFSETS[s.id] ?? 2 * 24 * 3600 * 1000)
+            Date.now() - (CURATED_TIME_OFFSETS[s.id] ?? 2 * 24 * 3600 * 1000),
           );
 
           return (
@@ -462,7 +536,7 @@ export const StoryWallScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
                     styles.tierTag,
                     {
                       backgroundColor:
-                        s.fromTier === 'high'
+                        s.fromTier === "high"
                           ? colors.tierHighContainer
                           : colors.tierModerateContainer,
                     },
@@ -473,13 +547,15 @@ export const StoryWallScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
                       styles.tierTagText,
                       {
                         color:
-                          s.fromTier === 'high'
+                          s.fromTier === "high"
                             ? colors.onTierHighContainer
                             : colors.onTierModerateContainer,
                       },
                     ]}
                   >
-                    {s.fromTier === 'high' ? 'Dulu Kondisi Tinggi' : 'Dulu Kondisi Sedang'}
+                    {s.fromTier === "high"
+                      ? "Dulu Kondisi Tinggi"
+                      : "Dulu Kondisi Sedang"}
                   </Text>
                 </View>
                 <Text style={styles.timeAgoText}>{postedTimeAgo}</Text>
@@ -495,7 +571,9 @@ export const StoryWallScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
 
               <View style={styles.actionRow}>
                 <SparkleIcon size={14} color={colors.primary} />
-                <Text style={styles.actionText}>Langkah nyata: {s.actionTaken}</Text>
+                <Text style={styles.actionText}>
+                  Langkah nyata: {s.actionTaken}
+                </Text>
               </View>
 
               <View style={styles.cardFooterDivider} />
@@ -511,12 +589,20 @@ export const StoryWallScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
                     ]}
                     onPress={() => handleToggleHelpful(s.id)}
                     activeOpacity={0.7}
-                    accessibilityLabel={reaction.isHelped ? 'Batal menyukai cerita' : 'Sukai cerita'}
+                    accessibilityLabel={
+                      reaction.isHelped
+                        ? "Batal menyukai cerita"
+                        : "Sukai cerita"
+                    }
                   >
                     <HeartIcon
                       size={17}
-                      color={reaction.isHelped ? colors.accentPink : colors.textSecondary}
-                      fill={reaction.isHelped ? colors.accentPink : 'none'}
+                      color={
+                        reaction.isHelped
+                          ? colors.accentPink
+                          : colors.textSecondary
+                      }
+                      fill={reaction.isHelped ? colors.accentPink : "none"}
                     />
                     <Text
                       style={[
@@ -537,7 +623,10 @@ export const StoryWallScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
                         story: s.story,
                         actionTaken: s.actionTaken,
                         author: s.authorLabel,
-                        conditionLabel: s.fromTier === 'high' ? 'Dulu Kondisi Tinggi' : 'Dulu Kondisi Sedang',
+                        conditionLabel:
+                          s.fromTier === "high"
+                            ? "Dulu Kondisi Tinggi"
+                            : "Dulu Kondisi Sedang",
                         timeAgo: postedTimeAgo,
                       })
                     }
@@ -566,7 +655,9 @@ export const StoryWallScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
         <View style={styles.letterSection}>
           <Text style={styles.sectionHeading}>Tulis & Bagikan Cerita</Text>
           <Text style={styles.sectionSub}>
-            Tuliskan kata-kata pengingat saat kamu sedang lapang. Tulisan ini murni tersimpan secara pribadi di perangkatmu dan bisa kamu hapus kapan saja.
+            Tuliskan kata-kata pengingat saat kamu sedang lapang. Tulisan ini
+            murni tersimpan secara pribadi di perangkatmu dan bisa kamu hapus
+            kapan saja.
           </Text>
 
           {composerOpen ? (
@@ -589,10 +680,19 @@ export const StoryWallScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
                 <View
                   style={[
                     styles.checkboxBox,
-                    shareToPublic && { backgroundColor: colors.primary, borderColor: colors.primary },
+                    shareToPublic && {
+                      backgroundColor: colors.primary,
+                      borderColor: colors.primary,
+                    },
                   ]}
                 >
-                  {shareToPublic && <Text style={{ color: '#fff', fontSize: 11, fontWeight: '700' }}>✓</Text>}
+                  {shareToPublic && (
+                    <Text
+                      style={{ color: "#fff", fontSize: 11, fontWeight: "700" }}
+                    >
+                      ✓
+                    </Text>
+                  )}
                 </View>
                 <Text style={styles.shareOptionText}>
                   Bagikan secara anonim ke Dinding Cerita Publik
@@ -603,7 +703,7 @@ export const StoryWallScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
                 <TouchableOpacity
                   style={styles.ghostBtn}
                   onPress={() => {
-                    setDraft('');
+                    setDraft("");
                     setComposerOpen(false);
                   }}
                   disabled={isSharing}
@@ -627,7 +727,9 @@ export const StoryWallScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
                 setComposerOpen(true);
               }}
             >
-              <Text style={styles.openComposerText}>+ Tulis Surat untuk Diri Sendiri</Text>
+              <Text style={styles.openComposerText}>
+                + Tulis Surat untuk Diri Sendiri
+              </Text>
             </TouchableOpacity>
           )}
 
@@ -636,10 +738,10 @@ export const StoryWallScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
               <Text style={styles.letterBody}>{ltr.body}</Text>
               <View style={styles.letterBottom}>
                 <Text style={styles.letterDate}>
-                  {new Date(ltr.createdAt).toLocaleDateString('id-ID', {
-                    day: 'numeric',
-                    month: 'short',
-                    year: 'numeric',
+                  {new Date(ltr.createdAt).toLocaleDateString("id-ID", {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
                   })}
                 </Text>
                 <TouchableOpacity
@@ -675,16 +777,23 @@ export const StoryWallScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
             </TouchableOpacity>
           </View>
 
-          <ScrollView contentContainerStyle={styles.modalScroll} showsVerticalScrollIndicator={false}>
+          <ScrollView
+            contentContainerStyle={styles.modalScroll}
+            showsVerticalScrollIndicator={false}
+          >
             <View style={styles.modalNotice}>
               <ShieldLockIcon size={16} color={colors.primary} />
               <Text style={styles.modalNoticeText}>
-                Ceritamu ditujukan untuk menguatkan orang lain. Tidak perlu nama asli. Semua pengiriman melalui peninjauan kurasi sebelum tayang publik.
+                Ceritamu ditujukan untuk menguatkan orang lain. Tidak perlu nama
+                asli. Semua pengiriman melalui peninjauan kurasi sebelum tayang
+                publik.
               </Text>
             </View>
 
             {/* Nama & Kategori */}
-            <Text style={styles.inputLabel}>NAMA PANGGILAN SAMARAN (OPSIONAL)</Text>
+            <Text style={styles.inputLabel}>
+              NAMA PANGGILAN SAMARAN (OPSIONAL)
+            </Text>
             <TextInput
               style={styles.formInput}
               value={authorName}
@@ -694,17 +803,29 @@ export const StoryWallScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
             />
 
             <Text style={styles.inputLabel}>TEMA CERITA</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: spacing.md }}>
-              <View style={{ flexDirection: 'row', gap: 6 }}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={{ marginBottom: spacing.md }}
+            >
+              <View style={{ flexDirection: "row", gap: 6 }}>
                 {CATEGORY_CHOICES.map((c) => {
                   const isCatSelected = category === c;
                   return (
                     <TouchableOpacity
                       key={c}
-                      style={[styles.categoryPill, isCatSelected && styles.categoryPillActive]}
+                      style={[
+                        styles.categoryPill,
+                        isCatSelected && styles.categoryPillActive,
+                      ]}
                       onPress={() => setCategory(c)}
                     >
-                      <Text style={[styles.categoryPillText, isCatSelected && styles.categoryPillTextActive]}>
+                      <Text
+                        style={[
+                          styles.categoryPillText,
+                          isCatSelected && styles.categoryPillTextActive,
+                        ]}
+                      >
                         {c}
                       </Text>
                     </TouchableOpacity>
@@ -714,11 +835,15 @@ export const StoryWallScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
             </ScrollView>
 
             {/* Template 5 Bagian */}
-            <Text style={styles.sectionHeader}>TEMPLATE 5 LANGKAH REFLEKSI</Text>
+            <Text style={styles.sectionHeader}>
+              TEMPLATE 5 LANGKAH REFLEKSI
+            </Text>
 
             <View style={styles.formGroup}>
               <Text style={styles.stepTitle}>1. Dulu Merasa...</Text>
-              <Text style={styles.stepSub}>Apa yang kamu rasakan saat berada di titik paling berat?</Text>
+              <Text style={styles.stepSub}>
+                Apa yang kamu rasakan saat berada di titik paling berat?
+              </Text>
               <TextInput
                 style={[styles.formInput, styles.multilineInput]}
                 value={feltText}
@@ -731,7 +856,9 @@ export const StoryWallScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
 
             <View style={styles.formGroup}>
               <Text style={styles.stepTitle}>2. Titik Balik</Text>
-              <Text style={styles.stepSub}>Momen apa yang menyadarkanmu bahwa kamu perlu melangkah?</Text>
+              <Text style={styles.stepSub}>
+                Momen apa yang menyadarkanmu bahwa kamu perlu melangkah?
+              </Text>
               <TextInput
                 style={[styles.formInput, styles.multilineInput]}
                 value={turningPointText}
@@ -744,7 +871,9 @@ export const StoryWallScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
 
             <View style={styles.formGroup}>
               <Text style={styles.stepTitle}>3. Yang Kulakukan</Text>
-              <Text style={styles.stepSub}>Langkah nyata kecil apa yang mulai kamu ambil?</Text>
+              <Text style={styles.stepSub}>
+                Langkah nyata kecil apa yang mulai kamu ambil?
+              </Text>
               <TextInput
                 style={[styles.formInput, styles.multilineInput]}
                 value={actionText}
@@ -757,7 +886,9 @@ export const StoryWallScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
 
             <View style={styles.formGroup}>
               <Text style={styles.stepTitle}>4. Ternyata...</Text>
-              <Text style={styles.stepSub}>Bagaimana dampaknya bagi pikiran dan energimu sekarang?</Text>
+              <Text style={styles.stepSub}>
+                Bagaimana dampaknya bagi pikiran dan energimu sekarang?
+              </Text>
               <TextInput
                 style={[styles.formInput, styles.multilineInput]}
                 value={resultText}
@@ -770,7 +901,9 @@ export const StoryWallScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
 
             <View style={styles.formGroup}>
               <Text style={styles.stepTitle}>5. Pesan untuk Pembaca</Text>
-              <Text style={styles.stepSub}>Satu kalimat penguat bagi teman yang sedang membaca ini:</Text>
+              <Text style={styles.stepSub}>
+                Satu kalimat penguat bagi teman yang sedang membaca ini:
+              </Text>
               <TextInput
                 style={[styles.formInput, styles.multilineInput]}
                 value={messageText}
@@ -805,9 +938,9 @@ export const StoryWallScreen: React.FC<Props> = ({ onBack, onQuickClose }) => {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
   topBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: spacing.marginMobile,
     paddingTop: spacing.md,
   },
@@ -816,8 +949,8 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
     backgroundColor: colors.surface,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     borderWidth: 1,
     borderColor: colors.outlineVariant,
   },
@@ -848,9 +981,9 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   shareCtaBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     gap: 8,
     backgroundColor: colors.primary,
     borderRadius: radius.md,
@@ -859,8 +992,8 @@ const styles = StyleSheet.create({
   },
   shareCtaText: {
     ...typography.labelSm,
-    fontFamily: 'Montserrat-SemiBold',
-    color: '#FFFFFF',
+    fontFamily: "Montserrat-SemiBold",
+    color: "#FFFFFF",
     letterSpacing: 0.2,
   },
 
@@ -884,11 +1017,11 @@ const styles = StyleSheet.create({
   filterChipText: {
     ...typography.labelSm,
     color: colors.textSecondary,
-    fontFamily: 'Montserrat-Medium',
+    fontFamily: "Montserrat-Medium",
   },
   filterChipTextActive: {
-    color: '#FFFFFF',
-    fontFamily: 'Montserrat-SemiBold',
+    color: "#FFFFFF",
+    fontFamily: "Montserrat-SemiBold",
   },
 
   userSubmissionsSection: {
@@ -908,7 +1041,7 @@ const styles = StyleSheet.create({
   },
   pendingBadgeText: {
     fontSize: 10,
-    fontFamily: 'Montserrat-SemiBold',
+    fontFamily: "Montserrat-SemiBold",
     color: colors.onTertiaryContainer,
   },
   storyBlock: {
@@ -916,7 +1049,7 @@ const styles = StyleSheet.create({
   },
   blockLabel: {
     fontSize: 10,
-    fontFamily: 'Montserrat-Bold',
+    fontFamily: "Montserrat-Bold",
     color: colors.textSecondary,
     letterSpacing: 0.5,
   },
@@ -936,9 +1069,9 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   storyTop: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     marginBottom: spacing.sm,
   },
   tierTag: {
@@ -949,19 +1082,19 @@ const styles = StyleSheet.create({
   tierTagText: {
     ...typography.labelSm,
     fontSize: 10,
-    fontFamily: 'Montserrat-SemiBold',
+    fontFamily: "Montserrat-SemiBold",
   },
   timeAgoText: {
     ...typography.bodySm,
     fontSize: 11,
     color: colors.textSecondary,
-    fontFamily: 'Montserrat-Medium',
+    fontFamily: "Montserrat-Medium",
   },
   quote: {
     ...typography.cardTitle,
     color: colors.textPrimary,
     marginBottom: spacing.xs,
-    fontStyle: 'italic',
+    fontStyle: "italic",
     lineHeight: 22,
   },
   storyText: {
@@ -980,7 +1113,7 @@ const styles = StyleSheet.create({
   },
   nowLabel: {
     fontSize: 10,
-    fontFamily: 'Montserrat-Bold',
+    fontFamily: "Montserrat-Bold",
     color: colors.textSecondary,
     letterSpacing: 0.5,
   },
@@ -990,8 +1123,8 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   actionRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 6,
     marginTop: spacing.xs,
   },
@@ -999,7 +1132,7 @@ const styles = StyleSheet.create({
     ...typography.bodySm,
     fontSize: 12,
     color: colors.primary,
-    fontFamily: 'Montserrat-SemiBold',
+    fontFamily: "Montserrat-SemiBold",
   },
   cardFooterDivider: {
     height: 1,
@@ -1007,18 +1140,18 @@ const styles = StyleSheet.create({
     marginVertical: spacing.sm,
   },
   cardFooter: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   cardFooterActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
   },
   likeBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 5,
     paddingVertical: 6,
     paddingHorizontal: 10,
@@ -1035,14 +1168,14 @@ const styles = StyleSheet.create({
     ...typography.labelSm,
     fontSize: 12,
     color: colors.textSecondary,
-    fontFamily: 'Montserrat-SemiBold',
+    fontFamily: "Montserrat-SemiBold",
   },
   likeCountTextActive: {
     color: colors.accentPink,
   },
   shareBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 6,
     paddingVertical: 6,
     paddingHorizontal: 12,
@@ -1055,7 +1188,7 @@ const styles = StyleSheet.create({
     ...typography.labelSm,
     fontSize: 12,
     color: colors.textSecondary,
-    fontFamily: 'Montserrat-Medium',
+    fontFamily: "Montserrat-Medium",
   },
   reportBtn: {
     padding: 6,
@@ -1085,16 +1218,16 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderRadius: radius.md,
     padding: spacing.md,
-    alignItems: 'center',
+    alignItems: "center",
     borderWidth: 1,
-    borderStyle: 'dashed',
+    borderStyle: "dashed",
     borderColor: colors.primary,
     marginBottom: spacing.md,
   },
   openComposerText: {
     ...typography.labelSm,
     color: colors.primary,
-    fontFamily: 'Montserrat-SemiBold',
+    fontFamily: "Montserrat-SemiBold",
   },
   letterInput: {
     backgroundColor: colors.surface,
@@ -1105,12 +1238,37 @@ const styles = StyleSheet.create({
     ...typography.bodySm,
     color: colors.textPrimary,
     minHeight: 100,
-    textAlignVertical: 'top',
+    textAlignVertical: "top",
     marginBottom: spacing.sm,
   },
+  shareOptionRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
+    backgroundColor: colors.surfaceContainer,
+    padding: spacing.sm + 2,
+    borderRadius: radius.sm,
+    marginBottom: spacing.md,
+  },
+  checkboxBox: {
+    width: 20,
+    height: 20,
+    borderRadius: 4,
+    borderWidth: 1.5,
+    borderColor: colors.outlineVariant,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: colors.surface,
+  },
+  shareOptionText: {
+    ...typography.bodySm,
+    color: colors.onSurface,
+    fontWeight: "600",
+    flex: 1,
+  },
   composerRow: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
+    flexDirection: "row",
+    justifyContent: "flex-end",
     gap: spacing.sm,
     marginBottom: spacing.md,
   },
@@ -1131,8 +1289,8 @@ const styles = StyleSheet.create({
   },
   primaryBtnText: {
     ...typography.labelSm,
-    color: '#FFFFFF',
-    fontFamily: 'Montserrat-SemiBold',
+    color: "#FFFFFF",
+    fontFamily: "Montserrat-SemiBold",
   },
   letterCard: {
     backgroundColor: colors.surface,
@@ -1149,9 +1307,9 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xs,
   },
   letterBottom: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   letterDate: {
     ...typography.bodySm,
@@ -1165,9 +1323,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   modalHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: spacing.marginMobile,
     paddingVertical: spacing.md,
     borderBottomWidth: 1,
@@ -1176,7 +1334,7 @@ const styles = StyleSheet.create({
   },
   modalHeaderTitle: {
     ...typography.labelLg,
-    fontFamily: 'Montserrat-Bold',
+    fontFamily: "Montserrat-Bold",
     color: colors.textPrimary,
   },
   modalCloseBtn: {
@@ -1185,14 +1343,14 @@ const styles = StyleSheet.create({
   modalCloseBtnText: {
     ...typography.labelSm,
     color: colors.primary,
-    fontFamily: 'Montserrat-SemiBold',
+    fontFamily: "Montserrat-SemiBold",
   },
   modalScroll: {
     padding: spacing.marginMobile,
     paddingBottom: spacing.xxl + 40,
   },
   modalNotice: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 8,
     backgroundColor: colors.primarySoft,
     padding: spacing.sm + 2,
@@ -1226,7 +1384,7 @@ const styles = StyleSheet.create({
   },
   multilineInput: {
     minHeight: 70,
-    textAlignVertical: 'top',
+    textAlignVertical: "top",
   },
   categoryPill: {
     paddingHorizontal: spacing.md,
@@ -1242,12 +1400,12 @@ const styles = StyleSheet.create({
   },
   categoryPillText: {
     fontSize: 11,
-    fontFamily: 'Montserrat-Medium',
+    fontFamily: "Montserrat-Medium",
     color: colors.textSecondary,
   },
   categoryPillTextActive: {
-    color: '#FFFFFF',
-    fontFamily: 'Montserrat-SemiBold',
+    color: "#FFFFFF",
+    fontFamily: "Montserrat-SemiBold",
   },
   sectionHeader: {
     ...typography.labelSm,
@@ -1261,7 +1419,7 @@ const styles = StyleSheet.create({
   },
   stepTitle: {
     ...typography.labelSm,
-    fontFamily: 'Montserrat-SemiBold',
+    fontFamily: "Montserrat-SemiBold",
     color: colors.textPrimary,
   },
   stepSub: {
@@ -1274,13 +1432,13 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     borderRadius: radius.md,
     paddingVertical: 14,
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: spacing.md,
   },
   submitBtnText: {
     ...typography.labelSm,
-    color: '#FFFFFF',
-    fontFamily: 'Montserrat-Bold',
+    color: "#FFFFFF",
+    fontFamily: "Montserrat-Bold",
     letterSpacing: 0.3,
   },
 });

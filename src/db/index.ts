@@ -538,3 +538,12 @@ export async function getHiddenStoryIds(): Promise<string[]> {
     return [];
   }
 }
+
+/** ID Anonim unik perangkat untuk sesi konseling anonim */
+export async function getOrCreateAnonymousUserId(): Promise<string> {
+  const existingId = await getSetting('anonymous_user_id');
+  if (existingId) return existingId;
+  const newId = `anon_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+  await setSetting('anonymous_user_id', newId);
+  return newId;
+}
