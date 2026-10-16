@@ -6,6 +6,8 @@ import {
   ActivityIndicator,
   BackHandler,
   Linking,
+  Keyboard,
+  Platform,
 } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { colors, FontScaleProvider } from "./theme";
@@ -154,13 +156,30 @@ export default function App() {
     );
   }
 
-  // Tampilkan BottomNavBar hanya pada layar utama tab
+  // Listener Keyboard untuk menyembunyikan floating BottomNavBar saat mengetik di layar chat
+  const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
+  useEffect(() => {
+    const showSub = Keyboard.addListener(
+      Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow",
+      () => setIsKeyboardOpen(true),
+    );
+    const hideSub = Keyboard.addListener(
+      Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide",
+      () => setIsKeyboardOpen(false),
+    );
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
+
+  // Tampilkan BottomNavBar hanya pada layar utama tab (sembunyikan di chat saat keyboard muncul)
   const showBottomNav =
-    currentRoute === "home" ||
-    currentRoute === "trend" ||
-    currentRoute === "chat" ||
-    currentRoute === "stories" ||
-    currentRoute === "profile";
+    (currentRoute === "home" ||
+      currentRoute === "trend" ||
+      currentRoute === "stories" ||
+      currentRoute === "profile" ||
+      (currentRoute === "chat" && !isKeyboardOpen));
 
   return (
     <FontScaleProvider>
