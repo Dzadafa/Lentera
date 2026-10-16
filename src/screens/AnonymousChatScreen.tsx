@@ -25,6 +25,7 @@ import { haptics } from "../services/haptics";
 import { getOrCreateAnonymousUserId } from "../db";
 import {
   matchRandomCounselor,
+  getActiveChatSession,
   skipCurrentCounselor,
   fetchSessionMessages,
   sendChatMessage,
@@ -109,7 +110,8 @@ export const AnonymousChatScreen: React.FC<Props> = ({
       const anonId = await getOrCreateAnonymousUserId();
       if (mounted) {
         setDeviceId(anonId);
-        void handleFindMatch(anonId);
+        // Buka sesi yang sudah ada jika ada, tanpa membuat sesi baru
+        void handleFindMatch(anonId, false);
       }
     };
     void initChat();
@@ -168,7 +170,7 @@ export const AnonymousChatScreen: React.FC<Props> = ({
     };
   }, [sessionId]);
 
-  const handleFindMatch = async (userIdToUse?: string) => {
+  const handleFindMatch = async (userIdToUse?: string, isForceNew = false) => {
     setIsMatching(true);
     void haptics.tap();
 
@@ -177,12 +179,34 @@ export const AnonymousChatScreen: React.FC<Props> = ({
         userIdToUse || deviceId || (await getOrCreateAnonymousUserId());
       if (!deviceId) setDeviceId(uid);
 
-      const match = await matchRandomCounselor(uid);
-      setSessionId(match.sessionId);
-      setCounselor(match.psychologist);
+      let targetSessionId = '';
+      let targetCounselor: CounselorInfo | null = null;
 
-      // Ambil pesan awal
-      const records = await fetchSessionMessages(match.sessionId);
+      // 1. Cek sesi aktif yang sudah ada jika BUKAN tombol ganti (force new)
+      if (!isForceNew) {
+        try {
+          const activeSession = await getActiveChatSession(uid);
+          if (activeSession) {
+            targetSessionId = activeSession.sessionId;
+            targetCounselor = activeSession.psychologist;
+          }
+        } catch {
+          // Fallback coba match baru
+        }
+      }
+
+      // 2. Jika belum ada sesi aktif atau user meminta ganti konselor
+      if (!targetSessionId) {
+        const match = await matchRandomCounselor(uid);
+        targetSessionId = match.sessionId;
+        targetCounselor = match.psychologist;
+      }
+
+      setSessionId(targetSessionId);
+      if (targetCounselor) setCounselor(targetCounselor);
+
+      // Ambil pesan dari sesi aktif tersebut
+      const records = await fetchSessionMessages(targetSessionId);
       if (records && records.length > 0) {
         setMessages(
           records.map((r) => ({
@@ -195,6 +219,8 @@ export const AnonymousChatScreen: React.FC<Props> = ({
             }),
           })),
         );
+      } else {
+        setMessages(INITIAL_MESSAGES);
       }
       void haptics.success();
     } catch {
@@ -221,7 +247,8 @@ export const AnonymousChatScreen: React.FC<Props> = ({
     setSessionId(null);
     setCounselor(null);
     setMessages([]);
-    await handleFindMatch();
+    // Paksa buat sesi baru dengan konselor lain
+    await handleFindMatch(undefined, true);
   };
 
   const handleSend = async () => {

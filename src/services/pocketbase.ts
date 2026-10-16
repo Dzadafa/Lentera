@@ -177,6 +177,71 @@ export async function matchRandomCounselor(anonymousUserId?: string): Promise<{
 }
 
 /**
+ * Mengambil sesi chat aktif yang sedang berjalan untuk anonymousUserId (jika ada)
+ */
+export async function getActiveChatSession(anonymousUserId: string): Promise<{
+  sessionId: string;
+  anonymousUserId: string;
+  psychologist: CounselorInfo;
+} | null> {
+  const urls = [
+    activeBaseUrl,
+    PB_PROD_URL,
+    PB_LAN_URL,
+    PB_EMULATOR_URL,
+    "http://127.0.0.1:8090",
+  ];
+
+  for (const base of urls) {
+    try {
+      const res = await fetch(
+        `${base}/api/collections/chat_sessions/records?filter=(anonymous_user_id='${anonymousUserId}'%26%26status='active')&sort=-created&perPage=1`,
+      );
+      if (res.ok) {
+        const data = await res.json();
+        const activeRecord = data.items?.[0];
+        if (activeRecord) {
+          activeBaseUrl = base;
+          let psychInfo: CounselorInfo = {
+            id: activeRecord.psychologist || 'cns_demo',
+            name: 'Rania Wardani, S.Psi.',
+            university: 'Universitas Gadjah Mada',
+            bio: 'Fokus pada pendampingan kecemasan akademik, burnout mahasiswa, dan transisi quarter-life crisis.',
+            kyc_status: 'verified',
+          };
+
+          if (activeRecord.psychologist) {
+            try {
+              const psychRes = await fetch(
+                `${base}/api/collections/psychologists/records/${activeRecord.psychologist}`,
+              );
+              if (psychRes.ok) {
+                const psychData = await psychRes.json();
+                psychInfo = {
+                  id: psychData.id,
+                  name: psychData.name,
+                  university: psychData.university,
+                  bio: psychData.bio || psychInfo.bio,
+                  kyc_status: psychData.kyc_status || 'verified',
+                };
+              }
+            } catch {}
+          }
+
+          return {
+            sessionId: activeRecord.id,
+            anonymousUserId: activeRecord.anonymous_user_id,
+            psychologist: psychInfo,
+          };
+        }
+      }
+    } catch {}
+  }
+
+  return null;
+}
+
+/**
  * Melewati (skip) konselor saat ini dan membebaskan sesi
  */
 export async function skipCurrentCounselor(
