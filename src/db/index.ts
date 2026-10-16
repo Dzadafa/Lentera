@@ -284,3 +284,25 @@ export async function getScreeningTrend(limit: number = 12): Promise<ScreeningTr
     })
     .reverse();
 }
+
+/**
+ * ID Pengguna Anonim Perangkat (Device ID permanen).
+ * Digenerate otomatis saat pertama kali dibuka dan disimpan selamanya di SQLite lokal.
+ */
+export async function getOrCreateAnonymousUserId(): Promise<string> {
+  const existing = await getSetting('anonymous_device_user_id');
+  if (existing) {
+    return existing;
+  }
+
+  // Generate ID acak permanen yang elegan & anonim
+  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  let rand = '';
+  for (let i = 0; i < 8; i++) {
+    rand += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  const newId = `anon_${rand}`;
+  await setSetting('anonymous_device_user_id', newId);
+  return newId;
+}
+

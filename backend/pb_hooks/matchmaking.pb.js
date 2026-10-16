@@ -95,3 +95,49 @@ routerAdd("POST", "/api/chat/skip-counselor", (c) => {
 
   return c.json(200, { message: "Sesi konselor telah dilewati." });
 });
+
+// Endpoint untuk Berbagi Cerita Anonim ke Dinding Cerita
+routerAdd("POST", "/api/stories/share", (c) => {
+  const data = $apis.requestInfo(c).data;
+  const storyText = (data.story || "").trim();
+  const quoteText = (data.quote || "").trim();
+  const actionTaken = (data.action_taken || "").trim();
+  const nowStatus = (data.now_status || "").trim();
+  const fromTier = data.from_tier === "high" ? "high" : "moderate";
+
+  if (!storyText) {
+    return c.json(400, { message: "Isi cerita tidak boleh kosong." });
+  }
+
+  const dao = $app.dao();
+  const storiesCollection = dao.findCollectionByNameOrId("stories");
+  if (!storiesCollection) {
+    return c.json(500, { message: "Koleksi stories tidak ditemukan." });
+  }
+
+  const newStory = new Record(storiesCollection, {
+    author_label: "Pengguna Lentera",
+    from_tier: fromTier,
+    quote: quoteText || (storyText.length > 80 ? storyText.substring(0, 80) + "..." : storyText),
+    story: storyText,
+    action_taken: actionTaken || "Mengambil jeda dan berbagi cerita",
+    now_status: nowStatus || "Sedang berproses menjadi lebih baik",
+    is_approved: true
+  });
+
+  dao.saveRecord(newStory);
+
+  return c.json(200, {
+    message: "Cerita berhasil dibagikan ke Dinding Cerita!",
+    story: {
+      id: newStory.id,
+      author_label: newStory.getString("author_label"),
+      from_tier: newStory.getString("from_tier"),
+      quote: newStory.getString("quote"),
+      story: newStory.getString("story"),
+      action_taken: newStory.getString("action_taken"),
+      now_status: newStory.getString("now_status"),
+      created: newStory.getString("created")
+    }
+  });
+});

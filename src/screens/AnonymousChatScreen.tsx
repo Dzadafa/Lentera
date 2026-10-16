@@ -21,6 +21,7 @@ import {
 } from '../components/Icons';
 import { QuickCloseButton } from '../components/QuickCloseButton';
 import { haptics } from '../services/haptics';
+import { getOrCreateAnonymousUserId } from '../db';
 import {
   matchRandomCounselor,
   skipCurrentCounselor,
@@ -57,6 +58,7 @@ export const AnonymousChatScreen: React.FC<Props> = ({ onBack, onQuickClose, onO
   const [counselor, setCounselor] = useState<CounselorInfo | null>(null);
   const [isMatching, setIsMatching] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
+  const [deviceId, setDeviceId] = useState<string>('');
 
   const scrollViewRef = useRef<ScrollView>(null);
   const pollIntervalRef = useRef<any>(null);
@@ -65,11 +67,20 @@ export const AnonymousChatScreen: React.FC<Props> = ({ onBack, onQuickClose, onO
     scrollViewRef.current?.scrollToEnd({ animated });
   };
 
-  // Mulai mencocokkan konselor saat pertama kali masuk
+  // Mulai mencocokkan konselor saat pertama kali masuk dengan ID perangkat permanen
   useEffect(() => {
-    void handleFindMatch();
+    let mounted = true;
+    const initChat = async () => {
+      const anonId = await getOrCreateAnonymousUserId();
+      if (mounted) {
+        setDeviceId(anonId);
+        void handleFindMatch(anonId);
+      }
+    };
+    void initChat();
 
     return () => {
+      mounted = false;
       if (pollIntervalRef.current) {
         clearInterval(pollIntervalRef.current);
       }
@@ -116,12 +127,15 @@ export const AnonymousChatScreen: React.FC<Props> = ({ onBack, onQuickClose, onO
     };
   }, [sessionId]);
 
-  const handleFindMatch = async () => {
+  const handleFindMatch = async (userIdToUse?: string) => {
     setIsMatching(true);
     void haptics.tap();
 
     try {
-      const match = await matchRandomCounselor();
+      const uid = userIdToUse || deviceId || (await getOrCreateAnonymousUserId());
+      if (!deviceId) setDeviceId(uid);
+
+      const match = await matchRandomCounselor(uid);
       setSessionId(match.sessionId);
       setCounselor(match.psychologist);
 
@@ -255,11 +269,11 @@ export const AnonymousChatScreen: React.FC<Props> = ({ onBack, onQuickClose, onO
         </TouchableOpacity>
       </View>
 
-      {/* Banner info privasi & hotline */}
+      {/* Banner info privasi & hotline & ID Perangkat Anonim */}
       <View style={styles.bannerRow}>
         <ShieldLockIcon size={14} color={colors.primary} />
         <Text style={styles.bannerText}>
-          Obrolan anonim tanpa login. Jika dalam bahaya darurat, buka{' '}
+          Obrolan anonim tanpa login{deviceId ? ` (${deviceId})` : ''}. Jika dalam bahaya darurat, buka{' '}
           <Text style={styles.bannerLink} onPress={onOpenSupport}>
             Hotline 119
           </Text>
