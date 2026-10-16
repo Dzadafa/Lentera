@@ -140,4 +140,45 @@ routerAdd("POST", "/api/stories/share", (c) => {
       created: newStory.getString("created")
     }
   });
+});// Endpoint untuk Mengirim Pesan Chat (Aman dari kendala relasi collectionId kosong)
+routerAdd("POST", "/api/chat/send-message", (c) => {
+  const data = $apis.requestInfo(c).data;
+  const sessionId = (data.session_id || data.session || "").trim();
+  const sender = (data.sender || "user").trim();
+  const text = (data.text || "").trim();
+
+  if (!sessionId) {
+    return c.json(400, { message: "ID Sesi (session_id) tidak boleh kosong." });
+  }
+
+  if (!text) {
+    return c.json(400, { message: "Isi pesan tidak boleh kosong." });
+  }
+
+  const dao = $app.dao();
+  const session = dao.findRecordById("chat_sessions", sessionId);
+  if (!session) {
+    return c.json(404, { message: "Sesi obrolan tidak ditemukan." });
+  }
+
+  if (session.getString("status") === "skipped" || session.getString("status") === "ended") {
+    return c.json(403, { message: "Sesi ini telah diarsipkan atau dilewati." });
+  }
+
+  const chatMessagesCollection = dao.findCollectionByNameOrId("chat_messages");
+  const msgRecord = new Record(chatMessagesCollection, {
+    session: session.id,
+    sender: sender === "psychologist" ? "psychologist" : "user",
+    text: text
+  });
+
+  dao.saveRecord(msgRecord);
+
+  return c.json(200, {
+    id: msgRecord.id,
+    session: session.id,
+    sender: msgRecord.getString("sender"),
+    text: msgRecord.getString("text"),
+    created: msgRecord.getString("created")
+  });
 });

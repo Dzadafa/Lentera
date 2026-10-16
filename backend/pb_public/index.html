@@ -2510,11 +2510,11 @@ Fokus pada pendampingan kecemasan akademik, burnout mahasiswa, dan transisi quar
         }
 
         try {
-          const res = await fetch('/api/collections/chat_messages/records', {
+          const res = await fetch('/api/chat/send-message', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              session: selectedSessionId,
+              session_id: selectedSessionId,
               sender: 'psychologist',
               text: text
             })
@@ -2523,6 +2523,9 @@ Fokus pada pendampingan kecemasan akademik, burnout mahasiswa, dan transisi quar
           if (res.ok) {
             input.value = '';
             loadMessages(selectedSessionId);
+          } else {
+            const err = await res.json().catch(() => ({}));
+            alert('Gagal mengirim pesan: ' + (err.message || 'Terjadi kesalahan'));
           }
         } catch (e) {
           alert('Gagal mengirim pesan: ' + e.message);
@@ -2530,7 +2533,8 @@ Fokus pada pendampingan kecemasan akademik, burnout mahasiswa, dan transisi quar
       }
 
       function handleChatKeyDown(e) {
-        if (e.key === 'Enter') {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
           sendCounselorMessage();
         }
       }

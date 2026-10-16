@@ -219,22 +219,32 @@ export async function sendChatMessage(
   sessionId: string,
   text: string,
 ): Promise<ChatMessageRecord | null> {
-  try {
-    const res = await fetch(
-      `${activeBaseUrl}/api/collections/chat_messages/records`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          session: sessionId,
-          sender: "user",
-          text: text.trim(),
-        }),
-      },
-    );
-    if (res.ok) {
-      return (await res.json()) as ChatMessageRecord;
-    }
-  } catch {}
+  const urls = [
+    activeBaseUrl,
+    PB_PROD_URL,
+    PB_LAN_URL,
+    PB_EMULATOR_URL,
+    "http://127.0.0.1:8090",
+  ];
+
+  for (const base of urls) {
+    try {
+      const res = await fetch(
+        `${base}/api/chat/send-message`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            session_id: sessionId,
+            sender: "user",
+            text: text.trim(),
+          }),
+        },
+      );
+      if (res.ok) {
+        return (await res.json()) as ChatMessageRecord;
+      }
+    } catch {}
+  }
   return null;
 }
